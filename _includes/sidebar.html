@@ -6,7 +6,7 @@
   {% if page.sidebar %}
   {% for s in page.sidebar %}
   {% if s.image %}
-  <img src="{{ s.image | prepend: ' /images/' | prepend: base_path }}">
+  <img src="{{ s.image | relative_url }}" alt="{% if s.image_alt %}{{ s.image_alt }}{% endif %}">
   {% endif %}
   {% if s.title %}<h3>{{ s.title }}</h3>{% endif %}
   {% if s.text %}{{ s.text | markdownify }}{% endif %}
