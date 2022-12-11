@@ -15,8 +15,8 @@ main:
   - title: "Klists"
     url: /klists/
 
-  - title: "Kdiaries"
-    url: /kdiaries/
+  - title: "Kmemories"
+    url: /kmemories/
 
   - title: "Blog Posts"
     url: /year-archive/
