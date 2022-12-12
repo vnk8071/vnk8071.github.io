@@ -10,7 +10,7 @@
         <a class="site-title" href="{{ '/' | relative_url }}">
           Github Page
         </a>
-        <ul class="visible-links hidden">
+        <ul class="visible-links">
           {% for link in site.data.navigation.main %}
           {% if link.url contains 'http' %}
           {% assign domain = '' %}
@@ -20,9 +20,9 @@
           <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
         </ul>
-        <button class="greedy-nav__toggle" type="button">
+        <!-- <button class="greedy-nav__toggle" type="button">
           <div class="navicon"></div>
-        </button>
+        </button> -->
         <ul class="hidden-links hidden"></ul>
       </nav>
     </div>
