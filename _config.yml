@@ -11,7 +11,7 @@ minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "
 
 # Site Settings
 locale: "en-US"
-title: "Github Page"
+title: "KhoiVN Space"
 title_separator: "-"
 name: &name "KhoiVN"
 description: &description "personal description"
@@ -326,6 +326,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
+  - jemoji
   - jekyll-redirect-from
 # mimic GitHub Pages with --safe
 whitelist:

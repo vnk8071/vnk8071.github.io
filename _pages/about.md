@@ -15,9 +15,10 @@ redirect_from:
 - Day of birth: 08/17/2000
 - Sex: Male
 - Work: Senior Student
-- Major: Biomedical Engineering - GPA: 3.2/4.0 
+- Major: Biomedical Engineering - GPA: 3.23/4.0 
 - Material BME: <a href="https://drive.google.com/drive/folders/1Z6FldasTFjdDnYaiwan6FNiLvypjnDw9">BME-IU</a>
 - University: International University HCMC
+
 # Status
 <p align="center"><img width="70%" src="https://github-readme-streak-stats.herokuapp.com/?user=vnk8071&theme=github-dark-blue&date_format=M%20j%5B%2C%20Y%5D"/></p>
 
