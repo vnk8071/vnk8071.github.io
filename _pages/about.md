@@ -15,9 +15,9 @@ redirect_from:
 - Day of birth: 08/17/2000
 - Sex: Male
 - Work: Senior Student
-- Major: Biomedical Engineering - GPA: 3.23/4.0 
+- Major: Biomedical Engineering - GPA: 3.23/4.0 (<a href="files/AcademicTranscript_VoNguyenKhoi_25092022.pdf">PDF</a>)
 - Material BME: <a href="https://drive.google.com/drive/folders/1Z6FldasTFjdDnYaiwan6FNiLvypjnDw9">BME-IU</a>
-- University: International University HCMC
+- University: International University - VNU HCMC
 
 # Status
 <p align="center"><img width="70%" src="https://github-readme-streak-stats.herokuapp.com/?user=vnk8071&theme=github-dark-blue&date_format=M%20j%5B%2C%20Y%5D"/></p>
@@ -38,6 +38,10 @@ Professional summary
 - Understand and experience the pipeline of AI production.
 - Cooperative and able to perform within a team-oriented atmosphere.
 - Good English communication.
+
+Awards:
+- Top 9 of challenge Lyric Alignment - Zalo AI Challenge 2022
+- Top 15 of Data Centric-AI Competition 2021 of FPT AI Center
 
 More information:
 - Email: nguyenkhoi8071@gmail.com

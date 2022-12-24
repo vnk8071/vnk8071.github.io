@@ -11,7 +11,7 @@ minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "
 
 # Site Settings
 locale: "en-US"
-title: "KhoiVN Space"
+title: "Space"
 title_separator: "-"
 name: &name "KhoiVN"
 description: &description "personal description"
@@ -83,7 +83,7 @@ analytics:
 
 # Site Author
 author:
-  name: "KhoiVN"
+  name: "Khoi VN"
   avatar: "/images/profile.jpg"
   bio: "AI Engineer"
   location: "Quy Nhon, Vietnam"

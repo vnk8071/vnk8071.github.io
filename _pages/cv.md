@@ -40,24 +40,24 @@ Work experience
   
 Skills
 ======
-| Skill                        | Experience | Last used | Description |
-| -----------------------------| -----------| ----------| ------------|
-| Artificial Intelligence      | -          | -         | -         |
-| Feature Engineering          | 1 year     | 2022      | Tabular, Text, Video |
-| Computer Vision              | 1 year     | 2022      |  EfficientNet, ResNet, YOLO, Faster R-CNN |
-| Natural Language Processing  | 3 month    | 2022      | Bert, Attention Mechanism |
-| Frameworks                   | -          | -         | -       |
-| Pytorch                      | 1 year     | 2022      |        |
-| Tensorflow/Keras             | 3 month    | 2021      | Tensorflow 2.0 | 
-| Programming Language         | -          | -         | -        |
-| Python                       | 1.5 year   | 2022      |        |
-| C++                          | 6 month    | 2021      |        |
-| SQL                          | 6 month    | 2021      |        |
-| Others                       | -          | -         | -        |
-| Git                          | 1 year     | 2022      | Github, Gitlab |
-| Docker                       | 6 month    | 2022      |        |
-| Amazon Web Service           | 6 month    | 2022      | EC2, S3, Sagemaker, Lambda |
-| Google Cloud Platform        | 3 month    | 2021      | Google Cloud Computing |
+| Skill                       | Experience | Last used | Description               |
+|-----------------------------|------------|-----------|---------------------------|
+| Artificial Intelligence     |            |           |                           |
+| Feature Engineering         | 1 year     | 2022      | Tabular, Text, Video      |
+| Computer Vision             | 1 year     | 2022      | YOLO, Faster R-CNN        |
+| Natural Language Processing | 3 month    | 2022      | Bert, Attention Mechanism |
+| Frameworks                  |            |           |                           |
+| Pytorch                     | 1 year     | 2022      |                           |
+| Tensorflow/Keras            | 3 month    | 2021      | Tensorflow 2.0            |
+| Programming Language        |            |           |                           |
+| Python                      | 1.5 year   | 2022      |                           |
+| C++                         | 6 month    | 2021      |                           |
+| SQL                         | 6 month    | 2021      |                           |
+| Others                      |            |           |                           |
+| Git                         | 1 year     | 2022      | Github, Gitlab            |
+| Docker                      | 6 month    | 2022      |                           |
+| Amazon Web Service          | 6 month    | 2022      | EC2, S3, Lambda           |
+| Google Cloud Platform       | 3 month    | 2021      | Google Cloud Computing    |
 
 Publications
 ======
@@ -71,3 +71,4 @@ Projects
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
   
+CV PDF format: <a href="files/CV_MachineLearningEngineer_VoNguyenKhoi.pdf"> PDF</a>
