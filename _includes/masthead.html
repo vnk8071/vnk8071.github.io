@@ -30,6 +30,7 @@
 </div> -->
 
 {% capture logo_path %}{{ site.logo }}{% endcapture %}
+{% capture header_path %}{{ site.header }}{% endcapture %}
 
 <div class="masthead">
   <div class="masthead__inner-wrap">
@@ -43,6 +44,16 @@
           {{ site.masthead_title | default: site.title }}
           {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle }}</span>{% endif %}
         </a>
+      </nav>
+      <nav id="site-nav" class="greedy-nav">
+        <!-- {% unless logo_path == empty %}
+        <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}"
+            alt="{{ site.masthead_title | default: site.title }}"></a>
+        {% endunless %}
+        <a class="site-title" href="{{ '/' | relative_url }}">
+          {{ site.masthead_title | default: site.title }}
+          {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle }}</span>{% endif %}
+        </a> -->
         <ul class="visible-links">
           {%- for link in site.data.navigation.main -%}
           <li class="masthead__menu-item">
@@ -57,6 +68,7 @@
         </button>
         <ul class="hidden-links hidden"></ul>
       </nav>
+      <img src="{{ header_path | relative_url }}">
     </div>
   </div>
 </div>

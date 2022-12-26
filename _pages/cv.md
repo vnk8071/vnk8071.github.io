@@ -71,4 +71,4 @@ Projects
     {% include archive-single-cv.html %}
   {% endfor %}</ul>
   
-CV PDF format: <a href="files/CV_MachineLearningEngineer_VoNguyenKhoi.pdf"> PDF</a>
+CV PDF format: <a href="../files/CV_MachineLearningEngineer_VoNguyenKhoi.pdf"> PDF</a>

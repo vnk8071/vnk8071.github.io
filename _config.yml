@@ -5,8 +5,8 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # `jekyll serve`. If you change this file, please restart the server process.
 
-remote_theme: "mmistakes/minimal-mistakes@4.24.0"
-# theme: minimal-mistakes-jekyll
+# remote_theme: "mmistakes/minimal-mistakes@4.24.0"
+theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
@@ -23,6 +23,7 @@ breadcrumbs: false # true, false (default)
 words_per_minute: 160
 future: true
 logo: "/images/site-logo.png"
+header: "/images/header.jpg"
 read_more: "disabled" # if enabled, adds "Read more" links to excerpts
 talkmap_link: false #change to true to add link to talkmap on talks page
 comments:
@@ -206,6 +207,9 @@ kramdown:
 
 # Collections
 collections:
+  home:
+    output: true
+    permalink: /:collection/:path/
   projects:
     output: true
     permalink: /:collection/:path/
@@ -241,6 +245,13 @@ defaults:
       comments: true
       share: true
       related: true
+  # _home
+  - scope:
+      path: ""
+      type: home
+    values:
+      layout: single
+      author_profile: true
   # _pages
   - scope:
       path: ""
