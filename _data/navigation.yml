@@ -15,11 +15,11 @@ main:
   - title: "Klists"
     url: /klists/
 
-  - title: "Kmemories"
-    url: /kmemories/
+  - title: "Kimages"
+    url: /kimages/
 
-  - title: "Blog Posts"
-    url: /year-archive/
+  # - title: "Blog Posts"
+  #   url: /year-archive/
 
   # - title: "Guide"
   #   url: /markdown/

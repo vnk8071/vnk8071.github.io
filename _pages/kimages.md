@@ -1,12 +1,12 @@
 ---
 layout: archive
-title: "Kmemories"
-permalink: /kmemories/
+title: "Kimages"
+permalink: /kimages/
 author_profile: true
 ---
 
 {% include base_path %}
 
-{% for post in site.kmemories reversed %}
+{% for post in site.kimages reversed %}
   {% include archive-single.html %}
 {% endfor %}
