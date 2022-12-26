@@ -54,7 +54,7 @@
           {{ site.masthead_title | default: site.title }}
           {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle }}</span>{% endif %}
         </a> -->
-        <ul class="visible-links">
+        <ul class="visible-links hidden">
           {%- for link in site.data.navigation.main -%}
           <li class="masthead__menu-item">
             <a href="{{ link.url | relative_url }}" {% if link.description %} title="{{ link.description }}" {% endif
@@ -62,9 +62,9 @@
           </li>
           {%- endfor -%}
         </ul>
-        <button class="greedy-nav__toggle" type="button" count="1">
+        <button class="greedy-nav__toggle" type="button">
           <span class="visually-hidden">Toggle menu</span>
-          <div class="navicon" bis_skin_checked="1"></div>
+          <div class="navicon"></div>
         </button>
         <ul class="hidden-links hidden"></ul>
       </nav>
