@@ -30,7 +30,7 @@ Work experience
   * Skills: Research, review code, communication
   * Technologies: Pytorch, Flask API, Docker, AWS
 
-* July 2021 - present: Machine Learning Intern & Part-time 
+* July 2021 - April 2023: Machine Learning Intern & Part-time 
   * A2DS (AI-Associated Diagnosis System) <img src="../images/A2DS.jpg" align="right">
   * Duties included: 
     * Maintaining the dry eye disease project of A2DS
@@ -40,24 +40,29 @@ Work experience
   
 Skills
 ======
-| Skill                       | Experience | Last used | Description               |
-|-----------------------------|------------|-----------|---------------------------|
-| Artificial Intelligence     |            |           |                           |
-| Feature Engineering         | 1 year     | 2022      | Tabular, Text, Video      |
-| Computer Vision             | 1 year     | 2022      | YOLO, Faster R-CNN        |
-| Natural Language Processing | 3 month    | 2022      | Bert, Attention Mechanism |
-| Frameworks                  |            |           |                           |
-| Pytorch                     | 1 year     | 2022      |                           |
-| Tensorflow/Keras            | 3 month    | 2021      | Tensorflow 2.0            |
-| Programming Language        |            |           |                           |
-| Python                      | 1.5 year   | 2022      |                           |
-| C++                         | 6 month    | 2021      |                           |
-| SQL                         | 6 month    | 2021      |                           |
-| Others                      |            |           |                           |
-| Git                         | 1 year     | 2022      | Github, Gitlab            |
-| Docker                      | 6 month    | 2022      |                           |
-| Amazon Web Service          | 6 month    | 2022      | EC2, S3, Lambda           |
-| Google Cloud Platform       | 3 month    | 2021      | Google Cloud Computing    |
+
+| **Skill**                   | **Experience** | **Last used** | **Description**            |
+|-----------------------------|------------|-----------|------------------------------------|
+| *Artificial Intelligence*   |------------|-----------|------------------------------------|
+| Feature Engineering         | 1 year     | 2023      | Tabular, Text                      |
+| Computer Vision             | 1 year     | 2023      | YOLO, Detectron2                   |
+| Natural Language Processing | 6 months   | 2023      | Bert, Attention Mechanism, ChatGPT |
+| *Frameworks*                |------------|-----------|------------------------------------|
+| Pytorch                     | 1 year     | 2022      |                                    |
+| Tensorflow/Keras            | 3 months   | 2021      | Tensorflow 2.0                     |
+| *Web Development*           |------------| ----------| -----------------------------------|
+| FastAPI                     | 6 months   | 2023      |                                    |
+| Flask                       | 6 months   | 2023      |                                    |
+| *Programming Language*      |------------|-----------|------------------------------------|
+| Python                      | 2 years    | 2023      |                                    |
+| C++                         | 6 months   | 2021      |                                    |
+| SQL                         | 1 year     | 2023      |                                    |
+| *Others*                    |------------|-----------|------------------------------------|
+| Git                         | 1.5 years  | 2023      | Github, Gitlab, Github Action      |
+| Docker                      | 1.5 years  | 2023      | Docker compose                     |
+| Amazon Web Service          | 6 months   | 2023      | EC2, S3, Lambda, Sagemaker         |
+| Microsoft Azure             | 6 months   | 2023      | Virtual Machine, Azure OpenAI      |
+| Google Cloud Platform       | 3 months   | 2021      | Google Cloud Computing             |
 
 Publications
 ======

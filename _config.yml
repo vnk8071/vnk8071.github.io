@@ -88,22 +88,22 @@ author:
   avatar: "/images/profile.jpg"
   bio: "AI Engineer"
   location: "Quy Nhon, Vietnam"
-  # email: "nguyenkhoi8071@gmail.com"
+  email: "nguyenkhoi8071@gmail.com"
   # researchgate: # example: "https://www.researchgate.net/profile/yourprofile"
   # uri:
   # bitbucket:
   # codepen:
   # dribbble:
   # flickr:
-  # facebook: "khoivn8071"
+  facebook: "khoivn8071"
   # foursquare:
-  # github: "vnk8071"
+  github: "vnk8071"
   # google_plus:
   # keybase:
-  # instagram: "khooivn"
+  instagram: "khooivn"
   # impactstory: #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   # lastfm:
-  # linkedin: "khoivn8071"
+  linkedin: "khoivn8071"
   # orcid:
   # pinterest:
   # soundcloud:
@@ -116,25 +116,6 @@ author:
   # xing:
   # youtube:
   # wikipedia:
-  links:
-    - label: "Email"
-      icon: "fas fa-fw fa-envelope-square"
-      url: "mailto:nguyenkhoi8071@gmail.com"
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      url: "https://khoivn.space"
-    - label: "Facebook"
-      icon: "fab fa-fw fa-facebook-square"
-      url: "https://facebook.com/khoivn8071"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/vnk8071"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/khooivn"
-    - label: "Linkedin"
-      icon: "fab fa-fw fa-linkedin"
-      url: "https://linkedin.com/in/khoivn8071"
 
 # Site Footer
 footer:

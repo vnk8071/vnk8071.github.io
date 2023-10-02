@@ -22,8 +22,8 @@
         </ul>
         <button class="greedy-nav__toggle" type="button">
           <div class="navicon"></div>
-        </button> -->
-<!-- <ul class="hidden-links hidden"></ul>
+        </button>
+        <ul class="hidden-links hidden"></ul>
 </nav>
 </div>
 </div>
@@ -35,25 +35,21 @@
 <div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
-      <nav id="site-nav" class="greedy-nav">
+      <nav id="site-nav-above" class="greedy-nav" aria-label="Site Navigation">
         {% unless logo_path == empty %}
-        <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}"
-            alt="{{ site.masthead_title | default: site.title }}"></a>
-        {% endunless %}
-        <a class="site-title" href="{{ '/' | relative_url }}">
-          {{ site.masthead_title | default: site.title }}
-          {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle }}</span>{% endif %}
-        </a>
+          <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}"
+              alt="{{ site.masthead_title | default: site.title }}">KhoiVN Space</a>
+          {% endunless %}
+          {%- for link in site.data.navigation.main -%}
+        <ul class="visible-links">
+          <li class="masthead__menu-item">
+            <a href="{{ link.url | relative_url }}" {% if link.description %} title="{{ link.description }}" {% endif
+              %}>{{ link.title }}</a>
+          </li>
+          {%- endfor -%}
+        </ul>
       </nav>
-      <nav id="site-nav" class="greedy-nav">
-        <!-- {% unless logo_path == empty %}
-        <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}"
-            alt="{{ site.masthead_title | default: site.title }}"></a>
-        {% endunless %}
-        <a class="site-title" href="{{ '/' | relative_url }}">
-          {{ site.masthead_title | default: site.title }}
-          {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle }}</span>{% endif %}
-        </a> -->
+      <nav id="site-nav" class="greedy-nav" aria-label="Site Navigation">
         <ul class="visible-links">
           {%- for link in site.data.navigation.main -%}
           <li class="masthead__menu-item">
