@@ -9,3 +9,6 @@ bundle add webrick
 bundle install
 bundle exec jekyll serve
 ```
+
+## Platform
+```x86_64-darwin-19```
