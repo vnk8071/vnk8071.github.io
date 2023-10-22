@@ -94,7 +94,7 @@ Kibana run on: http://localhost:5601
 ## Contact
 - KhoiVN - [@linkedin-khoivn8071](https://www.linkedin.com/in/khoivn8071) - nguyenkhoi8071@gmail.com
 - Project Link: [Github-E2E-AI-Chatbot](https://github.com/vnk8071/E2E-AI-Chatbot)
-- Website: [khoivn.space](https://khoivn.space)
+- Website: [khoispace.io.vn](https://khoispace.io.vn)
 ## Impressive
 - From Langchain Framework: https://github.com/hwchase17/langchain
 - From GPT4All: https://github.com/nomic-ai/gpt4all

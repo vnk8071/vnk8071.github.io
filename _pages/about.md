@@ -54,7 +54,7 @@ Awards:
 
 More information:
 - Email: nguyenkhoi8071@gmail.com
-- Website: <a href="https://khoivn.space">khoivn.space</a>
+- Website: <a href="https://khoispace.io.vn">khoispace.io.vn</a>
 - Linkedin: <a href="https://www.linkedin.com/in/khoivn8071">khoivn8071</a>
 
 # 📘 My open source projects:
