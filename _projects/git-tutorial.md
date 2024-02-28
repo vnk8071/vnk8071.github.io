@@ -6,7 +6,7 @@ date: 2023-10-02
 ---
 # GIT Tutorial
 
-Source code: [vnk8071/git_tutorial](https://github.com/vnk8071/machine-learning-in-production/tree/main/examples/git_tutorial)
+Source code: [vnk8071/git_tutorial](https://github.com/vnk8071/machine-learning-learning-path/tree/main/examples/git_tutorial)
 
 ## Overview
 Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later. It allows you to revert files or project to a previous version, track modifications and modifying individuals, and compare changes. It is essential for the integrity of the project and the people working on it.
@@ -72,16 +72,16 @@ git push origin <branch_name>
 
 Example:
 Follow the instructions in `flow.py`:
-![basic_flow](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_flow.png)
+![basic_flow](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_flow.png)
 
 Check remote branches:
-![basic_flow_push_origin](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_flow_push_origin.png)
+![basic_flow_push_origin](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_flow_push_origin.png)
 
 ## Common workflow patterns
 ### Single branch workflow
 - Use a single branch for all changes.
 - Use tags to mark important commits.
-![single_branch](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/single_branch.png)
+![single_branch](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/single_branch.png)
 
 | # | Benefits | Drawbacks |
 | --- | --- | --- |
@@ -116,7 +116,7 @@ git push origin <branch_name>
 
 Example:
 Follow the instructions in `revert.py`:
-![revert_log](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/revert_log.png)
+![revert_log](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/revert_log.png)
 
 We want to revert the commit `0fcd910e9488b06d2206ff59c556e92a03a6f4ca`:
 ```git
@@ -129,7 +129,7 @@ Result:
 [git-flow 7e41a10] Revert "UPDATE github link into doc projects"
  7 files changed, 14 deletions(-)
 ```
-![after_revert_log](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/after_revert_log.png)
+![after_revert_log](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/after_revert_log.png)
 
 We can see that the commit `0fcd910e9488b06d2206ff59c556e92a03a6f4ca` is reverted.
 
@@ -140,7 +140,7 @@ git reset --hard <commit_hash>
 git commit -m "[RESET] <commit_hash>"
 git push origin <branch_name>
 ```
-![after_revert_log](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/after_revert_log.png)
+![after_revert_log](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/after_revert_log.png)
 
 We can see that the commit `0fcd910e9488b06d2206ff59c556e92a03a6f4ca` is reset.
 
@@ -157,13 +157,13 @@ Follow the instructions in `branch.py`:
 ```git
 git checkout -b git-flow
 ```
-![basic_branch](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_branch.png)
+![basic_branch](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_branch.png)
 
 ```git
 git push origin git-flow
 ```
 
-![basic_branch_push_origin](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_branch_push_origin.png)
+![basic_branch_push_origin](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_branch_push_origin.png)
 
 ### Delete a branch
 ```git
@@ -177,7 +177,7 @@ git checkout <branch_target>
 git merge <branch_name>
 git push origin <branch_target>
 ```
-![basic_merge](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_merge.png)
+![basic_merge](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_merge.png)
 
 Follow the instructions in `merge.py`:
 Ìf merge conflict, we need to resolve it first.
@@ -195,7 +195,7 @@ This is the first line of the main branch.
 This is the first line of the git-flow branch.
 >>>>>>> git-flow
 ```
-![basic_resolve_conflict](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_resolve_conflict.png)
+![basic_resolve_conflict](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_resolve_conflict.png)
 
 Then accept the changes could be current | incoming | both and commit:
 ```git
@@ -213,7 +213,7 @@ git diff <branch_name_1> <branch_name_2>
 ```
 
 ## Remote
-![remote_git](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/remote_git.png)
+![remote_git](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/remote_git.png)
 
 Before we can push to a team repository, we need to pull and resolve conflicts first.
 ```git
@@ -273,11 +273,11 @@ git rebase <branch_name>
 Example:
 It squashes all commits of <branch_name> into one commit and reapply on top of <branch_target>.
 
-![basic_rebase](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_rebase.png)
+![basic_rebase](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_rebase.png)
 
 Then it rewrites the history of <branch_target> and we need to force push to the remote repository.
 
-![basic_rebase_master](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/basic_rebase_master.png)
+![basic_rebase_master](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/basic_rebase_master.png)
 
 | # | Benefits | Drawbacks |
 | --- | --- | --- |
@@ -408,7 +408,7 @@ git add .
 git commit -m "ADD latest git tutorial and ADD edit page"
 ```
 
-![pre_commit](https://github.com/vnk8071/machine-learning-in-production/raw/main/examples/git_tutorial/images/pre_commit.png)
+![pre_commit](https://github.com/vnk8071/machine-learning-learning-path/raw/main/examples/git_tutorial/images/pre_commit.png)
 
 @source: [Git pre-commit hooks](https://pre-commit.com/#advanced)
 

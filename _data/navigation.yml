@@ -6,8 +6,8 @@ main:
   - title: "CV"
     url: /cv/
 
-  - title: "ML in Production"
-    url: /machine-learning-in-production/
+  - title: "ML Learning Path"
+    url: /machine-learning-learning-path/
 
   - title: "Projects"
     url: /projects/
