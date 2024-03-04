@@ -33,19 +33,19 @@ redirect_from:
 <p align="center"></p>
 
 # About
-I am a ML Engineer.
-A Biomedical Engineering student with a passion for Computer Vision in the medical field. All the time, I just researched the knowledge related to that field by self-study, so I didn't get a thorough instruction. However, I know how to find a solution, and I will solve it anyway.
+I am an ML Engineer.
+A Biomedical Engineering student with a passion for Computer Vision in the medical field. All the time, I just researched the knowledge related to that field by self-study, so I didn't get thorough instruction. However, I know how to find a solution, and I will solve it anyway.
 
 Current workplace:
 
-- Graduated of Biomedical Engineering in International University - Vietnam National University HCMC.
+- Graduated in Biomedical Engineering at International University - Vietnam National University HCMC.
 - AI Engineer full-time at FPT Software (AI Valley).
 - Machine Learning Engineer part-time at A2DS Inc.
 
-Professional summary
+Professional Summary
 
 - Understanding of Machine Learning and Deep Learning.
-- Domain Expertise in the field of Computer Vision in Medical Industry.
+- Domain Expertise in the field of Computer Vision in the Medical Industry.
 - Understand and experience the pipeline of AI production.
 - Cooperative and able to perform within a team-oriented atmosphere.
 - Good English communication.
