@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}">
+<head>
+  {% include space-head.html %}
+  <title>{{ page.title }} — {{ site.author.name }}</title>
+  {% if page.excerpt %}<meta name="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | truncate: 160 }}">{% endif %}
+</head>
+<body>
+
+  {% include space-nav.html %}
+
+  <header class="page-head">
+    <div class="wrap">
+      {%- if page.collection -%}
+      <a class="backlink reveal d1" href="{{ '/' | append: page.collection | append: '/' | relative_url }}">← Back to {{ page.collection | capitalize }}</a>
+      {%- endif -%}
+      <h1 class="reveal d1">{{ page.title }}</h1>
+      {%- if page.date or page.link -%}
+      <div class="detail-meta reveal d2">
+        {%- if page.date -%}<span>{{ page.date | date: "%B %Y" }}</span>{%- endif -%}
+        {%- if page.link -%}<span class="dot-sep">·</span><span><a href="{{ page.link }}" style="color:var(--accent);text-decoration:none;">Source ↗</a></span>{%- endif -%}
+      </div>
+      {%- endif -%}
+    </div>
+  </header>
+
+  <main>
+    <section class="page-body">
+      <div class="wrap">
+        <article class="prose reveal d2">
+          {{ content }}
+        </article>
+      </div>
+    </section>
+  </main>
+
+  {% include space-footer.html %}
+
+</body>
+</html>

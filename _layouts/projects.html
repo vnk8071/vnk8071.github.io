@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}">
+<head>
+  {% include space-head.html %}
+  <title>{{ page.title }} — {{ site.author.name }}</title>
+  <meta name="description" content="Selected projects by {{ site.author.name }}.">
+</head>
+<body>
+
+  {% include space-nav.html %}
+
+  <header class="page-head">
+    <div class="wrap">
+      <div class="kicker reveal d1">Projects</div>
+      <h1 class="reveal d1">Things I've built</h1>
+      <p class="lede reveal d2">End-to-end AI systems, research pipelines, and tools — spanning computer vision, LLMs, and MLOps.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-body">
+      <div class="wrap">
+        <div class="repos reveal d2">
+          {%- for post in site.projects -%}
+          <a class="repo" href="{{ post.url | relative_url }}">
+            <div class="repo-top">
+              <span class="repo-name">{{ post.title }}</span>
+              <span class="repo-arr">→</span>
+            </div>
+            {%- if post.excerpt -%}
+            <div class="repo-desc">{{ post.excerpt | markdownify | strip_html | strip_newlines | truncate: 160 }}</div>
+            {%- endif -%}
+            {%- if post.date -%}
+            <div class="repo-meta"><span><span class="lang-dot"></span>{{ post.date | date: "%b %Y" }}</span></div>
+            {%- endif -%}
+          </a>
+          {%- endfor -%}
+        </div>
+        <a class="all-repos reveal d3" href="https://github.com/{{ site.author.github }}" target="_blank" rel="noopener">View all repositories on GitHub ↗</a>
+      </div>
+    </section>
+  </main>
+
+  {% include space-footer.html %}
+
+</body>
+</html>

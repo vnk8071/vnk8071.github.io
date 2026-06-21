@@ -1,0 +1,29 @@
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="{{ '/' | relative_url }}">khoi<span class="dot">.</span>vn</a>
+    <div class="nav-right">
+      <ul class="navlinks">
+        {%- for link in site.data.navigation.main -%}
+          {%- unless link.url == "/" -%}
+          <li><a href="{{ link.url | relative_url }}"{% if page.url contains link.url %} class="is-active"{% endif %}>{{ link.title }}</a></li>
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+      <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
+        <span class="i-sun" aria-hidden="true">☀</span>
+        <span class="i-moon" aria-hidden="true">☾</span>
+      </button>
+    </div>
+  </div>
+</nav>
+<script>
+  (function () {
+    var btn = document.querySelector('.theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+</script>

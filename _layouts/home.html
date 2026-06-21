@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}">
+<head>
+  {% include space-head.html %}
+  <title>{{ site.author.name }} — {{ site.author.bio }}</title>
+  <meta name="description" content="{{ site.description }}">
+  <meta property="og:type" content="profile">
+  <meta property="og:title" content="{{ site.author.name }} — {{ site.author.bio }}">
+  <meta property="og:description" content="{{ site.description }}">
+  <meta property="og:url" content="{{ site.url }}">
+  <meta property="og:image" content="{{ site.author.avatar | absolute_url }}">
+</head>
+<body>
+
+  {% include space-nav.html %}
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow reveal d1">AI Engineer · Computer Vision</div>
+      <h1 class="reveal d1">Khoi <span class="light">Vo&nbsp;Nguyen</span></h1>
+      <div class="role reveal d2">
+        <span>AI Engineer <span class="at">@</span> Qualcomm</span>
+        <span class="cursor" aria-hidden="true"></span>
+      </div>
+      <div class="loc reveal d2"><span class="pin">◍</span> Ho Chi Minh City, Vietnam</div>
+      <a class="building reveal d2" href="https://goodjobs.io.vn" target="_blank" rel="noopener">
+        <span class="pulse" aria-hidden="true"></span>
+        Currently building <strong>goodjobs.io.vn</strong> ↗
+      </a>
+      <p class="summary reveal d3">
+        My experience is in computer vision. I've pursued this field largely through
+        independent study — a resourceful engineer with a proven ability to identify
+        and overcome hard problems on my own. I build and ship AI systems end to end,
+        from research to production.
+      </p>
+      <div class="actions reveal d4">
+        <a class="btn primary" href="https://github.com/vnk8071" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="btn" href="https://www.linkedin.com/in/khoivn8071" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn" href="mailto:nguyenkhoi8071@gmail.com">Email</a>
+        <a class="btn" href="{{ '/projects/' | relative_url }}">Projects</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="block">
+      <div class="wrap">
+        <div class="sec-head reveal d1">
+          <span class="sec-no">01</span>
+          <h2>Experience</h2>
+        </div>
+        <div class="timeline reveal d2">
+          <div class="job current">
+            <div class="when">Apr 2026 — Present</div>
+            <div class="what">AI Engineer · <span class="co">Qualcomm</span><span class="badge-now">now</span></div>
+            <div class="where">Ho Chi Minh City, Vietnam</div>
+          </div>
+          <div class="job">
+            <div class="when">Mar 2024 — Apr 2026 · 2 yrs 2 mos</div>
+            <div class="what">AI Engineer · <span class="co">viAct</span></div>
+            <div class="where">Hong Kong SAR</div>
+          </div>
+          <div class="job">
+            <div class="when">Sep 2022 — Feb 2024 · 1 yr 6 mos</div>
+            <div class="what">AI Engineer · <span class="co">FPT Software</span></div>
+            <div class="where">Quy Nhơn, Vietnam</div>
+          </div>
+          <div class="job">
+            <div class="when">Jul 2021 — Feb 2023 · 1 yr 8 mos</div>
+            <div class="what">AI Engineer · <span class="co">A2DS Inc.</span></div>
+            <div class="where">Ho Chi Minh City, Vietnam</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="wrap">
+        <div class="sec-head reveal d1">
+          <span class="sec-no">02</span>
+          <h2>Selected Work</h2>
+        </div>
+        <div class="repos reveal d2">
+          <a class="repo" href="https://github.com/vnk8071/machine-learning-learning-path" target="_blank" rel="noopener">
+            <div class="repo-top"><span class="repo-name">machine-learning-learning-path</span><span class="repo-arr">↗</span></div>
+            <div class="repo-desc">A structured, self-taught roadmap through machine learning and deep learning — notes, code, and projects.</div>
+            <div class="repo-meta"><span><span class="lang-dot"></span>Jupyter / Python</span></div>
+          </a>
+          <a class="repo" href="https://github.com/vnk8071/E2E-AI-Chatbot" target="_blank" rel="noopener">
+            <div class="repo-top"><span class="repo-name">E2E-AI-Chatbot</span><span class="repo-arr">↗</span></div>
+            <div class="repo-desc">An end-to-end AI chatbot — retrieval-augmented generation wired from data to a deployable service.</div>
+            <div class="repo-meta"><span><span class="lang-dot"></span>Python</span></div>
+          </a>
+          <a class="repo" href="https://github.com/vnk8071/anomaly-detection-in-industry-manufacturing" target="_blank" rel="noopener">
+            <div class="repo-top"><span class="repo-name">anomaly-detection-in-industry-manufacturing</span><span class="repo-arr">↗</span></div>
+            <div class="repo-desc">Computer-vision anomaly detection for industrial manufacturing defect inspection.</div>
+            <div class="repo-meta"><span><span class="lang-dot"></span>Python / PyTorch</span></div>
+          </a>
+          <a class="repo" href="https://github.com/vnk8071/AI-on-Cpp" target="_blank" rel="noopener">
+            <div class="repo-top"><span class="repo-name">AI-on-Cpp</span><span class="repo-arr">↗</span></div>
+            <div class="repo-desc">Running deep-learning inference in C++ — bringing models closer to production performance.</div>
+            <div class="repo-meta"><span><span class="lang-dot"></span>C++</span></div>
+          </a>
+        </div>
+        <a class="all-repos reveal d3" href="https://github.com/vnk8071" target="_blank" rel="noopener">View all repositories on GitHub ↗</a>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="wrap">
+        <div class="sec-head reveal d1">
+          <span class="sec-no">03</span>
+          <h2>Education</h2>
+        </div>
+        <div class="cards reveal d2">
+          <div class="card">
+            <div class="k">2025 — 2027</div>
+            <div class="t">M.Sc. Artificial Intelligence</div>
+            <div class="s">VNUHCM — University of Science</div>
+          </div>
+          <div class="card">
+            <div class="k">2018 — 2023</div>
+            <div class="t">B.Eng. Biomedical Engineering</div>
+            <div class="s">International University — VNU HCMC</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="wrap">
+        <div class="sec-head reveal d1">
+          <span class="sec-no">04</span>
+          <h2>Focus &amp; Tooling</h2>
+        </div>
+        <div class="tags reveal d2">
+          <span class="tag">Computer Vision</span>
+          <span class="tag">Deep Learning</span>
+          <span class="tag">NLP</span>
+          <span class="tag">DeepStream</span>
+          <span class="tag">PyTorch</span>
+          <span class="tag">Python</span>
+          <span class="tag">C++</span>
+          <span class="tag">Docker</span>
+          <span class="tag">AWS</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">MLOps</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="wrap">
+        <div class="sec-head reveal d1">
+          <span class="sec-no">05</span>
+          <h2>Honors</h2>
+        </div>
+        <div class="cards reveal d2">
+          <div class="card">
+            <div class="k">Zalo AI Challenge 2022</div>
+            <div class="t">Top 9 — Lyric Alignment</div>
+          </div>
+          <div class="card">
+            <div class="k">FPT AI Center 2021</div>
+            <div class="t">Top 15 — Data-Centric AI</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {% include space-footer.html %}
+
+</body>
+</html>

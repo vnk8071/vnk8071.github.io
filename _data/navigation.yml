@@ -3,23 +3,8 @@ main:
   - title: "Home"
     url: /
 
-  - title: "CV"
-    url: /cv/
-
   - title: "ML Learning Path"
     url: /machine-learning-learning-path/
 
   - title: "Projects"
     url: /projects/
-
-  - title: "Klists"
-    url: /klists/
-
-  - title: "Kimages"
-    url: /kimages/
-
-  # - title: "Blog Posts"
-  #   url: /year-archive/
-
-  - title: "Guide"
-    url: /markdown/

@@ -2,3 +2,5 @@ _site/
 vendor/
 .bundle/
 .DS_Store
+*.pdf
+!files/*.pdf

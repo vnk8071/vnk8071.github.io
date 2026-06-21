@@ -11,10 +11,10 @@ minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "
 
 # Site Settings
 locale: "en-US"
-title: "Space"
+title: "Khoi Space"
 title_separator: "-"
-name: &name "KhoiVN"
-description: &description "personal description"
+name: &name "Khoi Vo Nguyen"
+description: &description "AI Engineer @ Qualcomm — computer vision, deep learning, and AI systems."
 url: "https://khoispace.io.vn" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl: "" # the subpath of your site, e.g. "/blog"
 repository: "vnk8071/vnk8071.github.io"
@@ -84,10 +84,10 @@ analytics:
 
 # Site Author
 author:
-  name: "Khoi VN"
+  name: "Khoi Vo Nguyen"
   avatar: "/images/profile.jpg"
-  bio: "Machine Learning Engineer"
-  location: "Vietnam"
+  bio: "AI Engineer @ Qualcomm"
+  location: "Ho Chi Minh City, Vietnam"
   email: "nguyenkhoi8071@gmail.com"
   # researchgate: # example: "https://www.researchgate.net/profile/yourprofile"
   # uri:
@@ -206,12 +206,6 @@ collections:
   talks:
     output: true
     permalink: /:collection/:path/
-  klists:
-    output: true
-    permalink: /:collection/:path/
-  kimages:
-    output: true
-    permalink: /:collection/:path/
 
 # Defaults
 defaults:
@@ -245,10 +239,7 @@ defaults:
       path: ""
       type: projects
     values:
-      layout: single
-      author_profile: true
-      share: true
-      comments: true
+      layout: dark
   # _teaching
   - scope:
       path: ""
@@ -282,22 +273,6 @@ defaults:
       type: talks
     values:
       layout: talk
-      author_profile: true
-      share: true
-  # _klists
-  - scope:
-      path: ""
-      type: klists
-    values:
-      layout: single
-      author_profile: true
-      share: true
-  # _kimages
-  - scope:
-      path: ""
-      type: kimages
-    values:
-      layout: single
       author_profile: true
       share: true
 
