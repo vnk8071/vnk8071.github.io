@@ -21,7 +21,8 @@
     <section class="page-body">
       <div class="wrap">
         <div class="repos reveal d2">
-          {%- for post in site.projects -%}
+          {%- assign projects = site.projects | sort: 'date' | reverse -%}
+          {%- for post in projects -%}
           <a class="repo" href="{{ post.url | relative_url }}">
             <div class="repo-top">
               <span class="repo-name">{{ post.title }}</span>
