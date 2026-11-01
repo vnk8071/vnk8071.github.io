@@ -23,10 +23,11 @@
     // Cheaper alternatives: @cf/meta/llama-3.3-70b-instruct-fp8-fast, @cf/google/gemma-3-12b-it.
     "MODEL": "@cf/qwen/qwen3.8-27b",
 
-    // Small, cheap model for the topic guardrail (ON_TOPIC / OFF_TOPIC). If it errors, the guardrail falls back to
-    // MODEL (more expensive: Qwen thinks before it answers). With DEBUG_ERRORS="1" every response has an
-    // `x-guard-model` header showing which model gave the verdict, so you can tell when the fallback is in use.
-    "GUARD_MODEL": "@cf/meta/llama-3.1-8b-instruct",
+    // The topic guardrail (ON_TOPIC / OFF_TOPIC) runs on the same model as the answers. The small
+    // @cf/meta/llama-3.1-8b-instruct was failing on this account, and the guardrail would fall back to MODEL on
+    // every question anyway; naming it here avoids the wasted failing call. If GUARD_MODEL equals MODEL it is
+    // tried once. A cheaper guard (any small model that works for you) can be set here later.
+    "GUARD_MODEL": "@cf/qwen/qwen3.8-27b",
 
     // "1" adds the underlying Workers AI error text to 5xx responses ({"attempts":[{model,error}]}); handy while
     // bringing a deployment up. Set to "0" once chat works.

@@ -491,3 +491,16 @@ test("DEBUG_ERRORS=1 adds x-guard-model so you can see whether the fallback mode
   assert.equal(quiet.headers.get("x-guard-model"), null);
   await quiet.text();
 });
+
+test("GUARD_MODEL equal to MODEL is tried once (no duplicate failing call)", async () => {
+  const { env, calls } = makeEnv({ GUARD_MODEL: MAIN }, { main: () => { throw new Error("5035: not available on the Workers Free plan"); } });
+  const res = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), env, ctx().c);
+  assert.equal(res.status, 503);
+  assert.equal(calls.length, 1);
+
+  const ok = makeEnv({ GUARD_MODEL: MAIN }, { main: (i) => (i.stream ? streamOf(sseBody(["ok"])) : { choices: [{ message: { content: "\n\nON_TOPIC" } }] }) });
+  const r = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), ok.env, ctx().c);
+  assert.equal(r.status, 200);
+  await r.text();
+  assert.equal(ok.calls.length, 2); // one verdict + one answer
+});

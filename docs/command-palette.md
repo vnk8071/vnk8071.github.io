@@ -98,7 +98,7 @@ Local dev: `bundle exec jekyll serve` (site on :4000, already an allowed origin)
 ## Costs and limits
 
 * Browser: the model is a one-time download (≈120 MB for multilingual-e5-small q8; the browser caches it) and the chunk vectors are cached in IndexedDB. Nothing is downloaded until the palette is opened.
-* Workers AI: the free tier is a daily allowance of "neurons". Qwen3.8 27B is a reasoning model: roughly 150–300 neurons per answer, so about 35–60 uncached answers a day on the Free plan (the 8B guard is a few neurons; if it errors the guardrail falls back to `MODEL` and costs more). Some models are paid-plan only (DeepSeek v4.1 flash fails with error 5035 on Free). Suggested questions are cached for an hour on custom domains. Switch `MODEL` to a smaller model to stretch it.
+* Workers AI: the free tier is a daily allowance of "neurons". Qwen3.8 27B is a reasoning model: roughly 150–300 neurons per answer, so about 35–60 uncached answers a day on the Free plan (the topic check adds roughly 40–80 neurons per question because the guard also runs on Qwen; a small working guard model in `GUARD_MODEL` would cut that to a few neurons). Some models are paid-plan only (DeepSeek v4.1 flash fails with error 5035 on Free). Suggested questions are cached for an hour on custom domains. Switch `MODEL` to a smaller model to stretch it.
 * Workers: 8 questions / minute / IP (Workers Rate Limiting binding).
 
 ## Tests
