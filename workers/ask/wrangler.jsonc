@@ -22,7 +22,11 @@
     "MODEL": "@cf/deepseek-ai/deepseek-v4.1-flash-1017",
 
     // Small, cheap model for the topic guardrail (ON_TOPIC / OFF_TOPIC, ~8 output tokens per question).
-    "GUARD_MODEL": "@cf/meta/llama-3.1-8b-instruct"
+    "GUARD_MODEL": "@cf/meta/llama-3.1-8b-instruct",
+
+    // "1" adds the underlying Workers AI error text to 5xx responses ({"attempts":[{model,error}]}); handy while
+    // bringing a deployment up. Set to "0" once chat works.
+    "DEBUG_ERRORS": "1"
   },
 
   // Per-IP rate limit (Workers Rate Limiting): 8 questions per minute.

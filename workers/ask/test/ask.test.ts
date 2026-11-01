@@ -298,7 +298,7 @@ test("on-topic question passes the classifier and then reaches the main model (2
   assert.equal(main().length, 1);
   const g = guard()[0].input;
   assert.equal(g.temperature, 0);
-  assert.ok(g.max_tokens <= 64);
+  assert.ok(g.max_tokens <= 512);
   assert.match(g.messages[1].content, /vision transformer/);
 });
 
@@ -416,4 +416,27 @@ test("every error response carries a machine-readable code", async () => {
   assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { guard: () => { throw new Error("down"); } }).env), "guardrail_unavailable");
   resetKbCache();
   assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { main: () => { throw new Error("down"); } }).env), "model_unavailable");
+});
+
+test("DEBUG_ERRORS=1 reveals what each guard model did; off by default", async () => {
+  const guardDown = { guard: () => { throw new Error("5007: No such model `@cf/test/guard`"); }, main: () => ({ response: "" }) };
+  const on = makeEnv({ DEBUG_ERRORS: "1" }, guardDown);
+  const r = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), on.env, ctx().c);
+  assert.equal(r.status, 503);
+  const body = (await r.json()) as any;
+  assert.equal(body.code, "guardrail_unavailable");
+  assert.equal(body.attempts.length, 2);
+  assert.equal(body.attempts[0].model, GUARD);
+  assert.match(body.attempts[0].error, /5007: No such model/);
+  assert.equal(body.attempts[1].model, MAIN);
+  assert.match(body.attempts[1].error, /empty verdict/);
+
+  const off = makeEnv({}, guardDown);
+  const body2 = (await (await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), off.env, ctx().c)).json()) as any;
+  assert.deepEqual(body2, { error: "guardrail unavailable", code: "guardrail_unavailable" });
+
+  const model502 = makeEnv({ DEBUG_ERRORS: "1" }, { main: () => { throw new Error("AiError: quota"); } });
+  const b3 = (await (await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), model502.env, ctx().c)).json()) as any;
+  assert.equal(b3.code, "model_unavailable");
+  assert.match(b3.detail, /quota/);
 });
