@@ -1,6 +1,6 @@
 {
  "version": 1,
- "hash": "fd6d0ca721",
+ "hash": "d902665120",
  "suggestions": [
   "Tóm tắt thế mạnh cốt lõi trong 3 gạch đầu dòng",
   "Các dự án nào đã từng triển khai thực tế ở môi trường Production?",
@@ -106,6 +106,18 @@
    "core": true,
    "kw": "kinh nghiệm làm việc công ty vị trí experience career job work history resume cv",
    "label": "Experience"
+  },
+  {
+   "id": "work-website-kit",
+   "type": "project",
+   "title": "website-kit",
+   "text": "website-kit. A starter kit for proof-of-concept websites — Cloudflare Workers and Terraform, six GitHub Pages templates, a WordPress stack and Apps Script projects — scaffolded into a fresh repo with one command. Cloudflare / Terraform / TypeScript",
+   "url": "/#work-website-kit",
+   "dedupe": "/#work-website-kit",
+   "core": true,
+   "ext": "https://github.com/vnk8071/website-kit",
+   "kw": "dự án sản phẩm project product demo triển khai production bộ khởi tạo starter kit mẫu template scaffold poc website cloudflare workers terraform dns github pages wordpress apps script ci cd hạ tầng tự động hóa",
+   "label": "Project"
   },
   {
    "id": "work-unified-ai-runtime",
@@ -759,6 +771,56 @@
    "text": "- Core: C / C++, CMake\n- Bindings: Python (wheels on PyPI), Rust\n- Backends: QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO, NCNN",
    "url": "/unified-ai-runtime/#tech-stack",
    "dedupe": "/unified-ai-runtime/",
+   "kw": "dự án sản phẩm project product demo triển khai production",
+   "label": "Project"
+  },
+  {
+   "id": "project-website-kit-1",
+   "type": "project",
+   "title": "Website Kit — PoC starter kit",
+   "text": "Four independent modules — Cloudflare, GitHub Pages, WordPress and Apps Script — and one command that scaffolds a proof-of-concept website into a fresh repo",
+   "url": "/website-kit/",
+   "dedupe": "/website-kit/",
+   "kw": "dự án sản phẩm project product demo triển khai production",
+   "label": "Project"
+  },
+  {
+   "id": "project-website-kit-2",
+   "type": "project",
+   "title": "Website Kit — PoC starter kit",
+   "text": "Repo\n\nA starter kit for spinning up a proof-of-concept website with minimal setup. It has four\nmodules; each is fully independent, so you use one or any combination and nothing in one\nmodule imports, links to or requires another.\n\nThe script copies one module into a fresh directory, installs its CI templates as\n.github/workflows/ and makes the first commit. The result has no connection back to the kit.",
+   "url": "/website-kit/",
+   "dedupe": "/website-kit/",
+   "kw": "dự án sản phẩm project product demo triển khai production",
+   "label": "Project"
+  },
+  {
+   "id": "project-website-kit-3",
+   "type": "project",
+   "title": "Website Kit — PoC starter kit — Modules",
+   "text": "- Cloudflare — Terraform for DNS, zone security, Pages, Workers resources (KV, D1, R2), WAF, Tunnel, Access, Turnstile and Email Routing, each behind an enable_* flag; nine runnable Worker examples (REST API over D1 + KV + R2, cron to queue, Turnstile contact form, Workers AI, Durable Objects, an email-server mailbox and more); a Pages site with Functions; CI templates.\n- GitHub Pages — six deployable templates (plain HTML, Jekyll, Hugo, Astro, Vite + React, MkDocs). Each folder is a complete repo with its own workflow.\n- WordPress — a Docker stack (WordPress, MariaDB, Mailpit), a one-command WP-CLI bootstrap, a block theme, a core plugin, a hardening mu-plugin, deploy workflows and a static export.\n- Apps Script — four clasp projects: a Sheets-backed JSON API, a contact-form backend, a web app UI and a scheduled email digest, with a test harness that runs against fakes of the Google",
+   "url": "/website-kit/#modules",
+   "dedupe": "/website-kit/",
+   "kw": "dự án sản phẩm project product demo triển khai production",
+   "label": "Project"
+  },
+  {
+   "id": "project-website-kit-4",
+   "type": "project",
+   "title": "Website Kit — PoC starter kit — Highlights",
+   "text": "- Pick-the-platform guidance: which module fits which kind of site, what each costs on free tiers, and how they combine (for example a GitHub Pages site on a Cloudflare-managed domain, or a static front end with a Worker API)\n- Agent skills in .claude/skills/ that recommend a platform, scaffold a PoC and design its UI\n- A CI workflow that validates every module independently\n- Each module's README ends with an explicit \"what has and has not been verified\" section\n- Used as the reference for the Cloudflare Worker behind the chatbot on this site",
+   "url": "/website-kit/#highlights",
+   "dedupe": "/website-kit/",
+   "kw": "dự án sản phẩm project product demo triển khai production",
+   "label": "Project"
+  },
+  {
+   "id": "project-website-kit-5",
+   "type": "project",
+   "title": "Website Kit — PoC starter kit — Tech stack",
+   "text": "- Infrastructure: Terraform (Cloudflare provider), Wrangler\n- Edge: Cloudflare Workers, Pages Functions, D1, KV, R2, Queues, Durable Objects, Workers AI\n- Sites: Jekyll, Hugo, Astro, Vite + React, MkDocs, WordPress (PHP, Docker)\n- Automation: Google Apps Script (clasp), GitHub Actions",
+   "url": "/website-kit/#tech-stack",
+   "dedupe": "/website-kit/",
    "kw": "dự án sản phẩm project product demo triển khai production",
    "label": "Project"
   }
