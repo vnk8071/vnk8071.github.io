@@ -17,11 +17,15 @@
     "KB_URL": "https://khoispace.io.vn/assets/data/kb.json",
 
     // The answering model: any text-generation model in the Workers AI catalog (`npx wrangler ai models`).
-    // Reasoning output (<think>…</think> / reasoning_content) is filtered out before it reaches visitors.
-    // Cheaper / more conservative alternatives: @cf/meta/llama-3.3-70b-instruct-fp8-fast, @cf/google/gemma-3-12b-it.
-    "MODEL": "@cf/deepseek-ai/deepseek-v4.1-flash-1017",
+    // Some models are paid-plan only (DeepSeek v4.1 flash returned error 5035 on the Free plan). Qwen3.8 27B works on
+    // Free but is a reasoning model: roughly 150-300 neurons per answer, so ~35-60 uncached answers a day.
+    // Reasoning output (<think>…</think>, `reasoning` / `reasoning_content`) never reaches visitors.
+    // Cheaper alternatives: @cf/meta/llama-3.3-70b-instruct-fp8-fast, @cf/google/gemma-3-12b-it.
+    "MODEL": "@cf/qwen/qwen3.8-27b",
 
-    // Small, cheap model for the topic guardrail (ON_TOPIC / OFF_TOPIC, ~8 output tokens per question).
+    // Small, cheap model for the topic guardrail (ON_TOPIC / OFF_TOPIC). If it errors, the guardrail falls back to
+    // MODEL (more expensive: Qwen thinks before it answers). With DEBUG_ERRORS="1" every response has an
+    // `x-guard-model` header showing which model gave the verdict, so you can tell when the fallback is in use.
     "GUARD_MODEL": "@cf/meta/llama-3.1-8b-instruct",
 
     // "1" adds the underlying Workers AI error text to 5xx responses ({"attempts":[{model,error}]}); handy while

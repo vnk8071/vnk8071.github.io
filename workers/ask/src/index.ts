@@ -182,7 +182,7 @@ export function parseVerdict(raw: string): boolean {
  * main MODEL if that model errors or returns nothing (catalogs change; a retired guard model must not take the
  * whole chat down). Throws only if every model failed, which the caller turns into a fail-closed 503.
  */
-async function classifyTopic(env: Env, question: string): Promise<boolean> {
+async function classifyTopic(env: Env, question: string): Promise<{ onTopic: boolean; model: string }> {
   const models = [...new Set([env.GUARD_MODEL, env.MODEL].filter(Boolean))];
   const attempts: { model: string; error: string }[] = [];
   for (const model of models) {
@@ -198,7 +198,7 @@ async function classifyTopic(env: Env, question: string): Promise<boolean> {
       const raw = extractToken(result) || ((result as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content ?? "");
       const text = raw.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
       if (!text) throw new Error(`empty verdict; raw result: ${short(JSON.stringify(result))}`);
-      return parseVerdict(text);
+      return { onTopic: parseVerdict(text), model };
     } catch (err) {
       attempts.push({ model, error: short(err) });
       console.error("guardrail model failed", model, short(err));
@@ -290,12 +290,14 @@ export function normalizeStream(src: ReadableStream<Uint8Array>, sources: Source
   const dec = new TextDecoder();
   const think = makeThinkFilter();
   let buf = "";
+  let started = false; // models like Qwen open the answer with blank lines
   const emit = (line: string, ctl: TransformStreamDefaultController<Uint8Array>) => {
     if (!line.startsWith("data:")) return;
     const raw = line.slice(5).trim();
     if (!raw || raw === "[DONE]") return;
     try {
-      const t = think.push(extractToken(JSON.parse(raw)));
+      let t = think.push(extractToken(JSON.parse(raw)));
+      if (!started) { t = t.replace(/^\s+/, ""); if (t) started = true; }
       if (t) ctl.enqueue(sse({ t }));
     } catch {
       /* ignore keep-alives and partial lines */
@@ -328,7 +330,7 @@ export function normalizeStream(src: ReadableStream<Uint8Array>, sources: Source
 /** Fallback for models/endpoints that return one JSON object instead of a stream. */
 function singleShot(result: unknown, sources: Source[]): ReadableStream<Uint8Array> {
   const raw = extractToken(result) || ((result as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content ?? "");
-  const text = raw.replace(/<think>[\s\S]*?<\/think>\s*/g, "");
+  const text = raw.replace(/<think>[\s\S]*?<\/think>\s*/g, "").trim();
   return new ReadableStream({
     start(ctl) {
       ctl.enqueue(sse(sources, "sources"));
@@ -383,6 +385,10 @@ const json = (body: unknown, status: number, headers: Record<string, string>) =>
 /** Error response with a stable `code` the chat window can show ("HTTP 503 · guardrail_unavailable"). */
 const fail = (code: string, message: string, status: number, headers: Record<string, string>, extra?: Record<string, unknown>) =>
   json({ error: message, code, ...extra }, status, { ...headers, "x-error-code": code, "cache-control": "no-store" });
+
+/** With DEBUG_ERRORS=1 responses say which model produced the topic verdict (shows when the fallback is used). */
+const debugHeaders = (env: Env, guardModel: string): Record<string, string> =>
+  env.DEBUG_ERRORS === "1" ? { "x-guard-model": guardModel } : {};
 
 const short = (err: unknown) => String((err as Error)?.message ?? err).slice(0, 300);
 
@@ -454,16 +460,17 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
 
     // guardrail 2: topic gate. The suggested questions are known-good and skip the classifier.
     const known = new Set((kb.suggestions ?? []).map(normalizeQuestion));
+    let guardModel = "(skipped: suggested question)";
     if (!known.has(normalizeQuestion(question))) {
       let onTopic: boolean;
       try {
-        onTopic = await classifyTopic(env, question);
+        ({ onTopic, model: guardModel } = await classifyTopic(env, question));
       } catch (err) {
         console.error("guardrail classifier error", String(err));
         const debug = env.DEBUG_ERRORS === "1" && err instanceof GuardError ? { attempts: err.attempts } : undefined;
         return fail("guardrail_unavailable", "guardrail unavailable", 503, cors, debug); // fail closed
       }
-      if (!onTopic) return blocked("off_topic", question, cors);
+      if (!onTopic) return blocked("off_topic", question, { ...cors, ...debugHeaders(env, guardModel) });
     }
 
     let result: unknown;
@@ -471,7 +478,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       result = await env.AI.run(env.MODEL as keyof AiModels, {
         messages: buildMessages(question, context),
         stream: true,
-        max_tokens: 1024, // headroom for models that spend tokens on reasoning before answering
+        max_tokens: 1500, // reasoning models (Qwen, DeepSeek) spend tokens on thinking before the answer
         temperature: 0.2,
       } as never);
     } catch (err) {
@@ -495,9 +502,9 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
           );
         })().catch(() => {}),
       );
-      return new Response(toClient, { headers: { ...sseHeaders, "x-cache": "MISS" } });
+      return new Response(toClient, { headers: { ...sseHeaders, ...debugHeaders(env, guardModel), "x-cache": "MISS" } });
     }
-    return new Response(out, { headers: sseHeaders });
+    return new Response(out, { headers: { ...sseHeaders, ...debugHeaders(env, guardModel) } });
 }
 
 export default {
