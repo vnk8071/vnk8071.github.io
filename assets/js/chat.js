@@ -33,6 +33,7 @@
     stopped: "(đã dừng)",
     noBackend: "Chưa kết nối trợ lý AI, nên đây là các đoạn liên quan nhất tìm được trong hồ sơ:",
     failed: "Trợ lý AI đang bận hoặc không phản hồi. Đây là các đoạn liên quan nhất tìm được trong hồ sơ:",
+    detail: "Chi tiết kỹ thuật",
     limited: "Bạn hỏi hơi nhanh, thử lại sau ít phút nhé.",
   };
 
@@ -194,7 +195,10 @@
 
   function bubbleHtml(m) {
     if (m.k === "blocked") return `<p class="cb-note">${esc(m.t)}</p>`;
-    if (m.k === "fallback") return `<p class="cb-note">${esc(m.t)}</p>${passagesHtml(m.hits)}`;
+    if (m.k === "fallback") {
+      const d = m.d ? `<p class="cb-detail" title="${esc(T.detail)}">${esc(m.d)}</p>` : "";
+      return `<p class="cb-note">${esc(m.t)}</p>${d}${passagesHtml(m.hits)}`;
+    }
     return renderMd(m.t, m.src) + sourcesHtml(m.src, m.t);
   }
 
@@ -296,7 +300,12 @@
         signal: ctl.signal,
       });
       if (res.status === 429) return finish({ k: "blocked", t: T.limited });
-      if (!res.ok || !res.body) throw new Error("ask " + res.status);
+      if (!res.ok || !res.body) {
+        const info = await res.json().catch(() => ({}));
+        const e = new Error(`HTTP ${res.status}${info.code ? " · " + info.code : ""}`);
+        e.detail = e.message;
+        throw e;
+      }
 
       const reader = res.body.getReader();
       const dec = new TextDecoder();
@@ -332,7 +341,10 @@
       if (raf) cancelAnimationFrame(raf);
       if (ctl.signal.aborted) return finish({ t: (text.trim() ? text + "\n\n" : "") + T.stopped, src: sources });
       if (text.trim()) return finish({ t: text, src: sources });
-      finish({ k: "fallback", t: T.failed, hits: passages });
+      // no HTTP answer at all = network failure, or the Worker rejected this origin (CORS hides that response)
+      const detail = err && err.detail ? err.detail : `không nhận được phản hồi (mạng hoặc CORS) · origin ${location.origin}`;
+      console.warn("[chat] ask failed:", detail, err);
+      finish({ k: "fallback", t: T.failed, d: detail, hits: passages });
     }
   }
 

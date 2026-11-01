@@ -108,6 +108,7 @@ html.has-chatbot footer.site { padding-bottom: 84px; }
   color: var(--accent); background: var(--glow); text-decoration: none;
 }
 .cb-note { font-size: 0.82rem; color: var(--muted); }
+.cb-detail { font: 400 0.68rem/1.4 var(--mono); color: var(--faint); word-break: break-word; }
 .cb-sources { margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .cb-sources-label { font: 500 0.6rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
 .cb-src {
