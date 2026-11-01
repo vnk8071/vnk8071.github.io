@@ -363,3 +363,36 @@ test("non-streaming reasoning output is stripped too", async () => {
   assert.match(text, /"t":"Đáp án\."/);
   assert.doesNotMatch(text, /think/);
 });
+
+// ---- observability: failures are always JSON with CORS and a stable code -------------------------------
+
+test("an unexpected exception becomes a JSON 500 with CORS headers and a code (not an opaque 1101 page)", async () => {
+  const { env, calls } = makeEnv({ RATE_LIMITER: { limit: async () => { throw new Error("binding exploded"); } } });
+  const res = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), env, ctx().c);
+  assert.equal(res.status, 500);
+  assert.equal(res.headers.get("access-control-allow-origin"), ORIGIN); // the browser can read the error
+  assert.equal(res.headers.get("x-error-code"), "internal");
+  assert.deepEqual(await res.json(), { error: "internal error", code: "internal" });
+  assert.equal(calls.length, 0);
+});
+
+test("every error response carries a machine-readable code", async () => {
+  const { c } = ctx();
+  const code = async (req: Request, env: any) => (await (await worker.fetch(req, env, c)).json() as any).code;
+  const { env } = makeEnv();
+  assert.equal(await code(ask({ question: "hello there" }, { origin: "https://evil.example" }), env), "origin_not_allowed");
+  assert.equal(await code(ask({ question: "x" }), env), "bad_question");
+  assert.equal(await code(new Request("https://ask.test/api/ask", { method: "GET", headers: { origin: ORIGIN } }), env), "method_not_allowed");
+  assert.equal(await code(new Request("https://ask.test/nope", { headers: { origin: ORIGIN } }), env), "not_found");
+  assert.equal(await code(ask({ question: "hello there" }), makeEnv({ RATE_LIMITER: { limit: async () => ({ success: false }) } }).env), "rate_limited");
+
+  globalThis.fetch = (async () => new Response("x", { status: 500 })) as any;
+  resetKbCache();
+  assert.equal(await code(ask({ question: "hello there" }), makeEnv().env), "kb_unavailable");
+
+  globalThis.fetch = (async () => Response.json(KB)) as any;
+  resetKbCache();
+  assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { guard: () => { throw new Error("down"); } }).env), "guardrail_unavailable");
+  resetKbCache();
+  assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { main: () => { throw new Error("down"); } }).env), "model_unavailable");
+});

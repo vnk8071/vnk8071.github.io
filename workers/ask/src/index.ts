@@ -361,13 +361,16 @@ function corsHeaders(origin: string | null): Record<string, string> {
 const json = (body: unknown, status: number, headers: Record<string, string>) =>
   Response.json(body, { status, headers });
 
+/** Error response with a stable `code` the chat window can show ("HTTP 503 · guardrail_unavailable"). */
+const fail = (code: string, message: string, status: number, headers: Record<string, string>) =>
+  json({ error: message, code }, status, { ...headers, "x-error-code": code, "cache-control": "no-store" });
+
 async function sha256(s: string): Promise<string> {
   const d = await crypto.subtle.digest("SHA-256", enc.encode(s));
   return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+async function handle(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const origin = allowedOrigin(request, env);
     const cors = corsHeaders(origin);
@@ -375,15 +378,15 @@ export default {
     if (request.method === "GET" && url.pathname === "/health") {
       return json({ ok: true, model: env.MODEL }, 200, { "cache-control": "no-store" });
     }
-    if (url.pathname !== "/api/ask" && url.pathname !== "/") return json({ error: "not found" }, 404, cors);
+    if (url.pathname !== "/api/ask" && url.pathname !== "/") return fail("not_found", "not found", 404, cors);
     if (request.method === "OPTIONS") return new Response(null, { status: origin ? 204 : 403, headers: cors });
-    if (request.method !== "POST") return json({ error: "method not allowed" }, 405, cors);
-    if (!origin) return json({ error: "origin not allowed" }, 403, cors);
+    if (request.method !== "POST") return fail("method_not_allowed", "method not allowed", 405, cors);
+    if (!origin) return fail("origin_not_allowed", "origin not allowed", 403, cors);
 
     const body = (await request.json().catch(() => null)) as { question?: unknown; ids?: unknown } | null;
     const question = typeof body?.question === "string" ? body.question.trim() : "";
     if (question.length < 2 || question.length > MAX_QUESTION) {
-      return json({ error: `question must be 2-${MAX_QUESTION} characters` }, 400, cors);
+      return fail("bad_question", `question must be 2-${MAX_QUESTION} characters`, 400, cors);
     }
     const ids = (Array.isArray(body?.ids) ? body.ids : [])
       .filter((x): x is string => typeof x === "string" && x.length < 100)
@@ -391,7 +394,7 @@ export default {
 
     if (env.RATE_LIMITER) {
       const { success } = await env.RATE_LIMITER.limit({ key: request.headers.get("cf-connecting-ip") ?? "anon" });
-      if (!success) return json({ error: "rate limited" }, 429, { ...cors, "retry-after": "60" });
+      if (!success) return fail("rate_limited", "rate limited", 429, { ...cors, "retry-after": "60" });
     }
 
     // guardrail 1: deterministic injection / jailbreak screen (no model call, no kb needed)
@@ -402,7 +405,7 @@ export default {
     try {
       kb = await loadKb(env);
     } catch (err) {
-      return json({ error: "knowledge base unavailable", detail: String(err) }, 503, cors);
+      return (console.error("kb error", String(err)), fail("kb_unavailable", "knowledge base unavailable", 503, cors));
     }
 
     const sseHeaders = { ...cors, "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", "x-accel-buffering": "no" };
@@ -427,7 +430,7 @@ export default {
         onTopic = await classifyTopic(env, question);
       } catch (err) {
         console.error("guardrail classifier error", String(err));
-        return json({ error: "guardrail unavailable" }, 503, cors); // fail closed
+        return fail("guardrail_unavailable", "guardrail unavailable", 503, cors); // fail closed
       }
       if (!onTopic) return blocked("off_topic", question, cors);
     }
@@ -442,7 +445,7 @@ export default {
       } as never);
     } catch (err) {
       console.error("workers-ai error", String(err));
-      return json({ error: "model unavailable" }, 502, cors);
+      return fail("model_unavailable", "model unavailable", 502, cors);
     }
 
     const out = result instanceof ReadableStream
@@ -464,5 +467,17 @@ export default {
       return new Response(toClient, { headers: { ...sseHeaders, "x-cache": "MISS" } });
     }
     return new Response(out, { headers: sseHeaders });
+}
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    try {
+      return await handle(request, env, ctx);
+    } catch (err) {
+      // Never let an exception escape: Cloudflare's default 1101 page has no CORS headers, so the browser
+      // would report an opaque network error. Log the detail server-side (`wrangler tail`), answer with JSON.
+      console.error("unhandled", String(err), (err as Error)?.stack ?? "");
+      return fail("internal", "internal error", 500, corsHeaders(allowedOrigin(request, env)));
+    }
   },
 } satisfies ExportedHandler<Env>;
