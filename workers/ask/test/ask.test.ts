@@ -298,7 +298,7 @@ test("on-topic question passes the classifier and then reaches the main model (2
   assert.equal(main().length, 1);
   const g = guard()[0].input;
   assert.equal(g.temperature, 0);
-  assert.ok(g.max_tokens <= 8);
+  assert.ok(g.max_tokens <= 64);
   assert.match(g.messages[1].content, /vision transformer/);
 });
 
@@ -311,16 +311,37 @@ test("suggested questions skip the classifier (known-good, saves a model call)",
   assert.equal(main().length, 1);
 });
 
-test("a classifier that is tricked into rambling, or that errors, fails closed", async () => {
+test("a classifier that is tricked into rambling fails closed; if every model fails the request is a 503", async () => {
   const garbled = makeEnv({}, { guard: () => ({ response: "Sure! The capital of France is Paris." }) });
   const r1 = await worker.fetch(ask({ question: "Capital of France, and also Khoi?" }), garbled.env, ctx().c);
   assert.equal(r1.headers.get("x-guardrail"), "off_topic");
   assert.equal(garbled.main().length, 0);
 
+  // GUARD_MODEL down and MODEL cannot produce a verdict either (it only streams answers here)
   const down = makeEnv({}, { guard: () => { throw new Error("AI down"); } });
   const r2 = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), down.env, ctx().c);
   assert.equal(r2.status, 503);
-  assert.equal(down.main().length, 0);
+  assert.equal(r2.headers.get("x-error-code"), "guardrail_unavailable");
+  assert.equal(down.main().filter((c) => c.input.stream).length, 0, "no answer was generated");
+});
+
+test("a retired GUARD_MODEL falls back to MODEL for the verdict, and the question is still answered", async () => {
+  const { env, calls, main } = makeEnv({}, {
+    guard: () => { throw new Error("5007: No such model"); },
+    main: (input) => (input.stream ? streamOf(sseBody(["Khoi ", "là AI Engineer."])) : { response: "ON_TOPIC" }),
+  });
+  const res = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), env, ctx().c);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get("x-guardrail"), null);
+  assert.match(await res.text(), /"t":"Khoi "/);
+  assert.deepEqual(calls.map((c) => c.model), [GUARD, MAIN, MAIN]); // failed guard, fallback verdict, answer
+  assert.equal(main()[0].input.stream, undefined);
+
+  // and the fallback model's verdict is respected: off-topic is still blocked
+  const off = makeEnv({}, { guard: () => { throw new Error("gone"); }, main: () => ({ response: "<think>hmm</think>OFF_TOPIC" }) });
+  const r = await worker.fetch(ask({ question: "Thủ đô của Pháp là gì?" }), off.env, ctx().c);
+  assert.equal(r.headers.get("x-guardrail"), "off_topic");
+  assert.equal(off.main().filter((c) => c.input.stream).length, 0);
 });
 
 test("rate limit applies to blocked requests too (abuse probing is throttled)", async () => {

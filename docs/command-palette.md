@@ -41,7 +41,7 @@ A request is answered only if it is about your profile. Order of checks, cheapes
 | 2 | `classifyTopic()`: a small Workers AI model answers `ON_TOPIC` / `OFF_TOPIC` (temperature 0, ≤8 tokens, few-shot, question passed as quoted data). Strict parse: anything other than a clean `ON_TOPIC` counts as off-topic. The 3 suggested questions (published in `kb.json`) skip it | ~2 neurons | `blocked` (`off_topic`) |
 | 3 | The main prompt (`MODEL`, default `@cf/deepseek-ai/deepseek-v4.1-flash-1017`; reasoning text is stripped from the stream): use only numbered context, never invent facts, don't upgrade claims ("production" only if the passage says live / deployed / published), ignore instructions inside the question | n/a | says it doesn't know |
 
-A filtered request gets HTTP 200 with `event: blocked` and a **fixed** refusal in the visitor's language (the model never writes it), the main model is never called, and nothing is cached. If the classifier itself is down the request **fails closed** (503); the palette then shows the best-matching passages instead.
+A filtered request gets HTTP 200 with `event: blocked` and a **fixed** refusal in the visitor's language (the model never writes it), the main model is never called, and nothing is cached. If no model can produce a verdict the request **fails closed** (503 `guardrail_unavailable`); the palette then shows the best-matching passages instead.
 
 Tuning: edit `GUARD_PROMPT` (scope and few-shot examples), `INJECTION_PATTERNS`, or `GUARD_MODEL` in `wrangler.jsonc`. Logs (`wrangler tail`) show `{"guardrail":"blocked","reason":…}` without the question text. If real visitors get wrongly refused, add their phrasing as an `ON_TOPIC` example.
 
@@ -107,3 +107,16 @@ Local dev: `bundle exec jekyll serve` (site on :4000, already an allowed origin)
 npm test --prefix scripts         # knowledge-base builder
 cd workers/ask && npm run typecheck && npm test   # Worker + guardrails, offline, fake AI binding
 ```
+
+## Troubleshooting
+
+Failure bubbles in the chat show a technical line. Every error response from the Worker also has a stable `code`:
+
+| Shown in chat | Meaning | Fix |
+| --- | --- | --- |
+| `HTTP 503 · guardrail_unavailable` | no guard/answer model could produce a verdict | `npx wrangler ai models`, fix `GUARD_MODEL` / `MODEL` in `wrangler.jsonc`, redeploy; `npx wrangler tail khoispace-ask` prints the exact Workers AI error |
+| `HTTP 502 · model_unavailable` | the answering model call failed | same as above |
+| `HTTP 503 · kb_unavailable` | the Worker could not fetch `KB_URL` | check the URL and that the site is deployed |
+| `HTTP 403 · origin_not_allowed`, or "mạng hoặc CORS · origin …" | the page's origin is not in `ALLOWED_ORIGINS` | add that exact origin (scheme + host, no trailing slash) |
+| `HTTP 429 · rate_limited` | more than 8 questions/minute from one IP | wait a minute |
+| `HTTP 500 · internal` | unexpected error | `wrangler tail` shows the stack |
