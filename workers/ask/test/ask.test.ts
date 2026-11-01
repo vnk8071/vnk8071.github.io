@@ -298,7 +298,7 @@ test("on-topic question passes the classifier and then reaches the main model (2
   assert.equal(main().length, 1);
   const g = guard()[0].input;
   assert.equal(g.temperature, 0);
-  assert.ok(g.max_tokens <= 64);
+  assert.ok(g.max_tokens <= 512);
   assert.match(g.messages[1].content, /vision transformer/);
 });
 
@@ -375,7 +375,7 @@ test("a reasoning model: reasoning_content and <think> never reach the visitor",
   const text = await (await worker.fetch(ask({ question: "Khoi làm gì ở goodjobs?" }), env, ctx().c)).text();
   assert.doesNotMatch(text, /secret plan|let me think|think>/);
   assert.match(text, /"t":"GoodJobs "/);
-  assert.equal(main()[0].input.max_tokens, 1024);
+  assert.equal(main()[0].input.max_tokens, 1500);
 });
 
 test("non-streaming reasoning output is stripped too", async () => {
@@ -416,4 +416,78 @@ test("every error response carries a machine-readable code", async () => {
   assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { guard: () => { throw new Error("down"); } }).env), "guardrail_unavailable");
   resetKbCache();
   assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { main: () => { throw new Error("down"); } }).env), "model_unavailable");
+});
+
+test("DEBUG_ERRORS=1 reveals what each guard model did; off by default", async () => {
+  const guardDown = { guard: () => { throw new Error("5007: No such model `@cf/test/guard`"); }, main: () => ({ response: "" }) };
+  const on = makeEnv({ DEBUG_ERRORS: "1" }, guardDown);
+  const r = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), on.env, ctx().c);
+  assert.equal(r.status, 503);
+  const body = (await r.json()) as any;
+  assert.equal(body.code, "guardrail_unavailable");
+  assert.equal(body.attempts.length, 2);
+  assert.equal(body.attempts[0].model, GUARD);
+  assert.match(body.attempts[0].error, /5007: No such model/);
+  assert.equal(body.attempts[1].model, MAIN);
+  assert.match(body.attempts[1].error, /empty verdict/);
+
+  const off = makeEnv({}, guardDown);
+  const body2 = (await (await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), off.env, ctx().c)).json()) as any;
+  assert.deepEqual(body2, { error: "guardrail unavailable", code: "guardrail_unavailable" });
+
+  const model502 = makeEnv({ DEBUG_ERRORS: "1" }, { main: () => { throw new Error("AiError: quota"); } });
+  const b3 = (await (await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), model502.env, ctx().c)).json()) as any;
+  assert.equal(b3.code, "model_unavailable");
+  assert.match(b3.detail, /quota/);
+});
+
+// ---- Qwen-style reasoning model (OpenAI-shaped responses, blank lines first, reasoning in its own field) -------
+
+test("Qwen: blank lines at the start of the streamed answer are dropped; `reasoning` deltas never reach the visitor", async () => {
+  const chunks = [
+    { choices: [{ delta: { reasoning: "We need to answer about goodjobs." } }] },
+    { choices: [{ delta: { content: "\n\n" } }] },
+    { choices: [{ delta: { content: "GoodJobs chạy thật " } }] },
+    { choices: [{ delta: { content: "[3].\n" } }] },
+  ].map((o) => `data: ${JSON.stringify(o)}\n\n`).join("") + "data: [DONE]\n\n";
+  const { env } = makeEnv({}, { main: () => streamOf(chunks, 13) });
+  const text = await (await worker.fetch(ask({ question: "Khoi làm gì ở goodjobs?" }), env, ctx().c)).text();
+  assert.match(text, /^event: sources\ndata: .*\n\ndata: \{"t":"GoodJobs chạy thật "\}/s);
+  assert.doesNotMatch(text, /We need to answer|"t":"\\n\\n"/);
+});
+
+test("Qwen: a non-streaming chat.completion verdict ('\\n\\nON_TOPIC' with a reasoning field) is understood", async () => {
+  const qwen = (verdict: string) => ({ choices: [{ message: { role: "assistant", content: `\n\n${verdict}`, reasoning: "The question asks about Khoi's experience." } }] });
+  const on = makeEnv({}, { guard: () => qwen("ON_TOPIC") });
+  const r = await worker.fetch(ask({ question: "Khoi làm ở những công ty nào?" }), on.env, ctx().c);
+  assert.equal(r.headers.get("x-guardrail"), null);
+  await r.text();
+  assert.equal(on.main().length, 1);
+
+  const off = makeEnv({}, { guard: () => qwen("OFF_TOPIC") });
+  const r2 = await worker.fetch(ask({ question: "Thủ đô của Pháp là gì?" }), off.env, ctx().c);
+  assert.equal(r2.headers.get("x-guardrail"), "off_topic");
+});
+
+test("DEBUG_ERRORS=1 adds x-guard-model so you can see whether the fallback model gave the verdict", async () => {
+  const fb = makeEnv({ DEBUG_ERRORS: "1" }, {
+    guard: () => { throw new Error("gone"); },
+    main: (input) => (input.stream ? streamOf(sseBody(["ok"])) : { response: "ON_TOPIC" }),
+  });
+  const r = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), fb.env, ctx().c);
+  assert.equal(r.headers.get("x-guard-model"), MAIN);
+  await r.text();
+
+  const normal = makeEnv({ DEBUG_ERRORS: "1" });
+  const r2 = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), normal.env, ctx().c);
+  assert.equal(r2.headers.get("x-guard-model"), GUARD);
+  await r2.text();
+
+  const preset = await worker.fetch(ask({ question: PRESET }), makeEnv({ DEBUG_ERRORS: "1" }).env, ctx().c);
+  assert.match(preset.headers.get("x-guard-model") ?? "", /skipped/);
+  await preset.text();
+
+  const quiet = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), makeEnv().env, ctx().c);
+  assert.equal(quiet.headers.get("x-guard-model"), null);
+  await quiet.text();
 });
