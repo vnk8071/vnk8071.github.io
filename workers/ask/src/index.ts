@@ -9,6 +9,7 @@
 // prompt. Small "core" facts (the whole CV) are always included, so answers hold up even when retrieval
 // misses or the visitor's browser never loaded the embedding model.
 //
+// Small talk ("Hi", "Xin chào", "cảm ơn", "bạn là ai?") gets a fixed friendly reply with the suggested questions: no model call, no cost.
 // Guardrails: only questions about Khoi's profile are answered. Everything else is filtered *before* the
 // main model runs (so it costs almost nothing and cannot be abused as a free general chatbot):
 //   1. screenInput()   deterministic prompt-injection / jailbreak patterns (English + Vietnamese)
@@ -211,7 +212,8 @@ const normalizeQuestion = (q: string) => fold(q).replace(/[?!.。\s]+$/g, "");
 
 export function isVietnamese(q: string): boolean {
   return /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(q) ||
-    /\b(ban|toi|minh|khong|nhung|duoc|cua|nao|gi|la|co|nhu the|the nao|lam)\b/.test(fold(q));
+    /\b(ban|toi|minh|khong|nhung|duoc|cua|nao|gi|la|co|nhu the|the nao|lam)\b/.test(fold(q)) ||
+    /\b(xin chao|chao|cam on|tam biet|hen gap lai|bai bai|alo)\b/.test(fold(q));
 }
 
 export const REFUSAL = {
@@ -225,6 +227,64 @@ function blocked(reason: BlockReason, question: string, headers: Record<string, 
   const body = `event: blocked\ndata: ${JSON.stringify({ reason, message })}\n\nevent: done\ndata: {}\n\n`;
   return new Response(body, {
     headers: { ...headers, "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", "x-guardrail": reason },
+  });
+}
+
+// ---- small talk -----------------------------------------------------------------------------------
+
+export type SmallTalk = "hello" | "thanks" | "bye" | "how_are_you" | "about_bot";
+
+// Words that may surround a greeting without changing it ("hi bạn ơi", "hello there bot").
+const FILLER = new Set(["there", "bot", "assistant", "ban", "anh", "chi", "em", "khoi", "ad", "admin", "oi", "nhe", "nha", "a", "ah", "please", "pls", "moi", "nguoi", "ca", "nhà"]);
+
+// Matched against the *whole* message (diacritics folded, punctuation and emoji removed, fillers dropped).
+const SMALL_TALK: Record<SmallTalk, string[]> = {
+  hello: ["hi", "hii", "hiii", "hello", "helo", "hey", "heya", "hiya", "yo", "hola", "howdy", "greetings", "good morning", "good afternoon", "good evening", "good day", "xin chao", "chao", "alo", "a lo", "hi hello", "hello hi"],
+  thanks: ["thanks", "thank", "thank you", "thx", "ty", "thanks a lot", "thank you so much", "thanks so much", "thank you very much", "many thanks", "cam on", "cam on nhieu", "cam on rat nhieu", "da cam on"],
+  bye: ["bye", "bye bye", "goodbye", "good bye", "see you", "see ya", "cya", "tam biet", "hen gap lai", "bai bai"],
+  how_are_you: ["how are you", "how are you doing", "how r u", "hows it going", "how is it going", "whats up", "sup", "khoe khong", "co khoe khong", "dao nay the nao"],
+  about_bot: ["who are you", "what are you", "what can you do", "what do you do", "how can you help", "can you help me", "help", "help me", "la ai", "la gi", "lam duoc gi", "co the lam gi", "giup", "giup toi", "giup do"],
+};
+const SMALL_TALK_LOOKUP = new Map<string, SmallTalk>(
+  (Object.entries(SMALL_TALK) as [SmallTalk, string[]][]).flatMap(([kind, phrases]) => phrases.map((p) => [p, kind] as const)),
+);
+
+export function detectSmallTalk(question: string): SmallTalk | null {
+  const words = fold(question).replace(/[^a-z0-9]+/g, " ").trim().split(" ").filter(Boolean);
+  if (!words.length || words.length > 8) return null;
+  const core = words.filter((w) => !FILLER.has(w)).join(" ");
+  return SMALL_TALK_LOOKUP.get(core || words.join(" ")) ?? null;
+}
+
+const INVITE = {
+  vi: "Bạn có thể hỏi về kinh nghiệm, dự án, kỹ năng, học vấn, đóng góp mã nguồn mở, công bố và bài viết của Khoi. Thử hỏi:",
+  en: "You can ask about Khoi's experience, projects, skills, education, open-source work, publications and writing. Try asking:",
+};
+
+export function smallTalkReply(kind: SmallTalk, vi: boolean, suggestions: string[]): string {
+  const list = suggestions.length ? "\n" + suggestions.map((q) => `- ${q}`).join("\n") : "";
+  const L = vi ? "vi" : "en";
+  switch (kind) {
+    case "hello":
+      return `${vi ? "Xin chào! 👋 Mình là trợ lý AI của Khoi." : "Hi there! 👋 I'm Khoi's AI assistant."} ${INVITE[L]}${list}`;
+    case "how_are_you":
+      return `${vi ? "Mình là AI nên lúc nào cũng sẵn sàng!" : "I'm an AI, so always ready!"} ${INVITE[L]}${list}`;
+    case "about_bot":
+      return `${vi
+        ? "Mình là trợ lý AI trên trang cá nhân của Khoi. Mình trả lời dựa trên nội dung của trang này và có thể nhầm lẫn."
+        : "I'm the AI assistant on Khoi's portfolio. I answer from the content of this site and can make mistakes."} ${INVITE[L]}${list}`;
+    case "thanks":
+      return vi ? "Không có gì! Bạn cần biết thêm gì về hồ sơ của Khoi cứ hỏi nhé." : "You're welcome! Ask me anything else about Khoi's profile.";
+    case "bye":
+      return vi ? "Hẹn gặp lại bạn! Chúc bạn một ngày tốt lành." : "Goodbye! Have a great day.";
+  }
+}
+
+function smallTalkResponse(kind: SmallTalk, question: string, suggestions: string[], headers: Record<string, string>): Response {
+  const text = smallTalkReply(kind, isVietnamese(question), suggestions);
+  const body = `event: sources\ndata: []\n\ndata: ${JSON.stringify({ t: text })}\n\nevent: done\ndata: {}\n\n`;
+  return new Response(body, {
+    headers: { ...headers, "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", "x-guardrail": "small_talk" },
   });
 }
 
@@ -443,6 +503,10 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     } catch (err) {
       return (console.error("kb error", String(err)), fail("kb_unavailable", "knowledge base unavailable", 503, cors));
     }
+
+    // small talk: fixed friendly reply, no model call
+    const talk = detectSmallTalk(question);
+    if (talk) return smallTalkResponse(talk, question, kb.suggestions ?? [], { ...cors, ...debugHeaders(env, "(small talk)") });
 
     const sseHeaders = { ...cors, "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", "x-accel-buffering": "no" };
 

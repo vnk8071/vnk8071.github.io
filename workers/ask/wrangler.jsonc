@@ -29,9 +29,9 @@
     // tried once. A cheaper guard (any small model that works for you) can be set here later.
     "GUARD_MODEL": "@cf/qwen/qwen3.8-27b",
 
-    // "1" adds the underlying Workers AI error text to 5xx responses ({"attempts":[{model,error}]}); handy while
-    // bringing a deployment up. Set to "0" once chat works.
-    "DEBUG_ERRORS": "1"
+    // "1" adds the underlying Workers AI error text to 5xx responses ({"attempts":[{model,error}]}) and an
+    // `x-guard-model` header to every response. Useful while bringing a deployment up; "0" for normal operation.
+    "DEBUG_ERRORS": "0"
   },
 
   // Per-IP rate limit (Workers Rate Limiting): 8 questions per minute.
