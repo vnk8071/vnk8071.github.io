@@ -219,6 +219,49 @@ export function extractToken(payload: unknown): string {
   return typeof c === "string" ? c : "";
 }
 
+/** Drops `<think>…</think>` reasoning (DeepSeek-style models) from a token stream, even when a tag is split across chunks. */
+export function makeThinkFilter() {
+  const OPEN = "<think>";
+  const CLOSE = "</think>";
+  let inThink = false;
+  let carry = "";
+  const partial = (s: string, tag: string) => {
+    for (let k = Math.min(tag.length - 1, s.length); k > 0; k--) if (tag.startsWith(s.slice(-k))) return k;
+    return 0;
+  };
+  return {
+    push(chunk: string): string {
+      let s = carry + chunk;
+      carry = "";
+      let out = "";
+      while (s) {
+        if (inThink) {
+          const i = s.indexOf(CLOSE);
+          if (i < 0) { carry = s.slice(-(CLOSE.length - 1)); return out; }
+          s = s.slice(i + CLOSE.length).replace(/^\s+/, "");
+          inThink = false;
+        } else {
+          const i = s.indexOf(OPEN);
+          if (i < 0) {
+            const k = partial(s, OPEN);
+            carry = s.slice(s.length - k);
+            return out + s.slice(0, s.length - k);
+          }
+          out += s.slice(0, i);
+          s = s.slice(i + OPEN.length);
+          inThink = true;
+        }
+      }
+      return out;
+    },
+    flush(): string {
+      const rest = inThink ? "" : carry;
+      carry = "";
+      return rest;
+    },
+  };
+}
+
 const enc = new TextEncoder();
 const sse = (data: unknown, event?: string) =>
   enc.encode(`${event ? `event: ${event}\n` : ""}data: ${JSON.stringify(data)}\n\n`);
@@ -226,13 +269,14 @@ const sse = (data: unknown, event?: string) =>
 /** Re-emits a Workers AI SSE stream as `{t: token}` events, preceded by the sources and followed by `done`. */
 export function normalizeStream(src: ReadableStream<Uint8Array>, sources: Source[]): ReadableStream<Uint8Array> {
   const dec = new TextDecoder();
+  const think = makeThinkFilter();
   let buf = "";
   const emit = (line: string, ctl: TransformStreamDefaultController<Uint8Array>) => {
     if (!line.startsWith("data:")) return;
     const raw = line.slice(5).trim();
     if (!raw || raw === "[DONE]") return;
     try {
-      const t = extractToken(JSON.parse(raw));
+      const t = think.push(extractToken(JSON.parse(raw)));
       if (t) ctl.enqueue(sse({ t }));
     } catch {
       /* ignore keep-alives and partial lines */
@@ -254,6 +298,8 @@ export function normalizeStream(src: ReadableStream<Uint8Array>, sources: Source
       },
       flush(ctl) {
         if (buf.trim()) emit(buf.trim(), ctl);
+        const tail = think.flush();
+        if (tail) ctl.enqueue(sse({ t: tail }));
         ctl.enqueue(sse({}, "done"));
       },
     }),
@@ -262,7 +308,8 @@ export function normalizeStream(src: ReadableStream<Uint8Array>, sources: Source
 
 /** Fallback for models/endpoints that return one JSON object instead of a stream. */
 function singleShot(result: unknown, sources: Source[]): ReadableStream<Uint8Array> {
-  const text = extractToken(result) || ((result as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content ?? "");
+  const raw = extractToken(result) || ((result as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content ?? "");
+  const text = raw.replace(/<think>[\s\S]*?<\/think>\s*/g, "");
   return new ReadableStream({
     start(ctl) {
       ctl.enqueue(sse(sources, "sources"));
@@ -390,7 +437,7 @@ export default {
       result = await env.AI.run(env.MODEL as keyof AiModels, {
         messages: buildMessages(question, context),
         stream: true,
-        max_tokens: 700,
+        max_tokens: 1024, // headroom for models that spend tokens on reasoning before answering
         temperature: 0.2,
       } as never);
     } catch (err) {

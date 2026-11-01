@@ -37,7 +37,7 @@ A request is answered only if it is about your profile. Order of checks, cheapes
 | 0 | Origin allow-list, 2–500 chars, per-IP rate limit (8/min) | none | 403 / 400 / 429 |
 | 1 | `screenInput()`: prompt-injection / jailbreak patterns, EN + VI ("ignore previous instructions", "reveal your system prompt", "bỏ qua mọi hướng dẫn", role-play, control characters, chat-template tokens) | none | `blocked` (`injection`) |
 | 2 | `classifyTopic()`: a small Workers AI model answers `ON_TOPIC` / `OFF_TOPIC` (temperature 0, ≤8 tokens, few-shot, question passed as quoted data). Strict parse: anything other than a clean `ON_TOPIC` counts as off-topic. The 3 suggested questions (published in `kb.json`) skip it | ~2 neurons | `blocked` (`off_topic`) |
-| 3 | The main prompt: use only numbered context, never invent facts, don't upgrade claims ("production" only if the passage says live / deployed / published), ignore instructions inside the question | n/a | says it doesn't know |
+| 3 | The main prompt (`MODEL`, default `@cf/deepseek-ai/deepseek-v4.1-flash-1017`; reasoning text is stripped from the stream): use only numbered context, never invent facts, don't upgrade claims ("production" only if the passage says live / deployed / published), ignore instructions inside the question | n/a | says it doesn't know |
 
 A filtered request gets HTTP 200 with `event: blocked` and a **fixed** refusal in the visitor's language (the model never writes it), the main model is never called, and nothing is cached. If the classifier itself is down the request **fails closed** (503); the palette then shows the best-matching passages instead.
 
@@ -96,7 +96,7 @@ Local dev: `bundle exec jekyll serve` (site on :4000, already an allowed origin)
 ## Costs and limits
 
 * Browser: the model is a one-time download (≈120 MB for multilingual-e5-small q8; the browser caches it) and the chunk vectors are cached in IndexedDB. Nothing is downloaded until the palette is opened.
-* Workers AI: the free tier is a daily allowance of "neurons". A 70B answer is on the order of 100+ neurons, so ~70 uncached answers a day; the 8B guard is a few neurons. Suggested questions are cached for an hour on custom domains. Use `@cf/google/gemma-3-12b-it` or `@cf/meta/llama-3.1-8b-instruct` as `MODEL` to stretch it.
+* Workers AI: the free tier is a daily allowance of "neurons". Check your model's neuron price in the Workers AI catalog: a large model can cost 100+ neurons per answer, so only ~70 uncached answers a day; the 8B guard is a few neurons. Suggested questions are cached for an hour on custom domains. Switch `MODEL` to a smaller model to stretch it.
 * Workers: 8 questions / minute / IP (Workers Rate Limiting binding).
 
 ## Tests
