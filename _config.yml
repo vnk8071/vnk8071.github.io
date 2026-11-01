@@ -33,6 +33,7 @@ command_palette:
     - "Stack công nghệ chính khi làm việc với Computer Vision & LLM?"
 
 # Site Settings
+# resume_url: "/files/Khoi-Vo-Nguyen-CV.pdf"   # optional: the "Resume / CV" button also appears on its own once a PDF is in files/
 locale: "en-US"
 title: "Khoi Space"
 title_separator: "-"

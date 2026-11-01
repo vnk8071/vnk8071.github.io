@@ -585,3 +585,71 @@ footer.site .social a:hover { color: var(--accent); }
   .reveal { animation: none; opacity: 1; transform: none; }
   .cursor, .building .pulse { animation: none; }
 }
+
+/* ===========================================================
+   Featured projects, grouped tooling, one-line job notes, contact CTA
+   =========================================================== */
+
+.job .blurb {
+  margin-top: 8px; max-width: 62ch;
+  font-size: 0.88rem; line-height: 1.55; color: var(--muted);
+}
+
+/* ---- flagship projects ---- */
+.flagships { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
+@media (max-width: 760px) { .flagships { grid-template-columns: 1fr; } }
+.flagship {
+  display: flex; flex-direction: column;
+  padding: 24px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--accent);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px var(--glow);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.flagship:hover { border-color: var(--accent); transform: translateY(-3px); }
+.flagship .repo-name { font-size: 1.05rem; }
+.flagship .repo-desc { margin: 12px 0 14px; flex: 0 0 auto; }
+.badge-live {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 500 0.66rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); border: 1px solid var(--accent-dim); border-radius: 999px; padding: 3px 10px;
+}
+.badge-live i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.9s ease-out infinite; }
+.metrics { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; padding: 0; }
+.metrics li {
+  font: 500 0.7rem var(--mono); letter-spacing: 0.02em;
+  color: var(--text-soft); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px;
+}
+.flagship-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.flagship-actions .btn { padding: 9px 15px; font-size: 0.76rem; }
+.subhead {
+  margin: 4px 0 16px;
+  font: 500 0.68rem var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint);
+}
+
+/* ---- grouped focus & tooling ---- */
+.tag-groups { display: grid; gap: 20px; }
+.tag-label {
+  margin-bottom: 10px;
+  font: 500 0.68rem var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ---- contact call to action ---- */
+.cta {
+  display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap;
+  padding: 30px 32px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: 3px;
+}
+.cta h2 { font: 700 1.15rem var(--mono); letter-spacing: -0.01em; margin-bottom: 8px; }
+.cta p { max-width: 52ch; color: var(--text-soft); font-size: 0.98rem; }
+.cta p a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-dim); }
+.cta p a:hover { border-bottom-color: var(--accent); }
+.cta-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 620px) { .cta { padding: 24px 20px; } }
+@media (prefers-reduced-motion: reduce) { .badge-live i { animation: none; } }

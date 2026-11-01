@@ -1,6 +1,6 @@
 {
  "version": 1,
- "hash": "d902665120",
+ "hash": "7fd5219d70",
  "suggestions": [
   "Tóm tắt thế mạnh cốt lõi trong 3 gạch đầu dòng",
   "Các dự án nào đã từng triển khai thực tế ở môi trường Production?",
@@ -46,7 +46,7 @@
    "type": "contact",
    "title": "Contact & links",
    "text": "GitHub: https://github.com/vnk8071. LinkedIn: https://www.linkedin.com/in/khoivn8071. Email: nguyenkhoi8071@gmail.com",
-   "url": "/#about",
+   "url": "/#contact",
    "dedupe": "/#contact",
    "core": true,
    "kw": "liên hệ email contact linkedin github mạng xã hội social",
@@ -56,7 +56,7 @@
    "id": "about",
    "type": "profile",
    "title": "About",
-   "text": "My experience is in computer vision. I've pursued this field largely through independent study — a resourceful engineer with a proven ability to identify and overcome hard problems on my own. I build and ship AI systems end to end, from research to production.",
+   "text": "AI Engineer working across computer vision, Edge AI and low-latency inference — C++ runtimes and Snapdragon NPU deployment (QNN, TFLite, ExecuTorch) through to production services. I build and ship AI systems end to end, from research to production.",
    "url": "/#about",
    "dedupe": "/#about",
    "core": true,
@@ -67,7 +67,7 @@
    "id": "exp-qualcomm",
    "type": "experience",
    "title": "AI Engineer · Qualcomm",
-   "text": "AI Engineer · Qualcomm. Apr 2026 — Present. Ho Chi Minh City, Vietnam. Current role",
+   "text": "AI Engineer · Qualcomm. Apr 2026 — Present. Ho Chi Minh City, Vietnam. Current role. Contributing to Qualcomm's open-source AI runtime tooling — QNN HTP, TFLite and ExecuTorch (see Open Source).",
    "url": "/#exp-qualcomm",
    "dedupe": "/#exp-qualcomm",
    "core": true,
@@ -108,6 +108,28 @@
    "label": "Experience"
   },
   {
+   "id": "work-goodjobs",
+   "type": "project",
+   "title": "goodjobs",
+   "text": "goodjobs. A self-hosted job aggregator (goodjobs.io.vn) — 18 job boards, one query, with real-time SSE streaming, LLM intent detection, and vector-based recommendations. Highlights: 18 job boards, Real-time SSE streaming, LLM intent detection, Vector recommendations. FastAPI / TypeScript / Redis",
+   "url": "/#work-goodjobs",
+   "dedupe": "/#work-goodjobs",
+   "core": true,
+   "kw": "dự án sản phẩm project product demo triển khai production sản phẩm đang chạy live trực tuyến triển khai production sản phẩm thực tế tuyển dụng việc làm tìm việc job search streaming vector recommendation llm",
+   "label": "Project"
+  },
+  {
+   "id": "work-unified-ai-runtime",
+   "type": "project",
+   "title": "unified-ai-runtime",
+   "text": "unified-ai-runtime. One C API over several inference runtimes — with a llama.cpp backend, a stateful session API, and CUDA / Vulkan device selection. Highlights: 8 backends, Plain C ABI, QNN · ONNX Runtime · TensorRT, CUDA / Vulkan / Hexagon NPU. C / C++",
+   "url": "/#work-unified-ai-runtime",
+   "dedupe": "/#work-unified-ai-runtime",
+   "core": true,
+   "kw": "dự án sản phẩm project product demo triển khai production tối ưu phần cứng tăng tốc hardware acceleration npu gpu cuda vulkan tensorrt openvino on-device inference runtime llm",
+   "label": "Project"
+  },
+  {
    "id": "work-website-kit",
    "type": "project",
    "title": "website-kit",
@@ -117,30 +139,6 @@
    "core": true,
    "ext": "https://github.com/vnk8071/website-kit",
    "kw": "dự án sản phẩm project product demo triển khai production bộ khởi tạo starter kit mẫu template scaffold poc website cloudflare workers terraform dns github pages wordpress apps script ci cd hạ tầng tự động hóa",
-   "label": "Project"
-  },
-  {
-   "id": "work-unified-ai-runtime",
-   "type": "project",
-   "title": "unified-ai-runtime",
-   "text": "unified-ai-runtime. One C API over several inference runtimes — with a llama.cpp backend, a stateful session API, and CUDA / Vulkan device selection. C / C++",
-   "url": "/#work-unified-ai-runtime",
-   "dedupe": "/#work-unified-ai-runtime",
-   "core": true,
-   "ext": "https://github.com/vnk8071/unified-ai-runtime",
-   "kw": "dự án sản phẩm project product demo triển khai production tối ưu phần cứng tăng tốc hardware acceleration npu gpu cuda vulkan tensorrt openvino on-device inference runtime llm",
-   "label": "Project"
-  },
-  {
-   "id": "work-goodjobs",
-   "type": "project",
-   "title": "goodjobs",
-   "text": "goodjobs. A self-hosted job aggregator (goodjobs.io.vn) — 18 job boards, one query, with real-time SSE streaming, LLM intent detection, and vector-based recommendations. FastAPI / TypeScript / Redis",
-   "url": "/#work-goodjobs",
-   "dedupe": "/#work-goodjobs",
-   "core": true,
-   "ext": "https://github.com/vnk8071/goodjobs",
-   "kw": "dự án sản phẩm project product demo triển khai production triển khai production sản phẩm thực tế tuyển dụng việc làm tìm việc job search streaming vector recommendation llm",
    "label": "Project"
   },
   {
@@ -265,11 +263,11 @@
    "id": "skills",
    "type": "skills",
    "title": "Focus & tooling",
-   "text": "Focus and tooling: Computer Vision, Deep Learning, NLP, DeepStream, PyTorch, Python, C++, Docker, AWS, FastAPI, MLOps",
+   "text": "Focus and tooling. Edge & Inference: C++, QNN (Qualcomm HTP), TensorRT, ONNX Runtime, ExecuTorch, TFLite, llama.cpp, OpenVINO, DeepStream. Modeling & AI: PyTorch, Computer Vision, Deep Learning, NLP, LLM / RAG. Backend & Infra: Python, FastAPI, Redis, Docker, AWS, Cloudflare Workers, MLOps, Linux / Android",
    "url": "/#skills",
    "dedupe": "/#skills",
    "core": true,
-   "kw": "kỹ năng công nghệ stack tooling skills technology công cụ computer vision thị giác máy tính deep learning học sâu pytorch python c++ docker aws fastapi mlops nlp deepstream llm",
+   "kw": "kỹ năng công nghệ stack tooling skills technology công cụ edge ai suy luận độ trễ thấp inference npu snapdragon qnn tensorrt onnx executorch tflite computer vision thị giác máy tính deep learning học sâu pytorch python c++ docker aws fastapi mlops nlp deepstream llm",
    "label": "Skills"
   },
   {

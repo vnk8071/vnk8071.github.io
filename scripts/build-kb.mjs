@@ -217,16 +217,20 @@ function homeChunks(root) {
       el.querySelectorAll(".badge-now").forEach((b) => b.remove());
       const current = el.classList.contains("current");
       title = pick(".what");
-      text = joinSentences([pick(".what"), pick(".when"), pick(".where"), current && "Current role"]);
+      text = joinSentences([pick(".what"), pick(".when"), pick(".where"), current && "Current role", pick(".blurb")]);
     } else if (type === "project" || type === "opensource") {
       title = pick(".repo-name");
-      text = joinSentences([title, pick(".repo-desc"), pick(".repo-meta")]);
+      const metrics = el.querySelectorAll(".metrics li").map((li) => clean(li.text)).join(", ");
+      text = joinSentences([title, pick(".repo-desc"), metrics && `Highlights: ${metrics}`, pick(".repo-meta")]);
     } else if (type === "education" || type === "honor") {
       title = type === "honor" ? joinSentences([pick(".k"), pick(".t")], " — ") : pick(".t");
       text = joinSentences([title, pick(".s"), type === "education" ? pick(".k") : ""]);
     } else if (type === "skills") {
       title = "Focus & tooling";
-      text = "Focus and tooling: " + el.querySelectorAll(".tag").map((t) => clean(t.text)).join(", ");
+      const groups = el.querySelectorAll(".tag-group");
+      text = groups.length
+        ? "Focus and tooling. " + groups.map((g) => `${clean(g.querySelector(".tag-label")?.text ?? "")}: ${g.querySelectorAll(".tag").map((t) => clean(t.text)).join(", ")}`).join(". ")
+        : "Focus and tooling: " + el.querySelectorAll(".tag").map((t) => clean(t.text)).join(", ");
     } else {
       title = "About";
       text = clean(el.text);
@@ -268,7 +272,7 @@ function configChunks(cfg) {
       type: "contact",
       title: "Contact & links",
       text: links.join(". "),
-      url: "/#about",
+      url: "/#contact",
       dedupe: "/#contact",
       core: true,
     },

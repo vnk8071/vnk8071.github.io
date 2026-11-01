@@ -16,7 +16,7 @@
 
   <header class="hero">
     <div class="wrap">
-      <div class="eyebrow reveal d1">AI Engineer · Computer Vision</div>
+      <div class="eyebrow reveal d1">AI Engineer · Edge AI · Computer Vision</div>
       <h1 class="reveal d1">Khoi <span class="light">Vo&nbsp;Nguyen</span></h1>
       <div class="role reveal d2">
         <span>AI Engineer <span class="at">@</span> Qualcomm</span>
@@ -28,15 +28,18 @@
         Currently building <strong>goodjobs.io.vn</strong> ↗
       </a>
       <p class="summary reveal d3" id="about" data-kb="profile">
-        My experience is in computer vision. I've pursued this field largely through
-        independent study — a resourceful engineer with a proven ability to identify
-        and overcome hard problems on my own. I build and ship AI systems end to end,
-        from research to production.
+        AI Engineer working across computer vision, Edge AI and low-latency inference —
+        C++ runtimes and Snapdragon NPU deployment (QNN, TFLite, ExecuTorch) through to
+        production services. I build and ship AI systems end to end, from research to production.
       </p>
       <div class="actions reveal d4">
         <a class="btn primary" href="https://github.com/vnk8071" target="_blank" rel="noopener">GitHub ↗</a>
         <a class="btn" href="https://www.linkedin.com/in/khoivn8071" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a class="btn" href="mailto:nguyenkhoi8071@gmail.com">Email</a>
+        {%- comment -%} Resume / CV button: shows by itself once a PDF is in files/ (or when resume_url is set in _config.yml) {%- endcomment -%}
+        {%- assign cv_url = site.resume_url -%}
+        {%- unless cv_url -%}{%- for f in site.static_files -%}{%- if f.extname == ".pdf" and f.path contains "/files/" -%}{%- unless cv_url -%}{%- assign cv_url = f.path -%}{%- endunless -%}{%- endif -%}{%- endfor -%}{%- endunless -%}
+        {%- if cv_url -%}<a class="btn" href="{{ cv_url | relative_url }}" target="_blank" rel="noopener">Resume / CV ↗</a>{%- endif -%}
         <a class="btn" href="{{ '/projects/' | relative_url }}">Projects</a>
       </div>
     </div>
@@ -54,6 +57,7 @@
             <div class="when">Apr 2026 — Present</div>
             <div class="what">AI Engineer · <span class="co">Qualcomm</span><span class="badge-now">now</span></div>
             <div class="where">Ho Chi Minh City, Vietnam</div>
+            <div class="blurb">Contributing to Qualcomm's open-source AI runtime tooling — QNN HTP, TFLite and ExecuTorch (see Open Source).</div>
           </div>
           <div class="job" id="exp-viact" data-kb="experience">
             <div class="when">Mar 2024 — Apr 2026 · 2 yrs 2 mos</div>
@@ -80,21 +84,36 @@
           <span class="sec-no">02</span>
           <h2>Selected Work</h2>
         </div>
+        <div class="flagships reveal d2">
+          <div class="flagship" id="work-goodjobs" data-kb="project">
+            <div class="repo-top"><span class="repo-name">goodjobs</span><span class="badge-live"><i aria-hidden="true"></i>live</span></div>
+            <div class="repo-desc">A self-hosted job aggregator (goodjobs.io.vn) — 18 job boards, one query, with real-time SSE streaming, LLM intent detection, and vector-based recommendations.</div>
+            <ul class="metrics" aria-label="Highlights"><li>18 job boards</li><li>Real-time SSE streaming</li><li>LLM intent detection</li><li>Vector recommendations</li></ul>
+            <div class="repo-meta"><span><span class="lang-dot"></span>FastAPI / TypeScript / Redis</span></div>
+            <div class="flagship-actions">
+              <a class="btn primary" href="https://goodjobs.io.vn" target="_blank" rel="noopener">Live app ↗</a>
+              <a class="btn" href="{{ '/goodjobs/' | relative_url }}">Details</a>
+              <a class="btn" href="https://github.com/vnk8071/goodjobs" target="_blank" rel="noopener">Source ↗</a>
+            </div>
+          </div>
+          <div class="flagship" id="work-unified-ai-runtime" data-kb="project">
+            <div class="repo-top"><span class="repo-name">unified-ai-runtime</span><span class="badge-live"><i aria-hidden="true"></i>on PyPI</span></div>
+            <div class="repo-desc">One C API over several inference runtimes — with a llama.cpp backend, a stateful session API, and CUDA / Vulkan device selection.</div>
+            <ul class="metrics" aria-label="Highlights"><li>8 backends</li><li>Plain C ABI</li><li>QNN · ONNX Runtime · TensorRT</li><li>CUDA / Vulkan / Hexagon NPU</li></ul>
+            <div class="repo-meta"><span><span class="lang-dot"></span>C / C++</span></div>
+            <div class="flagship-actions">
+              <a class="btn primary" href="{{ '/unified-ai-runtime/' | relative_url }}">Architecture</a>
+              <a class="btn" href="https://pypi.org/project/uairt/" target="_blank" rel="noopener">PyPI ↗</a>
+              <a class="btn" href="https://github.com/vnk8071/unified-ai-runtime" target="_blank" rel="noopener">Source ↗</a>
+            </div>
+          </div>
+        </div>
+        <div class="subhead reveal d2">Other repositories</div>
         <div class="repos reveal d2">
           <a class="repo" id="work-website-kit" data-kb="project" href="https://github.com/vnk8071/website-kit" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">website-kit</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">A starter kit for proof-of-concept websites — Cloudflare Workers and Terraform, six GitHub Pages templates, a WordPress stack and Apps Script projects — scaffolded into a fresh repo with one command.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>Cloudflare / Terraform / TypeScript</span></div>
-          </a>
-          <a class="repo" id="work-unified-ai-runtime" data-kb="project" href="https://github.com/vnk8071/unified-ai-runtime" target="_blank" rel="noopener">
-            <div class="repo-top"><span class="repo-name">unified-ai-runtime</span><span class="repo-arr">↗</span></div>
-            <div class="repo-desc">One C API over several inference runtimes — with a llama.cpp backend, a stateful session API, and CUDA / Vulkan device selection.</div>
-            <div class="repo-meta"><span><span class="lang-dot"></span>C / C++</span></div>
-          </a>
-          <a class="repo" id="work-goodjobs" data-kb="project" href="https://github.com/vnk8071/goodjobs" target="_blank" rel="noopener">
-            <div class="repo-top"><span class="repo-name">goodjobs</span><span class="repo-arr">↗</span></div>
-            <div class="repo-desc">A self-hosted job aggregator (goodjobs.io.vn) — 18 job boards, one query, with real-time SSE streaming, LLM intent detection, and vector-based recommendations.</div>
-            <div class="repo-meta"><span><span class="lang-dot"></span>FastAPI / TypeScript / Redis</span></div>
           </a>
           <a class="repo" id="work-machine-learning-learning-path" data-kb="project" href="https://github.com/vnk8071/machine-learning-learning-path" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">machine-learning-learning-path</span><span class="repo-arr">↗</span></div>
@@ -180,18 +199,16 @@
           <span class="sec-no">05</span>
           <h2>Focus &amp; Tooling</h2>
         </div>
-        <div class="tags reveal d2" id="skills" data-kb="skills">
-          <span class="tag">Computer Vision</span>
-          <span class="tag">Deep Learning</span>
-          <span class="tag">NLP</span>
-          <span class="tag">DeepStream</span>
-          <span class="tag">PyTorch</span>
-          <span class="tag">Python</span>
-          <span class="tag">C++</span>
-          <span class="tag">Docker</span>
-          <span class="tag">AWS</span>
-          <span class="tag">FastAPI</span>
-          <span class="tag">MLOps</span>
+        <div class="tag-groups reveal d2" id="skills" data-kb="skills">
+          <div class="tag-group"><div class="tag-label">Edge &amp; Inference</div><div class="tags">
+            <span class="tag">C++</span><span class="tag">QNN (Qualcomm HTP)</span><span class="tag">TensorRT</span><span class="tag">ONNX Runtime</span><span class="tag">ExecuTorch</span><span class="tag">TFLite</span><span class="tag">llama.cpp</span><span class="tag">OpenVINO</span><span class="tag">DeepStream</span>
+          </div></div>
+          <div class="tag-group"><div class="tag-label">Modeling &amp; AI</div><div class="tags">
+            <span class="tag">PyTorch</span><span class="tag">Computer Vision</span><span class="tag">Deep Learning</span><span class="tag">NLP</span><span class="tag">LLM / RAG</span>
+          </div></div>
+          <div class="tag-group"><div class="tag-label">Backend &amp; Infra</div><div class="tags">
+            <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">Redis</span><span class="tag">Docker</span><span class="tag">AWS</span><span class="tag">Cloudflare Workers</span><span class="tag">MLOps</span><span class="tag">Linux / Android</span>
+          </div></div>
         </div>
       </div>
     </section>
@@ -210,6 +227,22 @@
           <div class="card" id="honor-fpt-ai-center-2021" data-kb="honor">
             <div class="k">FPT AI Center 2021</div>
             <div class="t">Top 15 — Data-Centric AI</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="contact">
+      <div class="wrap">
+        <div class="cta reveal d2">
+          <div class="cta-text">
+            <h2>Let's talk</h2>
+            <p>Interested in Edge AI, C++ inference runtimes or AI products? Reach me at
+              <a href="mailto:nguyenkhoi8071@gmail.com">nguyenkhoi8071@gmail.com</a> or connect on LinkedIn.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn primary" href="mailto:nguyenkhoi8071@gmail.com">Email me</a>
+            <a class="btn" href="https://www.linkedin.com/in/khoivn8071" target="_blank" rel="noopener">LinkedIn ↗</a>
           </div>
         </div>
       </div>

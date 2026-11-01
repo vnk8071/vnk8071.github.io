@@ -14,6 +14,14 @@ One C API to run compiled AI models on QNN (Qualcomm NPUs), ONNX Runtime, TFLite
 CoreML, llama.cpp (GGUF language models), TensorRT, OpenVINO and NCNN. Write the
 application code once; choose the backend by name when you create an engine.
 
+```
+ your app ──► uairt C API ──► one plugin per backend ──► the vendor's own runtime
+                                 ├─ QNN                  (Qualcomm NPUs)
+                                 ├─ ONNX Runtime · TFLite · CoreML
+                                 ├─ llama.cpp            (GGUF language models; CUDA / Vulkan / OpenCL / Hexagon NPU)
+                                 └─ TensorRT · OpenVINO · NCNN
+```
+
 UAIRT loads artifacts that each vendor's toolchain already produced and runs them
 through that vendor's runtime. It does not convert or quantize models, and a
 device or SDK mismatch returns an error instead of silently falling back to the CPU.
