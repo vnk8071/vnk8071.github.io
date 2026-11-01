@@ -1,11 +1,13 @@
-# ⌘K command palette: search + "Ask my profile"
+# Site search (⌘K) + profile chatbot
 
-Press **⌘K / Ctrl K** (or `/`, or click **✦ Hỏi hồ sơ** in the nav) on any page.
+Two entry points that share one knowledge base:
 
+**Chatbot window, bottom right** (robot icon). Click it and ask. Answers are generated on Cloudflare Workers AI, grounded only in your CV, projects, posts and publications, with numbered citations that jump to the source. The conversation survives page navigation (sessionStorage); the window is full screen on phones; Esc closes it; ↺ starts over. Anything not about your profile is filtered (see Guardrails). Turn it off with `command_palette.chatbot: false`.
+
+**⌘K / Ctrl K palette** (also `/`, or the "Tìm kiếm" button in the nav):
 * **Navigate**: pages, theme toggle, GitHub / LinkedIn / email.
 * **Semantic search**: type a concept in Vietnamese or English ("kinh nghiệm tối ưu phần cứng", "bài báo khoa học"). A small embedding model runs in a Web Worker and jumps straight to the matching experience line, project card, blog post or publication, even without a keyword match. The target is scrolled into view and highlighted.
-* **Ask AI** (micro-RAG): click a suggested question or type your own. The answer is generated on Cloudflare Workers AI, grounded only in your CV, projects, posts and publications, and cites its sources.
-* **Guardrails**: anything not about your profile is filtered (see below).
+* **Hand-off**: the suggested questions and "Hỏi AI: …" rows close the palette and ask the chatbot.
 
 ## How it fits together
 
@@ -16,11 +18,11 @@ Press **⌘K / Ctrl K** (or `/`, or click **✦ Hỏi hồ sơ** in the nav) on 
  _projects/ _posts/ _publications/     ├─ scripts/build-kb.mjs ─► assets/data/kb.json ◄──── fetched + cached 5 min
  _data/profile.yml (extra facts)       ┘                              │  │                         │
                                                                       │  │                  ┌──────┴────────────┐
- browser ⌘K                                                           │  │                  │ workers/ask       │
+chat window + ⌘K (browser)                                            │  │                  │ workers/ask       │
   ├─ keyword index (instant)  ◄───────────────────────────────────────┘  │                  │  1 screenInput()  │ injection patterns
   ├─ Web Worker: multilingual-e5-small (ONNX/WASM, cached in browser)    │                  │  2 classifyTopic()│ Workers AI, small model
   │    vectors for every chunk cached in IndexedDB                       │                  │  3 main prompt    │ Workers AI, 70B
-  └─ Ask AI ── POST {question, ids of top passages} ─────────────────────┼─────────────────►│  + rate limit     │ SSE stream back
+  └─ chatbot ── POST {question, ids of top passages} ─────────────────────┼─────────────────►│  + rate limit     │ SSE stream back
                                                                          │                  │  + answer cache   │
                                                                          └──────────────────┴───────────────────┘
 ```

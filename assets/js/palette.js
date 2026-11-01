@@ -1,4 +1,5 @@
-/* ⌘K command palette: site navigation + in-browser semantic search + "ask my profile" (micro-RAG).
+/* ⌘K command palette: site navigation + in-browser semantic search. Questions are handed to the chat
+ * window (assets/js/chat.js), which answers with the "ask my profile" micro-RAG.
  *
  *  - kb.json (built by scripts/build-kb.mjs) is the whole knowledge base: CV, projects, posts, publications.
  *  - Keyword search works instantly. A small multilingual embedding model runs in a Web Worker
@@ -16,21 +17,14 @@
 
   // ---- strings (edit here to translate) ---------------------------------------------------------
   const T = {
-    placeholder: "Tìm kiếm hoặc hỏi về hồ sơ…",
-    placeholderAsk: "Hỏi tiếp một câu khác…",
-    suggestions: "Gợi ý hỏi AI",
+    placeholder: "Tìm kiếm trong hồ sơ…",
+    suggestions: "Hỏi trợ lý (mở khung chat)",
     navigate: "Điều hướng",
     results: "Trong hồ sơ",
     ask: "Hỏi AI",
     askRow: (q) => `Hỏi AI: “${q}”`,
-    askSub: "Trả lời dựa trên CV, dự án, bài viết và công bố của tôi",
+    askSub: "Mở khung chat và hỏi trợ lý về hồ sơ",
     none: "Không tìm thấy kết quả nào. Thử hỏi AI bên dưới.",
-    back: "← Quay lại tìm kiếm",
-    sources: "Nguồn",
-    thinking: "Đang tìm trong hồ sơ…",
-    noBackend: "Chưa kết nối trợ lý AI (Cloudflare Worker), nên đây là các đoạn liên quan nhất tìm được trong hồ sơ:",
-    failed: "Trợ lý AI đang bận hoặc không phản hồi. Đây là các đoạn liên quan nhất tìm được trong hồ sơ:",
-    limited: "Bạn hỏi hơi nhanh, thử lại sau ít phút nhé.",
     semOff: "Tìm theo ngữ nghĩa: tắt",
     semEnable: (mb) => `Bật (tải mô hình ≈${mb} MB, một lần)`,
     semLoading: (p) => `Ngữ nghĩa: đang tải mô hình${p != null ? ` ${p}%` : "…"}`,
@@ -38,7 +32,6 @@
     semReady: "Ngữ nghĩa: sẵn sàng",
     semError: "Ngữ nghĩa: lỗi, dùng tìm theo từ khóa",
     kUp: "chọn", kOpen: "mở", kAsk: "hỏi AI", kClose: "đóng",
-    askLabel: "Hỏi AI",
     close: "Đóng",
     emailCopied: "Đã sao chép email",
   };
@@ -362,8 +355,7 @@
   function setMode(mode) {
     S.mode = mode;
     ui.panel.dataset.mode = mode;
-    ui.input.placeholder = mode === "ask" ? T.placeholderAsk : T.placeholder;
-    ui.input.setAttribute("role", mode === "ask" ? "textbox" : "combobox");
+    ui.input.placeholder = T.placeholder;
   }
 
   // ---- search view --------------------------------------------------------------------------------------
@@ -384,7 +376,7 @@
     const cmds = commands();
 
     if (!q) {
-      SUGGESTIONS.forEach((s) => items.push({ group: T.suggestions, badge: "AI", badgeCls: "t-ai", title: s, sub: "", run: () => ask(s) }));
+      if (canAsk()) SUGGESTIONS.forEach((s) => items.push({ group: T.suggestions, badge: "AI", badgeCls: "t-ai", title: s, sub: "", run: () => ask(s) }));
       cmds.forEach((c) => items.push({ group: T.navigate, badge: "Go", badgeCls: "t-cmd", title: c.title, sub: c.sub, run: c.run }));
     } else {
       const fq = fold(q);
@@ -402,7 +394,7 @@
         run: () => go(chunk.url),
       }));
       if (!hits.length && !matchCmds.length) items.push({ group: "", empty: T.none });
-      items.push({ group: T.ask, badge: "AI", badgeCls: "t-ai", title: T.askRow(q), sub: T.askSub, run: () => ask(q) });
+      if (canAsk()) items.push({ group: T.ask, badge: "AI", badgeCls: "t-ai", title: T.askRow(q), sub: T.askSub, run: () => ask(q) });
     }
     S.items = items;
     S.active = Math.max(0, items.findIndex((i) => !i.empty));
@@ -462,7 +454,6 @@
 
   function onBodyClick(e) {
     if (e.target.closest("a.cmdk-ext, a.cmdk-src, a.cmdk-cite")) { close(); return; }
-    if (e.target.closest(".cmdk-back")) { backToSearch(); return; }
     const li = e.target.closest(".cmdk-item");
     if (li) S.items[+li.dataset.i]?.run();
   }
@@ -471,13 +462,13 @@
     if (e.isComposing) return;
     if (e.key === "Escape") {
       e.preventDefault();
-      if (S.mode === "ask") backToSearch(); else close();
-    } else if (S.mode === "search" && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      close();
+    } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault(); move(e.key === "ArrowDown" ? 1 : -1);
     } else if (e.key === "Enter") {
       e.preventDefault();
       const q = ui.input.value.trim();
-      if (S.mode === "ask" || e.metaKey || e.ctrlKey) { if (q) ask(q); }
+      if (e.metaKey || e.ctrlKey) { if (q) ask(q); }
       else S.items[S.active]?.run?.();
     }
   }
@@ -491,140 +482,21 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
-  // ---- ask view (micro-RAG) -----------------------------------------------------------------------------
-  function backToSearch() {
-    S.abort?.abort();
-    setMode("search");
-    ui.input.value = S.query || "";
-    ui.input.focus();
-    refresh();
+  // ---- hand-off to the chat window (assets/js/chat.js) -----------------------------------------------------
+  // The palette searches and navigates; answers live in the chat window at the bottom right.
+  const canAsk = () => Boolean(window.chatbot);
+
+  function ask(question) {
+    question = question.trim();
+    if (!question || !canAsk()) return;
+    close();
+    window.chatbot.ask(question);
   }
 
-  function renderMd(text, sources) {
-    const cite = (s) => s.replace(/\[(\d{1,2})\]/g, (m, n) => {
-      const src = sources[+n - 1];
-      return src ? `<a class="cmdk-cite" href="${esc((cfg.baseurl || "") + src.url)}" title="${esc(src.title)}">${n}</a>` : "";
-    });
-    const inline = (s) => cite(esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>"));
-    let html = "";
-    let list = null;
-    const closeList = () => { if (list) { html += `</${list}>`; list = null; } };
-    for (const line of text.replace(/\r/g, "").split("\n")) {
-      const li = line.match(/^\s*([-*•]|\d+[.)])\s+(.*)$/);
-      if (li) {
-        const kind = /\d/.test(li[1]) ? "ol" : "ul";
-        if (list !== kind) { closeList(); html += `<${kind}>`; list = kind; }
-        html += `<li>${inline(li[2])}</li>`;
-      } else if (line.trim()) { closeList(); html += `<p>${inline(line.trim())}</p>`; }
-      else closeList();
-    }
-    closeList();
-    return html;
-  }
-
-  function passageList(hits) {
-    return hits.map(({ chunk }) => `<li><a class="cmdk-src" style="display:inline-block" href="${esc((cfg.baseurl || "") + chunk.url)}"><b>${esc(chunk.label)}</b>${esc(chunk.title)}</a><div class="cmdk-sub" style="margin:4px 0 8px">${esc(chunk.text.slice(0, 220))}</div></li>`).join("");
-  }
-
-  async function ask(question) {
-    question = question.trim().slice(0, 500);
-    if (!question) return;
-    S.abort?.abort();
-    S.query = S.mode === "search" ? ui.input.value.trim() : S.query;
-    setMode("ask");
-    ui.input.value = "";
-    ui.input.placeholder = T.placeholderAsk;
-
-    ui.body.innerHTML =
-      `<div class="cmdk-ask"><div class="cmdk-q"><span>›</span><span>${esc(question)}</span></div>` +
-      `<div class="cmdk-answer is-streaming" aria-live="polite" aria-busy="true"><p class="cmdk-note">${esc(T.thinking)}</p></div>` +
-      `<div class="cmdk-sources" hidden></div>` +
-      `<button type="button" class="cmdk-back">${esc(T.back)}</button></div>`;
-    const answerEl = ui.body.querySelector(".cmdk-answer");
-    const srcEl = ui.body.querySelector(".cmdk-sources");
-    ui.input.focus();
-
-    // 1. retrieve: best non-core passages (core CV facts are always added by the Worker)
-    let hits = [];
-    try { await loadKb(); hits = await rank(question, { includeCore: false }); } catch { /* answer without retrieval */ }
-    const ids = hits.slice(0, 5).map((h) => h.chunk.id);
-
-    const fallback = (msg) => {
-      answerEl.classList.remove("is-streaming");
-      answerEl.setAttribute("aria-busy", "false");
-      answerEl.innerHTML = `<p class="cmdk-note">${esc(msg)}</p><ul style="list-style:none;margin:0">${passageList(hits.slice(0, 4))}</ul>`;
-    };
-    if (!cfg.ask) return fallback(T.noBackend);
-
-    // 2. generate: stream the grounded answer from the Cloudflare Worker
-    const ctl = (S.abort = new AbortController());
-    let sources = [];
-    let text = "";
-    let refusal = null; // set when the Worker's guardrail filtered the question
-    let raf = 0;
-    const paint = () => { raf = 0; answerEl.innerHTML = renderMd(text, sources); };
-    try {
-      const res = await fetch(cfg.ask, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question, ids }),
-        signal: ctl.signal,
-      });
-      if (res.status === 429) { answerEl.classList.remove("is-streaming"); answerEl.innerHTML = `<p class="cmdk-note">${esc(T.limited)}</p>`; return; }
-      if (!res.ok || !res.body) throw new Error("ask " + res.status);
-
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf = "";
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
-        let cut;
-        while ((cut = buf.indexOf("\n\n")) >= 0) {
-          const block = buf.slice(0, cut);
-          buf = buf.slice(cut + 2);
-          let event = "message";
-          const data = [];
-          for (const line of block.split("\n")) {
-            if (line.startsWith("event:")) event = line.slice(6).trim();
-            else if (line.startsWith("data:")) data.push(line.slice(5).trim());
-          }
-          if (!data.length) continue;
-          let payload;
-          try { payload = JSON.parse(data.join("\n")); } catch { continue; }
-          if (event === "sources") sources = payload;
-          else if (event === "blocked") refusal = payload.message || "";
-          else if (event === "error") throw new Error(payload.message || "ask error");
-          else if (event === "message" && payload.t) { text += payload.t; if (!raf) raf = requestAnimationFrame(paint); }
-        }
-      }
-      if (raf) cancelAnimationFrame(raf);
-      if (refusal !== null) {
-        // off-topic / injection: show the fixed refusal only (no passages, no sources), keep the input ready
-        answerEl.classList.remove("is-streaming");
-        answerEl.setAttribute("aria-busy", "false");
-        answerEl.innerHTML = `<p class="cmdk-note">${esc(refusal)}</p>`;
-        return;
-      }
-      if (!text.trim()) throw new Error("empty answer");
-      answerEl.classList.remove("is-streaming");
-      answerEl.setAttribute("aria-busy", "false");
-      answerEl.innerHTML = renderMd(text, sources);
-      // the Worker numbers every passage it gave the model; show only the ones the answer actually cited
-      const cited = [...new Set([...text.matchAll(/\[(\d{1,2})\]/g)].map((m) => +m[1]))]
-        .filter((n) => sources[n - 1]).sort((a, b) => a - b);
-      if (cited.length) {
-        srcEl.hidden = false;
-        srcEl.innerHTML = `<span class="cmdk-sources-label">${esc(T.sources)}</span>` +
-          cited.map((n) => `<a class="cmdk-src" href="${esc((cfg.baseurl || "") + sources[n - 1].url)}"><b>${n}</b>${esc(sources[n - 1].title)}</a>`).join("");
-      }
-    } catch (err) {
-      if (ctl.signal.aborted) return;
-      if (raf) cancelAnimationFrame(raf);
-      if (text.trim()) { answerEl.classList.remove("is-streaming"); answerEl.innerHTML = renderMd(text, sources); return; }
-      fallback(T.failed);
-    }
+  // Best non-core passages for a question (semantic when the model is ready, keyword otherwise).
+  async function retrieve(question) {
+    await loadKb();
+    return (await rank(question, { includeCore: false })).slice(0, 5);
   }
 
   // ---- global wiring -----------------------------------------------------------------------------------------
@@ -645,5 +517,5 @@
   // warm the (small) keyword index when the browser is idle so the first ⌘K is instant
   (window.requestIdleCallback || ((f) => setTimeout(f, 1500)))(() => { loadKb().catch(() => {}); });
 
-  window.cmdk = { open, close };
+  window.cmdk = { open, close, go, retrieve };
 })();

@@ -16,6 +16,7 @@
   "worker": {{ '/assets/js/palette.worker.js' | relative_url | jsonify }},
   "baseurl": {{ site.baseurl | default: '' | jsonify }},
   "ask": {{ cp.ask_endpoint | default: nil | jsonify }},
+  "chatbot": {% if cp.chatbot == false %}false{% else %}true{% endif %},
   "semantic": {{ cp.semantic | default: 'auto' | jsonify }},
   "semanticWindow": {{ cp.semantic_window | default: 0.05 | jsonify }},
   "transformers": {{ cp.transformers_url | jsonify }},
@@ -27,4 +28,7 @@
   "suggestions": {{ cp.suggestions | jsonify }}
 }</script>
 <script src="{{ '/assets/js/palette.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}" defer></script>
+{%- if cp.chatbot != false -%}
+<script src="{{ '/assets/js/chat.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}" defer></script>
+{%- endif -%}
 {%- endif -%}

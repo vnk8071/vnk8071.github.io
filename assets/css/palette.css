@@ -10,7 +10,7 @@ html { scroll-padding-top: 84px; }
   display: inline-flex; align-items: center; gap: 10px;
   height: 34px;
   padding: 0 8px 0 12px;
-  margin-right: 20px;
+  margin: 0 20px 0 22px;
   font: 400 0.74rem/1 var(--mono);
   color: var(--muted);
   background: var(--bg-soft);
@@ -31,11 +31,9 @@ html { scroll-padding-top: 84px; }
   border-radius: 4px;
 }
 @media (max-width: 620px) {
-  .cmdk-trigger { margin-right: 0; padding: 0 12px; }
+  .cmdk-trigger { margin: 0; padding: 0 12px; }
   .cmdk-trigger .cmdk-label, .cmdk-trigger kbd { display: none; }
 }
-.btn.cmdk-open { cursor: pointer; font-family: var(--mono); }
-.btn.cmdk-open .spark { color: var(--accent); }
 
 /* ---- overlay + panel ---- */
 .cmdk-overlay {
@@ -120,35 +118,6 @@ html[data-theme="light"] .cmdk-overlay { background: rgba(12, 21, 24, 0.28); }
 .cmdk-ext:hover { color: var(--accent); border-color: var(--accent); }
 .cmdk-empty { padding: 28px 12px; text-align: center; color: var(--muted); font-size: 0.86rem; }
 
-/* ---- ask view ---- */
-.cmdk-ask { padding: 14px 12px 12px; }
-.cmdk-q { font: 500 0.8rem var(--mono); color: var(--accent); margin-bottom: 12px; display: flex; gap: 8px; }
-.cmdk-q span:last-child { color: var(--text); font-family: var(--sans); font-weight: 400; font-size: 0.9rem; }
-.cmdk-answer { font-size: 0.92rem; line-height: 1.72; color: var(--text-soft); }
-.cmdk-answer p { margin: 0 0 10px; }
-.cmdk-answer ul, .cmdk-answer ol { margin: 0 0 10px 1.2em; padding: 0; }
-.cmdk-answer li { margin: 4px 0; padding-left: 4px; }
-.cmdk-answer strong { color: var(--text); font-weight: 600; }
-.cmdk-answer code { font: 0.82em var(--mono); background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; color: var(--accent); }
-.cmdk-answer .cmdk-cite {
-  font: 600 0.62rem var(--mono); vertical-align: super; margin: 0 1px;
-  color: var(--accent); text-decoration: none; padding: 0 3px; border-radius: 3px; background: var(--glow);
-}
-.cmdk-answer.is-streaming::after { content: ""; display: inline-block; width: 0.5em; height: 1em; margin-left: 2px; vertical-align: text-bottom; background: var(--accent); animation: blink 1s steps(1) infinite; }
-.cmdk-note { font: 400 0.76rem/1.6 var(--sans); color: var(--muted); margin: 8px 0; padding: 8px 10px; border-left: 2px solid var(--accent-dim); background: var(--surface); }
-.cmdk-sources { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.cmdk-sources[hidden] { display: none; }
-.cmdk-sources-label { font: 500 0.64rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
-.cmdk-src {
-  font: 400 0.74rem var(--mono); color: var(--text-soft); text-decoration: none;
-  border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; background: var(--surface);
-  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.cmdk-src:hover { border-color: var(--accent); color: var(--accent); }
-.cmdk-src b { color: var(--accent); font-weight: 600; margin-right: 6px; }
-.cmdk-back { font: 500 0.74rem var(--mono); color: var(--muted); background: none; border: 0; cursor: pointer; padding: 4px 0; margin-top: 12px; }
-.cmdk-back:hover { color: var(--accent); }
-
 /* ---- footer ---- */
 .cmdk-foot {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px;
@@ -160,7 +129,6 @@ html[data-theme="light"] .cmdk-overlay { background: rgba(12, 21, 24, 0.28); }
 .cmdk-foot .grow { flex: 1; }
 .cmdk-foot .keys { display: flex; gap: 14px; flex-wrap: wrap; }
 .cmdk-foot .keys span { display: inline-flex; align-items: center; gap: 5px; }
-.cmdk-panel[data-mode="ask"] .cmdk-foot .k-search { display: none; }
 .cmdk-sem { display: inline-flex; align-items: center; gap: 7px; }
 .cmdk-sem i { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
 .cmdk-sem[data-state="ready"] i { background: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
@@ -185,5 +153,4 @@ html[data-theme="light"] .cmdk-overlay { background: rgba(12, 21, 24, 0.28); }
 @media (prefers-reduced-motion: reduce) {
   .cmdk-overlay.is-open, .cmdk-panel { animation: none; }
   .cmdk-flash { animation: none; outline: 2px solid var(--accent); outline-offset: 8px; }
-  .cmdk-answer.is-streaming::after { animation: none; }
 }
