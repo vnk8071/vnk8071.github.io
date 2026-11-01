@@ -1,0 +1,58 @@
+# Tests the "Ask my profile" Cloudflare Worker (workers/ask) and deploys it to Cloudflare.
+#
+# One-time setup, in the repo's Settings > Secrets and variables > Actions:
+#   CLOUDFLARE_API_TOKEN   token with "Workers Scripts: Edit" (and Workers AI is used via the binding)
+#   CLOUDFLARE_ACCOUNT_ID
+# Deploys only on pushes to master that touch workers/ask, or manually. The site's content (kb.json) is read
+# live by the Worker, so a normal site deploy never needs a Worker redeploy.
+name: Ask Worker
+
+on:
+  pull_request:
+    paths: ["workers/ask/**"]
+  push:
+    branches: ["master"]
+    paths: ["workers/ask/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: workers/ask
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/ask/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Bundle check (no deploy)
+        run: npx wrangler deploy --dry-run --outdir /tmp/ask-out
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/ask/package-lock.json
+      - run: npm ci
+        working-directory: workers/ask
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/ask
+          command: deploy

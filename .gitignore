@@ -4,3 +4,8 @@ vendor/
 .DS_Store
 *.pdf
 !files/*.pdf
+
+# kb tooling / worker deps
+node_modules/
+.wrangler/
+.dev.vars

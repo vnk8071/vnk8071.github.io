@@ -27,7 +27,7 @@
         <span class="pulse" aria-hidden="true"></span>
         Currently building <strong>goodjobs.io.vn</strong> ↗
       </a>
-      <p class="summary reveal d3">
+      <p class="summary reveal d3" id="about" data-kb="profile">
         My experience is in computer vision. I've pursued this field largely through
         independent study — a resourceful engineer with a proven ability to identify
         and overcome hard problems on my own. I build and ship AI systems end to end,
@@ -38,34 +38,37 @@
         <a class="btn" href="https://www.linkedin.com/in/khoivn8071" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a class="btn" href="mailto:nguyenkhoi8071@gmail.com">Email</a>
         <a class="btn" href="{{ '/projects/' | relative_url }}">Projects</a>
+        {%- if site.command_palette.enabled != false -%}
+        <button class="btn cmdk-open" type="button" data-cmdk-open aria-haspopup="dialog"><span class="spark" aria-hidden="true">✦</span> Trò chuyện với hồ sơ <kbd data-cmdk-key>Ctrl K</kbd></button>
+        {%- endif -%}
       </div>
     </div>
   </header>
 
   <main>
-    <section class="block">
+    <section class="block" id="experience">
       <div class="wrap">
         <div class="sec-head reveal d1">
           <span class="sec-no">01</span>
           <h2>Experience</h2>
         </div>
         <div class="timeline reveal d2">
-          <div class="job current">
+          <div class="job current" id="exp-qualcomm" data-kb="experience">
             <div class="when">Apr 2026 — Present</div>
             <div class="what">AI Engineer · <span class="co">Qualcomm</span><span class="badge-now">now</span></div>
             <div class="where">Ho Chi Minh City, Vietnam</div>
           </div>
-          <div class="job">
+          <div class="job" id="exp-viact" data-kb="experience">
             <div class="when">Mar 2024 — Apr 2026 · 2 yrs 2 mos</div>
             <div class="what">AI Engineer · <span class="co">viAct</span></div>
             <div class="where">Hong Kong SAR</div>
           </div>
-          <div class="job">
+          <div class="job" id="exp-fpt-software" data-kb="experience">
             <div class="when">Sep 2022 — Feb 2024 · 1 yr 6 mos</div>
             <div class="what">AI Engineer · <span class="co">FPT Software</span></div>
             <div class="where">Quy Nhơn, Vietnam</div>
           </div>
-          <div class="job">
+          <div class="job" id="exp-a2ds" data-kb="experience">
             <div class="when">Jul 2021 — Feb 2023 · 1 yr 8 mos</div>
             <div class="what">AI Engineer · <span class="co">A2DS Inc.</span></div>
             <div class="where">Ho Chi Minh City, Vietnam</div>
@@ -74,39 +77,39 @@
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="selected-work">
       <div class="wrap">
         <div class="sec-head reveal d1">
           <span class="sec-no">02</span>
           <h2>Selected Work</h2>
         </div>
         <div class="repos reveal d2">
-          <a class="repo" href="https://github.com/vnk8071/unified-ai-runtime" target="_blank" rel="noopener">
+          <a class="repo" id="work-unified-ai-runtime" data-kb="project" href="https://github.com/vnk8071/unified-ai-runtime" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">unified-ai-runtime</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">One C API over several inference runtimes — with a llama.cpp backend, a stateful session API, and CUDA / Vulkan device selection.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>C / C++</span></div>
           </a>
-          <a class="repo" href="https://github.com/vnk8071/goodjobs" target="_blank" rel="noopener">
+          <a class="repo" id="work-goodjobs" data-kb="project" href="https://github.com/vnk8071/goodjobs" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">goodjobs</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">A self-hosted job aggregator (goodjobs.io.vn) — 18 job boards, one query, with real-time SSE streaming, LLM intent detection, and vector-based recommendations.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>FastAPI / TypeScript / Redis</span></div>
           </a>
-          <a class="repo" href="https://github.com/vnk8071/machine-learning-learning-path" target="_blank" rel="noopener">
+          <a class="repo" id="work-machine-learning-learning-path" data-kb="project" href="https://github.com/vnk8071/machine-learning-learning-path" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">machine-learning-learning-path</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">A structured, self-taught roadmap through machine learning and deep learning — notes, code, and projects.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>Jupyter / Python</span></div>
           </a>
-          <a class="repo" href="https://github.com/vnk8071/E2E-AI-Chatbot" target="_blank" rel="noopener">
+          <a class="repo" id="work-e2e-ai-chatbot" data-kb="project" href="https://github.com/vnk8071/E2E-AI-Chatbot" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">E2E-AI-Chatbot</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">An end-to-end AI chatbot — retrieval-augmented generation wired from data to a deployable service.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>Python</span></div>
           </a>
-          <a class="repo" href="https://github.com/vnk8071/anomaly-detection-in-industry-manufacturing" target="_blank" rel="noopener">
+          <a class="repo" id="work-anomaly-detection-in-industry-manufacturing" data-kb="project" href="https://github.com/vnk8071/anomaly-detection-in-industry-manufacturing" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">anomaly-detection-in-industry-manufacturing</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">Computer-vision anomaly detection for industrial manufacturing defect inspection.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>Python / PyTorch</span></div>
           </a>
-          <a class="repo" href="https://github.com/vnk8071/AI-on-Cpp" target="_blank" rel="noopener">
+          <a class="repo" id="work-ai-on-cpp" data-kb="project" href="https://github.com/vnk8071/AI-on-Cpp" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">AI-on-Cpp</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">Running deep-learning inference in C++ — bringing models closer to production performance.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>C++</span></div>
@@ -116,29 +119,29 @@
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="open-source">
       <div class="wrap">
         <div class="sec-head reveal d1">
           <span class="sec-no">03</span>
           <h2>Open Source</h2>
         </div>
         <div class="repos reveal d2">
-          <a class="repo" href="https://github.com/qualcomm/qai-appbuilder/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
+          <a class="repo" id="oss-qualcomm-qai-appbuilder" data-kb="opensource" href="https://github.com/qualcomm/qai-appbuilder/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">qualcomm/qai-appbuilder</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">Linux and Android TFLite and ExecuTorch support, plus a fix to run the Android TFLite YOLOX sample on QNN HTP.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>3 merged PRs · C++ / Android</span></div>
           </a>
-          <a class="repo" href="https://github.com/qualcomm/GenieX/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
+          <a class="repo" id="oss-qualcomm-geniex" data-kb="opensource" href="https://github.com/qualcomm/GenieX/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">qualcomm/GenieX</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">Structured decisions (JEV) for the GenieX CLI.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>1 merged PR</span></div>
           </a>
-          <a class="repo" href="https://github.com/career-ops-hq/career-ops/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
+          <a class="repo" id="oss-career-ops-hq-career-ops" data-kb="opensource" href="https://github.com/career-ops-hq/career-ops/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">career-ops-hq/career-ops</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">Vietnamese market mode and README, plus the ITviec and CareerViet job-board providers — the first Vietnamese sources.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>4 merged PRs</span></div>
           </a>
-          <a class="repo" href="https://github.com/ultralytics/ultralytics/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
+          <a class="repo" id="oss-ultralytics-ultralytics" data-kb="opensource" href="https://github.com/ultralytics/ultralytics/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged" target="_blank" rel="noopener">
             <div class="repo-top"><span class="repo-name">ultralytics/ultralytics</span><span class="repo-arr">↗</span></div>
             <div class="repo-desc">A C++ MNN example for YOLOv8 inference, and its README.</div>
             <div class="repo-meta"><span><span class="lang-dot"></span>2 merged PRs · C++</span></div>
@@ -148,19 +151,19 @@
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="education">
       <div class="wrap">
         <div class="sec-head reveal d1">
           <span class="sec-no">04</span>
           <h2>Education</h2>
         </div>
         <div class="cards reveal d2">
-          <div class="card">
+          <div class="card" id="edu-msc-ai-vnuhcm" data-kb="education">
             <div class="k">2025 — 2027</div>
             <div class="t">M.Sc. Artificial Intelligence</div>
             <div class="s">VNUHCM — University of Science</div>
           </div>
-          <div class="card">
+          <div class="card" id="edu-beng-bme-iu" data-kb="education">
             <div class="k">2018 — 2023</div>
             <div class="t">B.Eng. Biomedical Engineering</div>
             <div class="s">International University — VNU HCMC</div>
@@ -169,13 +172,13 @@
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="focus">
       <div class="wrap">
         <div class="sec-head reveal d1">
           <span class="sec-no">05</span>
           <h2>Focus &amp; Tooling</h2>
         </div>
-        <div class="tags reveal d2">
+        <div class="tags reveal d2" id="skills" data-kb="skills">
           <span class="tag">Computer Vision</span>
           <span class="tag">Deep Learning</span>
           <span class="tag">NLP</span>
@@ -191,18 +194,18 @@
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" id="honors">
       <div class="wrap">
         <div class="sec-head reveal d1">
           <span class="sec-no">06</span>
           <h2>Honors</h2>
         </div>
         <div class="cards reveal d2">
-          <div class="card">
+          <div class="card" id="honor-zalo-ai-challenge-2022" data-kb="honor">
             <div class="k">Zalo AI Challenge 2022</div>
             <div class="t">Top 9 — Lyric Alignment</div>
           </div>
-          <div class="card">
+          <div class="card" id="honor-fpt-ai-center-2021" data-kb="honor">
             <div class="k">FPT AI Center 2021</div>
             <div class="t">Top 15 — Data-Centric AI</div>
           </div>

@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "khoispace-ask",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+
+  // Cloudflare Workers AI: the LLM. Always talks to Cloudflare's network, even under `wrangler dev`
+  // (needs `wrangler login`; usage counts against the free daily allowance of neurons).
+  "ai": { "binding": "AI" },
+
+  "vars": {
+    // Browsers may call the API only from these origins (exact match, comma separated).
+    "ALLOWED_ORIGINS": "https://khoispace.io.vn,http://localhost:4000,http://127.0.0.1:4000",
+
+    // The knowledge base is read from the live site, so a site deploy updates the assistant too.
+    "KB_URL": "https://khoispace.io.vn/assets/data/kb.json",
+
+    // The answering model: any text-generation model in the Workers AI catalog (`npx wrangler ai models`).
+    // Reasoning output (<think>…</think> / reasoning_content) is filtered out before it reaches visitors.
+    // Cheaper / more conservative alternatives: @cf/meta/llama-3.3-70b-instruct-fp8-fast, @cf/google/gemma-3-12b-it.
+    "MODEL": "@cf/deepseek-ai/deepseek-v4.1-flash-1017",
+
+    // Small, cheap model for the topic guardrail (ON_TOPIC / OFF_TOPIC, ~8 output tokens per question).
+    "GUARD_MODEL": "@cf/meta/llama-3.1-8b-instruct"
+  },
+
+  // Per-IP rate limit (Workers Rate Limiting): 8 questions per minute.
+  "ratelimits": [
+    { "name": "RATE_LIMITER", "namespace_id": "4711", "simple": { "limit": 8, "period": 60 } }
+  ]
+
+  // Optional: serve it from your own domain instead of *.workers.dev (needed for the answer cache to work):
+  // "routes": [{ "pattern": "ask.khoispace.io.vn", "custom_domain": true }]
+}
