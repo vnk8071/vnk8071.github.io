@@ -9,6 +9,13 @@
           {%- endunless -%}
         {%- endfor -%}
       </ul>
+      {%- if site.command_palette.enabled != false -%}
+      <button class="cmdk-trigger" type="button" data-cmdk-open aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" title="Search or ask my profile">
+        <span class="spark" aria-hidden="true">✦</span>
+        <span class="cmdk-label">Hỏi hồ sơ</span>
+        <kbd data-cmdk-key>Ctrl K</kbd>
+      </button>
+      {%- endif -%}
       <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
         <span class="i-sun" aria-hidden="true">☀</span>
         <span class="i-moon" aria-hidden="true">☾</span>

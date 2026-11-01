@@ -9,6 +9,28 @@
 theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
+# ⌘K command palette: site search + "ask my profile". See docs/command-palette.md
+command_palette:
+  enabled: true
+  kb_url: /assets/data/kb.json            # built by scripts/build-kb.mjs
+  # Cloudflare Worker that answers with Workers AI (workers/ask). Leave empty until it is deployed:
+  # the palette then shows the best-matching passages instead of a generated answer.
+  ask_endpoint: ""                         # e.g. "https://ask.khoispace.io.vn/api/ask"
+  semantic: auto                           # auto | ask (visitor must opt in) | off
+  semantic_window: 0.05                    # keep semantic hits within this cosine distance of the best one
+  # Small multilingual embedding model, run in a Web Worker (Vietnamese queries over English content).
+  # English-only alternative (about 25 MB): Xenova/all-MiniLM-L6-v2 with empty query/passage prefixes.
+  transformers_url: https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm
+  embedding_model: Xenova/multilingual-e5-small
+  embedding_dtype: q8
+  embedding_mb: 120
+  query_prefix: "query: "
+  passage_prefix: "passage: "
+  suggestions:
+    - "Tóm tắt thế mạnh cốt lõi trong 3 gạch đầu dòng"
+    - "Các dự án nào đã từng triển khai thực tế ở môi trường Production?"
+    - "Stack công nghệ chính khi làm việc với Computer Vision & LLM?"
+
 # Site Settings
 locale: "en-US"
 title: "Khoi Space"
@@ -139,6 +161,9 @@ include:
   - _pages
   - files
 exclude:
+  - scripts
+  - workers
+  - docs
   - "*.sublime-project"
   - "*.sublime-workspace"
   - .asset-cache

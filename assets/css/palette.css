@@ -1,0 +1,189 @@
+/* ===========================================================
+   ⌘K command palette — search, navigate and ask the profile
+   Uses the design tokens from space.css (works in light + dark)
+   =========================================================== */
+
+html { scroll-padding-top: 84px; }
+
+/* ---- nav trigger ---- */
+.cmdk-trigger {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 34px;
+  padding: 0 8px 0 12px;
+  margin-right: 20px;
+  font: 400 0.74rem/1 var(--mono);
+  color: var(--muted);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.cmdk-trigger:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.cmdk-trigger:focus-visible, .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cmdk-trigger .spark { color: var(--accent); }
+.cmdk-trigger kbd, .cmdk-foot kbd, .btn kbd {
+  font: 500 0.68rem/1 var(--mono);
+  padding: 4px 6px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+@media (max-width: 620px) {
+  .cmdk-trigger { margin-right: 0; padding: 0 12px; }
+  .cmdk-trigger .cmdk-label, .cmdk-trigger kbd { display: none; }
+}
+.btn.cmdk-open { cursor: pointer; font-family: var(--mono); }
+.btn.cmdk-open .spark { color: var(--accent); }
+
+/* ---- overlay + panel ---- */
+.cmdk-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: none;
+  align-items: flex-start; justify-content: center;
+  padding: 11vh 16px 16px;
+  background: rgba(3, 8, 9, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+html[data-theme="light"] .cmdk-overlay { background: rgba(12, 21, 24, 0.28); }
+.cmdk-overlay.is-open { display: flex; animation: cmdkFade 0.14s ease-out; }
+@keyframes cmdkFade { from { opacity: 0; } to { opacity: 1; } }
+
+.cmdk-panel {
+  width: 100%; max-width: 660px;
+  max-height: min(640px, 78vh);
+  display: flex; flex-direction: column;
+  background: var(--bg-soft);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--glow);
+  overflow: hidden;
+  animation: cmdkPop 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+@keyframes cmdkPop { from { transform: translateY(-8px) scale(0.985); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.cmdk-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.cmdk-bar .cmdk-ico { color: var(--accent); font: 500 1rem var(--mono); flex: none; width: 1.2em; text-align: center; }
+.cmdk-input {
+  flex: 1; min-width: 0;
+  height: 56px;
+  background: transparent; border: 0; outline: 0;
+  color: var(--text);
+  font: 400 1rem var(--sans);
+}
+.cmdk-input::placeholder { color: var(--muted); }
+.cmdk-esc {
+  font: 500 0.68rem var(--mono); color: var(--muted);
+  border: 1px solid var(--line); border-radius: 4px; padding: 4px 6px;
+  background: var(--surface); cursor: pointer;
+}
+.cmdk-esc:hover { color: var(--accent); border-color: var(--accent); }
+
+.cmdk-body { overflow-y: auto; overscroll-behavior: contain; padding: 6px 8px 8px; flex: 1; min-height: 120px; }
+.cmdk-list { list-style: none; }
+.cmdk-group {
+  padding: 12px 10px 6px;
+  font: 500 0.66rem var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--faint);
+}
+.cmdk-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.cmdk-item[aria-selected="true"] { background: var(--surface); border-color: var(--line); }
+.cmdk-item[aria-selected="true"] .cmdk-go { color: var(--accent); opacity: 1; }
+.cmdk-badge {
+  flex: none; min-width: 84px; text-align: center;
+  font: 500 0.64rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 6px; border-radius: 4px;
+  color: var(--accent); background: var(--glow);
+  border: 1px solid transparent;
+}
+.cmdk-badge.t-cmd { color: var(--muted); background: var(--surface); border-color: var(--line); }
+.cmdk-badge.t-ai { color: var(--on-accent); background: var(--accent); }
+.cmdk-main { flex: 1; min-width: 0; }
+.cmdk-title { font: 500 0.88rem/1.35 var(--sans); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmdk-sub { font: 300 0.78rem/1.45 var(--sans); color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cmdk-via { flex: none; font: 500 0.62rem var(--mono); color: var(--accent-dim); letter-spacing: 0.04em; }
+.cmdk-go { flex: none; color: var(--faint); opacity: 0.7; font-family: var(--mono); }
+.cmdk-ext { color: var(--muted); font: 500 0.7rem var(--mono); text-decoration: none; padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px; }
+.cmdk-ext:hover { color: var(--accent); border-color: var(--accent); }
+.cmdk-empty { padding: 28px 12px; text-align: center; color: var(--muted); font-size: 0.86rem; }
+
+/* ---- ask view ---- */
+.cmdk-ask { padding: 14px 12px 12px; }
+.cmdk-q { font: 500 0.8rem var(--mono); color: var(--accent); margin-bottom: 12px; display: flex; gap: 8px; }
+.cmdk-q span:last-child { color: var(--text); font-family: var(--sans); font-weight: 400; font-size: 0.9rem; }
+.cmdk-answer { font-size: 0.92rem; line-height: 1.72; color: var(--text-soft); }
+.cmdk-answer p { margin: 0 0 10px; }
+.cmdk-answer ul, .cmdk-answer ol { margin: 0 0 10px 1.2em; padding: 0; }
+.cmdk-answer li { margin: 4px 0; padding-left: 4px; }
+.cmdk-answer strong { color: var(--text); font-weight: 600; }
+.cmdk-answer code { font: 0.82em var(--mono); background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; color: var(--accent); }
+.cmdk-answer .cmdk-cite {
+  font: 600 0.62rem var(--mono); vertical-align: super; margin: 0 1px;
+  color: var(--accent); text-decoration: none; padding: 0 3px; border-radius: 3px; background: var(--glow);
+}
+.cmdk-answer.is-streaming::after { content: ""; display: inline-block; width: 0.5em; height: 1em; margin-left: 2px; vertical-align: text-bottom; background: var(--accent); animation: blink 1s steps(1) infinite; }
+.cmdk-note { font: 400 0.76rem/1.6 var(--sans); color: var(--muted); margin: 8px 0; padding: 8px 10px; border-left: 2px solid var(--accent-dim); background: var(--surface); }
+.cmdk-sources { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cmdk-sources[hidden] { display: none; }
+.cmdk-sources-label { font: 500 0.64rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+.cmdk-src {
+  font: 400 0.74rem var(--mono); color: var(--text-soft); text-decoration: none;
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; background: var(--surface);
+  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cmdk-src:hover { border-color: var(--accent); color: var(--accent); }
+.cmdk-src b { color: var(--accent); font-weight: 600; margin-right: 6px; }
+.cmdk-back { font: 500 0.74rem var(--mono); color: var(--muted); background: none; border: 0; cursor: pointer; padding: 4px 0; margin-top: 12px; }
+.cmdk-back:hover { color: var(--accent); }
+
+/* ---- footer ---- */
+.cmdk-foot {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  font: 400 0.68rem var(--mono); color: var(--muted);
+}
+.cmdk-foot .grow { flex: 1; }
+.cmdk-foot .keys { display: flex; gap: 14px; flex-wrap: wrap; }
+.cmdk-foot .keys span { display: inline-flex; align-items: center; gap: 5px; }
+.cmdk-panel[data-mode="ask"] .cmdk-foot .k-search { display: none; }
+.cmdk-sem { display: inline-flex; align-items: center; gap: 7px; }
+.cmdk-sem i { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
+.cmdk-sem[data-state="ready"] i { background: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+.cmdk-sem[data-state="loading"] i { background: var(--accent-dim); animation: pulse 1.6s ease-out infinite; }
+.cmdk-sem[data-state="error"] i { background: #e5484d; }
+.cmdk-sem button { font: inherit; color: var(--accent); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; }
+@media (max-width: 620px) {
+  .cmdk-foot .keys { display: none; }
+  .cmdk-overlay { padding-top: 7vh; }
+  .cmdk-title { white-space: normal; }
+  .cmdk-badge { min-width: 58px; }
+  .cmdk-via { display: none; }
+}
+
+/* ---- arrival highlight ---- */
+.cmdk-flash { animation: cmdkFlash 2.4s ease-out; border-radius: 4px; }
+@keyframes cmdkFlash {
+  0%   { outline: 2px solid var(--accent); outline-offset: 8px; background: var(--glow); }
+  70%  { outline: 2px solid var(--accent); outline-offset: 8px; background: var(--glow); }
+  100% { outline: 2px solid transparent; outline-offset: 8px; background: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmdk-overlay.is-open, .cmdk-panel { animation: none; }
+  .cmdk-flash { animation: none; outline: 2px solid var(--accent); outline-offset: 8px; }
+  .cmdk-answer.is-streaming::after { animation: none; }
+}

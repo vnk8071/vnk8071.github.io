@@ -1,0 +1,35 @@
+# Extra knowledge for the ⌘K command palette and the "Ask my profile" assistant.
+# Everything on the home page and in _projects/, _posts/, _publications/ is indexed automatically
+# (see scripts/build-kb.mjs). Use this file for what those sources don't say yet.
+#
+# After editing, rebuild the index:   node scripts/build-kb.mjs
+# (CI also rebuilds it on every deploy.)
+
+# Facts that only exist here. They are shown in search AND handed to the AI as ground truth, so keep them
+# accurate: the assistant is told to answer from this material only and to say "I don't know" otherwise.
+#
+# facts:
+#   - id: viact-computer-vision            # unique, kebab-case
+#     type: experience                     # experience | project | opensource | education | skills | honor | publication | post | note
+#     title: "viAct — what I worked on"
+#     text: >-
+#       Describe real responsibilities, systems you shipped, scale, stack and measurable results.
+#     url: /#exp-viact                     # where the palette jumps to
+#     keywords: "an toàn lao động safety ppe"   # optional extra search terms (not shown to the AI)
+#     core: true                           # default true = always in the AI's context; false = only when retrieved
+facts: []
+
+# Publications: add one markdown file per paper under _publications/ (front matter: title, date, venue,
+# paperurl, citation) and they are indexed automatically. Blog posts: normal Jekyll _posts/.
+
+# Extra search aliases per chunk id, mixing Vietnamese and English. These only improve search; they are never
+# shown to the AI, so use them for translation/synonyms of what the chunk already says.
+keywords:
+  work-unified-ai-runtime: "tối ưu phần cứng tăng tốc hardware acceleration npu gpu cuda vulkan tensorrt openvino on-device inference runtime llm"
+  oss-qualcomm-qai-appbuilder: "tối ưu phần cứng npu htp qnn android edge on-device tflite executorch"
+  work-ai-on-cpp: "tối ưu hiệu năng triển khai deploy c++ inference tốc độ latency"
+  work-goodjobs: "triển khai production sản phẩm thực tế tuyển dụng việc làm tìm việc job search streaming vector recommendation llm"
+  work-e2e-ai-chatbot: "chatbot rag truy xuất sinh văn bản llm dịch vụ service triển khai"
+  work-anomaly-detection-in-industry-manufacturing: "phát hiện bất thường lỗi sản phẩm nhà máy kiểm tra chất lượng defect inspection thị giác máy tính anomalib"
+  work-machine-learning-learning-path: "lộ trình học học máy học sâu roadmap tự học nanodegree"
+  skills: "computer vision thị giác máy tính deep learning học sâu pytorch python c++ docker aws fastapi mlops nlp deepstream llm"
