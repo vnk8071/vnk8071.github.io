@@ -13,9 +13,9 @@ minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "
 command_palette:
   enabled: true
   kb_url: /assets/data/kb.json            # built by scripts/build-kb.mjs
-  # Cloudflare Worker that answers with Workers AI (workers/ask). Leave empty until it is deployed:
-  # the palette then shows the best-matching passages instead of a generated answer.
-  ask_endpoint: ""                         # e.g. "https://ask.khoispace.io.vn/api/ask"
+  # Cloudflare Worker that answers with Workers AI (workers/ask). Leave empty to disable generated answers:
+  # the palette then shows the best-matching passages instead.
+  ask_endpoint: "https://khoispace-ask.nguyenkhoi8071.workers.dev/api/ask"
   semantic: auto                           # auto | ask (visitor must opt in) | off
   semantic_window: 0.05                    # keep semantic hits within this cosine distance of the best one
   # Small multilingual embedding model, run in a Web Worker (Vietnamese queries over English content).
