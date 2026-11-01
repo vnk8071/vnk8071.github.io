@@ -15,7 +15,7 @@ bundle exec jekyll serve
 
 ## ⌘K command palette (search + "Ask my profile")
 
-Press ⌘K / Ctrl K on the site: in-browser semantic search over the CV, projects, posts and publications, plus an AI assistant on Cloudflare Workers AI that answers **only** questions about the profile (guardrails filter everything else).
+A chatbot window (robot icon, bottom right) answers questions about the profile on Cloudflare Workers AI, **only** about the profile (guardrails filter everything else). ⌘K / Ctrl K opens in-browser semantic search over the CV, projects, posts and publications.
 
 ```
 node scripts/build-kb.mjs        # rebuild assets/data/kb.json after editing content

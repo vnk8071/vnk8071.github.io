@@ -20,4 +20,7 @@
 <link rel="stylesheet" href="{{ '/assets/css/space.css' | relative_url }}">
 {%- if site.command_palette.enabled != false -%}
 <link rel="stylesheet" href="{{ '/assets/css/palette.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}">
+{%- if site.command_palette.chatbot != false -%}
+<link rel="stylesheet" href="{{ '/assets/css/chat.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}">
+{%- endif -%}
 {%- endif -%}

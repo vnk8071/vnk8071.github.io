@@ -12,6 +12,7 @@ minimal_mistakes_skin: "contrast" # "air", "aqua", "contrast", "dark", "dirt", "
 # ⌘K command palette: site search + "ask my profile". See docs/command-palette.md
 command_palette:
   enabled: true
+  chatbot: true                            # chat window at the bottom right (robot icon); false = search only
   kb_url: /assets/data/kb.json            # built by scripts/build-kb.mjs
   # Cloudflare Worker that answers with Workers AI (workers/ask). Leave empty to disable generated answers:
   # the palette then shows the best-matching passages instead.
