@@ -30,6 +30,16 @@
     note: "AI có thể nhầm lẫn. Mỗi câu hỏi được trả lời độc lập, chỉ về hồ sơ của Khoi.",
     sources: "Nguồn",
     thinking: "Đang tìm trong hồ sơ",
+    stepSearch: "Đang tìm trong hồ sơ…",
+    stepSearched: (n, titles) => `Tìm thấy ${n} đoạn liên quan: ${titles}`,
+    stepSearchedNone: "Đã đối chiếu với CV của Khoi",
+    stepConnect: "Đang hỏi trợ lý…",
+    stepGuard: "Đang kiểm tra câu hỏi…",
+    stepGuardDone: "Câu hỏi phù hợp",
+    stepContext: (n) => `Đã đọc ${n} đoạn ngữ cảnh`,
+    stepThinking: "Đang suy nghĩ…",
+    stepThinkingLong: "Đang suy nghĩ… câu hỏi này cần thêm chút thời gian",
+    sec: (n) => `${n} giây`,
     stopped: "(đã dừng)",
     noBackend: "Chưa kết nối trợ lý AI, nên đây là các đoạn liên quan nhất tìm được trong hồ sơ:",
     failed: "Trợ lý AI đang bận hoặc không phản hồi. Đây là các đoạn liên quan nhất tìm được trong hồ sơ:",
@@ -202,6 +212,16 @@
     return renderMd(m.t, m.src) + sourcesHtml(m.src, m.t);
   }
 
+  // Live progress while the assistant works: each step is {id, text, done}. The elapsed time proves it is alive.
+  function stepsHtml(steps, startedAt) {
+    const sec = Math.floor((Date.now() - startedAt) / 1000);
+    return `<ul class="cb-steps" role="status">` + steps.map((st) => {
+      const mark = st.done ? `<span class="cb-tick" aria-hidden="true">✓</span>` : `<i class="cb-spin" aria-hidden="true"></i>`;
+      const clock = !st.done && st.clock && sec >= 2 ? `<span class="cb-elapsed" aria-hidden="true"> · ${esc(T.sec(sec))}</span>` : "";
+      return `<li class="${st.done ? "done" : "active"}">${mark}<span>${esc(st.text)}</span>${clock}</li>`;
+    }).join("") + `</ul>`;
+  }
+
   function msgNode(m) {
     if (m.r === "u") return el("div", "cb-msg cb-user", `<div class="cb-bubble">${esc(m.t)}</div>`);
     const n = el("div", "cb-msg cb-bot", `<span class="cb-av">${ICON.bot}</span><div class="cb-bubble"></div>`);
@@ -267,13 +287,33 @@
     scrollEnd(true);
     setBusy(true);
 
+    // live progress: shown from the first millisecond, replaced by the answer as soon as it starts streaming
+    const startedAt = Date.now();
+    const steps = [{ id: "search", text: T.stepSearch, done: false }];
+    const setStep = (id, text, done, extra = {}) => {
+      const cur = steps.find((x) => x.id === id);
+      if (cur) Object.assign(cur, { text, done }, extra); else steps.push({ id, text, done, ...extra });
+    };
+    const renderSteps = () => { if (bot.pending) { bubble.innerHTML = stepsHtml(steps, startedAt); scrollEnd(false); } };
+    const ticker = setInterval(() => {
+      const th = steps.find((x) => x.id === "thinking");
+      if (th && !th.done && Date.now() - th.since > 15000) th.text = T.stepThinkingLong;
+      renderSteps();
+    }, 1000);
+    renderSteps();
+
     // 1. retrieve the best non-core passages (the Worker adds the whole CV by itself)
     let hits = [];
     try { hits = window.cmdk?.retrieve ? await window.cmdk.retrieve(question) : []; } catch { /* answer without retrieval */ }
     const ids = hits.map((h) => h.chunk.id);
+    const pages = [...new Set(hits.map((h) => h.chunk.title.split(" — ")[0].replace(/\s*\(\d+\)$/, "")))].slice(0, 3); // page names, de-duplicated
+    setStep("search", hits.length ? T.stepSearched(hits.length, pages.join(", ")) : T.stepSearchedNone, true);
+    setStep("connect", T.stepConnect, false, { clock: true });
+    renderSteps();
     const passages = hits.slice(0, 4).map(({ chunk }) => ({ label: chunk.label, title: chunk.title, url: chunk.url, text: chunk.text.slice(0, 200) }));
 
     const finish = (patch) => {
+      clearInterval(ticker);
       delete bot.pending;
       Object.assign(bot, patch);
       bubble.innerHTML = bubbleHtml(bot);
@@ -291,7 +331,7 @@
     let text = "";
     let refusal = null;
     let raf = 0;
-    const paint = () => { raf = 0; delete bot.pending; bubble.innerHTML = renderMd(text, sources); scrollEnd(false); };
+    const paint = () => { raf = 0; if (bot.pending) clearInterval(ticker); delete bot.pending; bubble.innerHTML = renderMd(text, sources); scrollEnd(false); };
     try {
       const res = await fetch(cfg.ask, {
         method: "POST",
@@ -329,7 +369,22 @@
           try { payload = JSON.parse(data.join("\n")); } catch { continue; }
           if (event === "sources") sources = payload;
           else if (event === "blocked") refusal = payload.message || "";
-          else if (event === "error") throw new Error(payload.message || "ask error");
+          else if (event === "status") {
+            // the Worker reports what it is doing: guard -> context -> thinking -> writing
+            const i = steps.findIndex((x) => x.id === "connect");
+            if (i >= 0) steps.splice(i, 1);
+            if (payload.step === "guard") setStep("guard", T.stepGuard, false, { clock: true });
+            else if (payload.step === "context") {
+              setStep("guard", T.stepGuardDone, true);
+              setStep("context", T.stepContext(payload.count || 0), true);
+            } else if (payload.step === "thinking") setStep("thinking", T.stepThinking, false, { clock: true, since: Date.now() });
+            renderSteps();
+          } else if (event === "error") {
+            const e = new Error(payload.message || "ask error");
+            e.detail = `HTTP ${payload.status || "?"} · ${payload.code || "error"}` +
+              (payload.attempts ? " · " + payload.attempts.map((a) => `${a.model}: ${a.error}`).join(" | ") : "") + (payload.detail ? " · " + payload.detail : "");
+            throw e;
+          }
           else if (event === "message" && payload.t) { text += payload.t; if (!raf) raf = requestAnimationFrame(paint); }
         }
       }

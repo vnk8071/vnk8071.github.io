@@ -64,6 +64,16 @@ const ctx = () => { const p: Promise<unknown>[] = []; return { c: { waitUntil: (
 const ask = (body: unknown, headers: Record<string, string> = { origin: ORIGIN }) =>
   new Request("https://ask.test/api/ask", { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
 
+/** Parses an SSE body into [{ev, data}] ("message" for events without a name). */
+const sseEvents = (text: string) =>
+  text.trim().split("\n\n").filter(Boolean).map((b) => ({
+    ev: /^event: (.*)$/m.exec(b)?.[1] ?? "message",
+    data: JSON.parse(/^data: (.*)$/m.exec(b)![1]),
+  }));
+const eventNamed = (evs: ReturnType<typeof sseEvents>, name: string) => evs.find((e) => e.ev === name)?.data;
+const run = async (req: Request, env: any, c = ctx().c) => sseEvents(await (await worker.fetch(req, env, c)).text());
+const steps = (evs: ReturnType<typeof sseEvents>) => evs.filter((e) => e.ev === "status").map((e) => e.data.step);
+
 test.beforeEach(() => {
   resetKbCache();
   globalThis.fetch = (async () => Response.json(KB)) as any;
@@ -84,11 +94,12 @@ test("buildContext: core facts always in, retrieved ids appended, unknown/duplic
   assert.equal(new Set(sources.map((s) => s.n)).size, sources.length);
 });
 
-test("normalizeStream: sources first, tokens re-emitted across arbitrary chunk boundaries, done last", async () => {
+test("normalizeStream: sources first, then the 'writing' status, tokens re-emitted across arbitrary chunk boundaries, done last", async () => {
   const out = await new Response(normalizeStream(streamOf(sseBody(["Xin ", "chào"])), [{ n: 1, title: "T", url: "/u" }])).text();
   const events = out.trim().split("\n\n");
   assert.equal(events[0], 'event: sources\ndata: [{"n":1,"title":"T","url":"/u"}]');
-  assert.deepEqual(events.slice(1, -1), ['data: {"t":"Xin "}', 'data: {"t":"chào"}']);
+  assert.equal(events[1], 'event: status\ndata: {"step":"writing"}');
+  assert.deepEqual(events.slice(2, -1), ['data: {"t":"Xin "}', 'data: {"t":"chào"}']);
   assert.equal(events.at(-1), "event: done\ndata: {}");
 });
 
@@ -147,7 +158,7 @@ test("rate limit -> 429 with retry-after, and the model is never called", async 
   assert.equal(calls.length, 0);
 });
 
-test("upstream failures degrade cleanly: kb down -> 503, model error -> 502", async () => {
+test("upstream failures degrade cleanly: kb down -> HTTP 503; model error -> in-stream error event (502)", async () => {
   const { c } = ctx();
   globalThis.fetch = (async () => new Response("nope", { status: 500 })) as any;
   assert.equal((await worker.fetch(ask({ question: "hello there" }), makeEnv().env, c)).status, 503);
@@ -155,7 +166,9 @@ test("upstream failures degrade cleanly: kb down -> 503, model error -> 502", as
   resetKbCache();
   globalThis.fetch = (async () => Response.json(KB)) as any;
   const { env } = makeEnv({}, { main: () => { throw new Error("quota exceeded"); } });
-  assert.equal((await worker.fetch(ask({ question: "hello there about Khoi" }), env, c)).status, 502);
+  const evs = await run(ask({ question: "hello there about Khoi" }), env);
+  assert.deepEqual(eventNamed(evs, "error"), { code: "model_unavailable", message: "model unavailable", status: 502 });
+  assert.equal(evs.some((e) => e.ev === "done"), false);
 });
 
 test("non-streaming model output is still delivered as an SSE answer", async () => {
@@ -178,14 +191,16 @@ test("answer cache: second identical question is a HIT and does not call the mod
     const { env, main } = makeEnv();
     const first = ctx();
     const r1 = await worker.fetch(ask({ question: "Tóm tắt thế mạnh", ids: ["project-x-1"] }), env, first.c);
-    const t1 = await r1.text();
+    const t1 = sseEvents(await r1.text());
     await first.settle();
     assert.equal(r1.headers.get("x-cache"), "MISS");
 
     const second = ctx();
     const r2 = await worker.fetch(ask({ question: "tóm tắt thế mạnh", ids: ["project-x-1"] }), env, second.c);
     assert.equal(r2.headers.get("x-cache"), "HIT");
-    assert.equal(await r2.text(), t1);
+    const t2 = sseEvents(await r2.text());
+    const answer = (evs: typeof t1) => evs.filter((e) => e.ev !== "status"); // progress steps are not replayed
+    assert.deepEqual(answer(t2), answer(t1));
     assert.equal(main().length, 1);
 
     const third = ctx(); // different retrieved passages => different answer => not served from cache
@@ -269,16 +284,17 @@ test("off-topic question: filtered with a fixed refusal, main model never runs, 
   const { env, main, guard } = makeEnv({}, { guard: () => ({ response: "OFF_TOPIC" }) });
   const res = await worker.fetch(ask({ question: "Thủ đô của Pháp là gì?", ids: ["project-x-1"] }), env, ctx().c);
   assert.equal(res.status, 200);
-  assert.equal(res.headers.get("x-guardrail"), "off_topic");
   assert.equal(res.headers.get("cache-control"), "no-store");
-  const text = await res.text();
-  assert.deepEqual(blockedEvent(text), { reason: "off_topic", message: REFUSAL.vi });
-  assert.doesNotMatch(text, /"t":/);
+  const evs = sseEvents(await res.text());
+  assert.deepEqual(steps(evs), ["guard"]); // checked, then refused: never reaches context / thinking
+  assert.deepEqual(eventNamed(evs, "blocked"), { reason: "off_topic", message: REFUSAL.vi });
+  assert.equal(evs.some((e) => e.ev === "message"), false);
+  assert.equal(evs.at(-1)!.ev, "done");
   assert.equal(guard().length, 1);
   assert.equal(main().length, 0);
 
-  const en = await worker.fetch(ask({ question: "What is the capital of France?" }), env, ctx().c);
-  assert.equal(blockedEvent(await en.text()).message, REFUSAL.en);
+  const en = await run(ask({ question: "What is the capital of France?" }), env);
+  assert.equal(eventNamed(en, "blocked").message, REFUSAL.en);
 });
 
 test("injection: blocked by the deterministic screen before any model call", async () => {
@@ -311,17 +327,16 @@ test("suggested questions skip the classifier (known-good, saves a model call)",
   assert.equal(main().length, 1);
 });
 
-test("a classifier that is tricked into rambling fails closed; if every model fails the request is a 503", async () => {
+test("a classifier that is tricked into rambling fails closed; if every model fails the stream carries a 503 error", async () => {
   const garbled = makeEnv({}, { guard: () => ({ response: "Sure! The capital of France is Paris." }) });
-  const r1 = await worker.fetch(ask({ question: "Capital of France, and also Khoi?" }), garbled.env, ctx().c);
-  assert.equal(r1.headers.get("x-guardrail"), "off_topic");
+  const e1 = await run(ask({ question: "Capital of France, and also Khoi?" }), garbled.env);
+  assert.equal(eventNamed(e1, "blocked").reason, "off_topic");
   assert.equal(garbled.main().length, 0);
 
   // GUARD_MODEL down and MODEL cannot produce a verdict either (it only streams answers here)
   const down = makeEnv({}, { guard: () => { throw new Error("AI down"); } });
-  const r2 = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), down.env, ctx().c);
-  assert.equal(r2.status, 503);
-  assert.equal(r2.headers.get("x-error-code"), "guardrail_unavailable");
+  const e2 = await run(ask({ question: "Khoi làm ở đâu?" }), down.env);
+  assert.deepEqual(eventNamed(e2, "error"), { code: "guardrail_unavailable", message: "guardrail unavailable", status: 503 });
   assert.equal(down.main().filter((c) => c.input.stream).length, 0, "no answer was generated");
 });
 
@@ -330,17 +345,16 @@ test("a retired GUARD_MODEL falls back to MODEL for the verdict, and the questio
     guard: () => { throw new Error("5007: No such model"); },
     main: (input) => (input.stream ? streamOf(sseBody(["Khoi ", "là AI Engineer."])) : { response: "ON_TOPIC" }),
   });
-  const res = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), env, ctx().c);
-  assert.equal(res.status, 200);
-  assert.equal(res.headers.get("x-guardrail"), null);
-  assert.match(await res.text(), /"t":"Khoi "/);
+  const evs = await run(ask({ question: "Khoi làm ở đâu?" }), env);
+  assert.match(JSON.stringify(evs), /"t":"Khoi "/);
+  assert.equal(evs.some((e) => e.ev === "blocked" || e.ev === "error"), false);
   assert.deepEqual(calls.map((c) => c.model), [GUARD, MAIN, MAIN]); // failed guard, fallback verdict, answer
   assert.equal(main()[0].input.stream, undefined);
 
   // and the fallback model's verdict is respected: off-topic is still blocked
   const off = makeEnv({}, { guard: () => { throw new Error("gone"); }, main: () => ({ response: "<think>hmm</think>OFF_TOPIC" }) });
-  const r = await worker.fetch(ask({ question: "Thủ đô của Pháp là gì?" }), off.env, ctx().c);
-  assert.equal(r.headers.get("x-guardrail"), "off_topic");
+  const e2 = await run(ask({ question: "Thủ đô của Pháp là gì?" }), off.env);
+  assert.equal(eventNamed(e2, "blocked").reason, "off_topic");
   assert.equal(off.main().filter((c) => c.input.stream).length, 0);
 });
 
@@ -382,10 +396,8 @@ test("non-streaming reasoning output is stripped too", async () => {
   const { env } = makeEnv({}, { main: () => ({ response: "<think>x</think>\nĐáp án." }) });
   const text = await (await worker.fetch(ask({ question: "Khoi làm gì ở goodjobs?" }), env, ctx().c)).text();
   assert.match(text, /"t":"Đáp án\."/);
-  assert.doesNotMatch(text, /think/);
+  assert.doesNotMatch(text, /<\/?think>/);
 });
-
-// ---- observability: failures are always JSON with CORS and a stable code -------------------------------
 
 test("an unexpected exception becomes a JSON 500 with CORS headers and a code (not an opaque 1101 page)", async () => {
   const { env, calls } = makeEnv({ RATE_LIMITER: { limit: async () => { throw new Error("binding exploded"); } } });
@@ -397,7 +409,7 @@ test("an unexpected exception becomes a JSON 500 with CORS headers and a code (n
   assert.equal(calls.length, 0);
 });
 
-test("every error response carries a machine-readable code", async () => {
+test("every error carries a machine-readable code (HTTP errors before the stream, error events inside it)", async () => {
   const { c } = ctx();
   const code = async (req: Request, env: any) => (await (await worker.fetch(req, env, c)).json() as any).code;
   const { env } = makeEnv();
@@ -413,35 +425,32 @@ test("every error response carries a machine-readable code", async () => {
 
   globalThis.fetch = (async () => Response.json(KB)) as any;
   resetKbCache();
-  assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { guard: () => { throw new Error("down"); } }).env), "guardrail_unavailable");
+  const inStream = async (env: any) => eventNamed(await run(ask({ question: "Khoi làm gì?" }), env), "error")?.code;
+  assert.equal(await inStream(makeEnv({}, { guard: () => { throw new Error("down"); } }).env), "guardrail_unavailable");
   resetKbCache();
-  assert.equal(await code(ask({ question: "Khoi làm gì?" }), makeEnv({}, { main: () => { throw new Error("down"); } }).env), "model_unavailable");
+  assert.equal(await inStream(makeEnv({}, { main: () => { throw new Error("down"); } }).env), "model_unavailable");
 });
 
 test("DEBUG_ERRORS=1 reveals what each guard model did; off by default", async () => {
   const guardDown = { guard: () => { throw new Error("5007: No such model `@cf/test/guard`"); }, main: () => ({ response: "" }) };
   const on = makeEnv({ DEBUG_ERRORS: "1" }, guardDown);
-  const r = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), on.env, ctx().c);
-  assert.equal(r.status, 503);
-  const body = (await r.json()) as any;
-  assert.equal(body.code, "guardrail_unavailable");
-  assert.equal(body.attempts.length, 2);
-  assert.equal(body.attempts[0].model, GUARD);
-  assert.match(body.attempts[0].error, /5007: No such model/);
-  assert.equal(body.attempts[1].model, MAIN);
-  assert.match(body.attempts[1].error, /empty verdict/);
+  const err = eventNamed(await run(ask({ question: "Khoi làm ở đâu?" }), on.env), "error");
+  assert.equal(err.code, "guardrail_unavailable");
+  assert.equal(err.attempts.length, 2);
+  assert.equal(err.attempts[0].model, GUARD);
+  assert.match(err.attempts[0].error, /5007: No such model/);
+  assert.equal(err.attempts[1].model, MAIN);
+  assert.match(err.attempts[1].error, /empty verdict/);
 
   const off = makeEnv({}, guardDown);
-  const body2 = (await (await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), off.env, ctx().c)).json()) as any;
-  assert.deepEqual(body2, { error: "guardrail unavailable", code: "guardrail_unavailable" });
+  const err2 = eventNamed(await run(ask({ question: "Khoi làm ở đâu?" }), off.env), "error");
+  assert.deepEqual(err2, { code: "guardrail_unavailable", message: "guardrail unavailable", status: 503 });
 
   const model502 = makeEnv({ DEBUG_ERRORS: "1" }, { main: () => { throw new Error("AiError: quota"); } });
-  const b3 = (await (await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), model502.env, ctx().c)).json()) as any;
-  assert.equal(b3.code, "model_unavailable");
-  assert.match(b3.detail, /quota/);
+  const err3 = eventNamed(await run(ask({ question: "Khoi làm ở đâu?" }), model502.env), "error");
+  assert.equal(err3.code, "model_unavailable");
+  assert.match(err3.detail, /quota/);
 });
-
-// ---- Qwen-style reasoning model (OpenAI-shaped responses, blank lines first, reasoning in its own field) -------
 
 test("Qwen: blank lines at the start of the streamed answer are dropped; `reasoning` deltas never reach the visitor", async () => {
   const chunks = [
@@ -451,61 +460,47 @@ test("Qwen: blank lines at the start of the streamed answer are dropped; `reason
     { choices: [{ delta: { content: "[3].\n" } }] },
   ].map((o) => `data: ${JSON.stringify(o)}\n\n`).join("") + "data: [DONE]\n\n";
   const { env } = makeEnv({}, { main: () => streamOf(chunks, 13) });
-  const text = await (await worker.fetch(ask({ question: "Khoi làm gì ở goodjobs?" }), env, ctx().c)).text();
-  assert.match(text, /^event: sources\ndata: .*\n\ndata: \{"t":"GoodJobs chạy thật "\}/s);
-  assert.doesNotMatch(text, /We need to answer|"t":"\\n\\n"/);
+  const evs = await run(ask({ question: "Khoi làm gì ở goodjobs?" }), env);
+  const tokens = evs.filter((e) => e.ev === "message").map((e) => e.data.t);
+  assert.equal(tokens[0], "GoodJobs chạy thật ");
+  assert.doesNotMatch(JSON.stringify(evs), /We need to answer/);
 });
 
 test("Qwen: a non-streaming chat.completion verdict ('\\n\\nON_TOPIC' with a reasoning field) is understood", async () => {
   const qwen = (verdict: string) => ({ choices: [{ message: { role: "assistant", content: `\n\n${verdict}`, reasoning: "The question asks about Khoi's experience." } }] });
   const on = makeEnv({}, { guard: () => qwen("ON_TOPIC") });
-  const r = await worker.fetch(ask({ question: "Khoi làm ở những công ty nào?" }), on.env, ctx().c);
-  assert.equal(r.headers.get("x-guardrail"), null);
-  await r.text();
+  const evs = await run(ask({ question: "Khoi làm ở những công ty nào?" }), on.env);
+  assert.equal(evs.some((e) => e.ev === "blocked"), false);
   assert.equal(on.main().length, 1);
 
   const off = makeEnv({}, { guard: () => qwen("OFF_TOPIC") });
-  const r2 = await worker.fetch(ask({ question: "Thủ đô của Pháp là gì?" }), off.env, ctx().c);
-  assert.equal(r2.headers.get("x-guardrail"), "off_topic");
+  const e2 = await run(ask({ question: "Thủ đô của Pháp là gì?" }), off.env);
+  assert.equal(eventNamed(e2, "blocked").reason, "off_topic");
 });
 
-test("DEBUG_ERRORS=1 adds x-guard-model so you can see whether the fallback model gave the verdict", async () => {
+test("DEBUG_ERRORS=1 reports which model gave the topic verdict (a trailing `debug` event); silent by default", async () => {
   const fb = makeEnv({ DEBUG_ERRORS: "1" }, {
     guard: () => { throw new Error("gone"); },
     main: (input) => (input.stream ? streamOf(sseBody(["ok"])) : { response: "ON_TOPIC" }),
   });
-  const r = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), fb.env, ctx().c);
-  assert.equal(r.headers.get("x-guard-model"), MAIN);
-  await r.text();
+  assert.deepEqual(eventNamed(await run(ask({ question: "Khoi làm ở đâu?" }), fb.env), "debug"), { guardModel: MAIN });
 
-  const normal = makeEnv({ DEBUG_ERRORS: "1" });
-  const r2 = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), normal.env, ctx().c);
-  assert.equal(r2.headers.get("x-guard-model"), GUARD);
-  await r2.text();
-
-  const preset = await worker.fetch(ask({ question: PRESET }), makeEnv({ DEBUG_ERRORS: "1" }).env, ctx().c);
-  assert.match(preset.headers.get("x-guard-model") ?? "", /skipped/);
-  await preset.text();
-
-  const quiet = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), makeEnv().env, ctx().c);
-  assert.equal(quiet.headers.get("x-guard-model"), null);
-  await quiet.text();
+  assert.deepEqual(eventNamed(await run(ask({ question: "Khoi làm ở đâu?" }), makeEnv({ DEBUG_ERRORS: "1" }).env), "debug"), { guardModel: GUARD });
+  assert.match(eventNamed(await run(ask({ question: PRESET }), makeEnv({ DEBUG_ERRORS: "1" }).env), "debug").guardModel, /skipped/);
+  assert.equal(eventNamed(await run(ask({ question: "Khoi làm ở đâu?" }), makeEnv().env), "debug"), undefined);
 });
 
 test("GUARD_MODEL equal to MODEL is tried once (no duplicate failing call)", async () => {
   const { env, calls } = makeEnv({ GUARD_MODEL: MAIN }, { main: () => { throw new Error("5035: not available on the Workers Free plan"); } });
-  const res = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), env, ctx().c);
-  assert.equal(res.status, 503);
+  const evs = await run(ask({ question: "Khoi làm ở đâu?" }), env);
+  assert.equal(eventNamed(evs, "error").code, "guardrail_unavailable");
   assert.equal(calls.length, 1);
 
   const ok = makeEnv({ GUARD_MODEL: MAIN }, { main: (i) => (i.stream ? streamOf(sseBody(["ok"])) : { choices: [{ message: { content: "\n\nON_TOPIC" } }] }) });
-  const r = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), ok.env, ctx().c);
-  assert.equal(r.status, 200);
-  await r.text();
+  const evs2 = await run(ask({ question: "Khoi làm ở đâu?" }), ok.env);
+  assert.match(JSON.stringify(evs2), /"t":"ok"/);
   assert.equal(ok.calls.length, 2); // one verdict + one answer
 });
-
-// ---- small talk ---------------------------------------------------------------------------------------
 
 test("detectSmallTalk recognises greetings, thanks, goodbyes, how-are-you and who-are-you (EN + VI)", () => {
   const cases: [string, string][] = [
@@ -551,8 +546,8 @@ test("small talk gets a fixed reply with the suggested questions: no model call,
 
 test("a greeting followed by a real question still goes through the guardrails", async () => {
   const { env, guard, main } = makeEnv({}, { guard: () => ({ response: "OFF_TOPIC" }) });
-  const res = await worker.fetch(ask({ question: "hi, what is the capital of France?" }), env, ctx().c);
-  assert.equal(res.headers.get("x-guardrail"), "off_topic");
+  const evs = await run(ask({ question: "hi, what is the capital of France?" }), env);
+  assert.equal(eventNamed(evs, "blocked").reason, "off_topic");
   assert.equal(guard().length, 1);
   assert.equal(main().length, 0);
 });
@@ -567,4 +562,64 @@ test("small talk still respects origin, rate limit and the knowledge-base depend
 test("smallTalkReply copes with an empty suggestion list", () => {
   assert.doesNotMatch(smallTalkReply("hello", false, []), /\n-/);
   assert.match(smallTalkReply("bye", true, []), /Hẹn gặp lại/);
+});
+
+// ---- progress steps ------------------------------------------------------------------------------------
+
+test("the stream starts with progress steps: guard -> context -> thinking -> writing, then tokens, then done", async () => {
+  const { env } = makeEnv();
+  const evs = await run(ask({ question: "Khoi làm ở đâu?", ids: ["project-x-1", "project-x-2"] }), env);
+  assert.deepEqual(steps(evs), ["guard", "context", "thinking", "writing"]);
+  const ctxStep = evs.find((e) => e.ev === "status" && e.data.step === "context")!.data;
+  assert.equal(ctxStep.count, 3 + 2); // 3 core facts + 2 retrieved passages
+  assert.deepEqual(ctxStep.retrieved, ["X part 1", "X part 2"]);
+  // order: every status comes before the first token, and sources before the first token too
+  const firstToken = evs.findIndex((e) => e.ev === "message");
+  assert.ok(evs.findIndex((e) => e.ev === "sources") < firstToken);
+  assert.ok(evs.map((e, i) => (e.ev === "status" ? i : -1)).every((i) => i < firstToken));
+  assert.equal(evs.at(-1)!.ev, "done");
+});
+
+test("a suggested question skips the guard step; the first event arrives before the model is even called", async () => {
+  const order: string[] = [];
+  const { env } = makeEnv({}, { main: () => { order.push("model called"); return streamOf(sseBody(["ok"])); } });
+  const res = await worker.fetch(ask({ question: PRESET }), env, ctx().c);
+  const reader = res.body!.getReader();
+  const first = new TextDecoder().decode((await reader.read()).value);
+  order.push("first event received");
+  assert.match(first, /event: status\ndata: \{"step":"context"/);
+  while (!(await reader.read()).done) { /* drain */ }
+  assert.deepEqual(steps(sseEvents(first)), ["context"]);
+  assert.ok(order.indexOf("first event received") >= 0);
+});
+
+test("the response starts immediately: a slow guard model does not delay the first event", async () => {
+  let releaseGuard!: () => void;
+  const gate = new Promise<void>((r) => { releaseGuard = r; });
+  const { env } = makeEnv({}, { guard: async () => { await gate; return { response: "ON_TOPIC" }; } });
+  const res = await worker.fetch(ask({ question: "Khoi làm ở đâu?" }), env, ctx().c);
+  const reader = res.body!.getReader();
+  const first = new TextDecoder().decode((await reader.read()).value); // resolves while the guard is still pending
+  assert.match(first, /event: status\ndata: \{"step":"guard"\}/);
+  releaseGuard();
+  while (!(await reader.read()).done) { /* drain */ }
+});
+
+test("a visitor who disconnects mid-answer stops the work and the upstream model stream is cancelled", async () => {
+  let cancelled = false;
+  const endless = new ReadableStream<Uint8Array>({
+    async pull(ctl) {
+      await new Promise((r) => setTimeout(r, 5));
+      ctl.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ response: "x" })}\n\n`));
+    },
+    cancel() { cancelled = true; },
+  });
+  const { env } = makeEnv({}, { main: () => endless });
+  const { c, settle } = ctx();
+  const res = await worker.fetch(ask({ question: PRESET }), env, c);
+  const reader = res.body!.getReader();
+  for (let i = 0; i < 4; i++) await reader.read();
+  await reader.cancel();
+  await settle();
+  assert.equal(cancelled, true);
 });

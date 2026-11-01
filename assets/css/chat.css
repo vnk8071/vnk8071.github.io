@@ -132,6 +132,14 @@ html.has-chatbot footer.site { padding-bottom: 84px; }
 }
 .cb-chip:hover { border-color: var(--accent); color: var(--accent); transform: translateX(2px); }
 
+/* live progress steps */
+.cb-steps { list-style: none; margin: 0 !important; padding: 0 !important; display: grid; gap: 7px; }
+.cb-steps li { margin: 0 !important; padding: 0 !important; display: flex; align-items: flex-start; gap: 9px; font: 400 0.78rem/1.5 var(--mono); color: var(--muted); }
+.cb-steps li.active { color: var(--text); }
+.cb-steps .cb-tick { flex: none; width: 14px; text-align: center; color: var(--accent); font-weight: 700; }
+.cb-spin { flex: none; width: 12px; height: 12px; margin: 3px 1px 0; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: cbSpin 0.8s linear infinite; }
+.cb-elapsed { color: var(--faint); white-space: nowrap; }
+@keyframes cbSpin { to { transform: rotate(360deg); } }
 .cb-typing { display: inline-flex; gap: 4px; padding: 6px 2px; }
 .cb-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.35; animation: cbDot 1.2s infinite ease-in-out; }
 .cb-typing i:nth-child(2) { animation-delay: 0.15s; } .cb-typing i:nth-child(3) { animation-delay: 0.3s; }
@@ -172,6 +180,7 @@ html.has-chatbot footer.site { padding-bottom: 84px; }
 @media (prefers-reduced-motion: reduce) {
   .cb-launcher, .cb-win { animation: none; }
   .cb-typing i { animation: none; opacity: 0.7; }
+  .cb-spin { animation: none; border-top-color: var(--accent); border-right-color: var(--accent); }
   .cb-log { scroll-behavior: auto; }
 }
 @media print { .cb-launcher, .cb-win { display: none !important; } }

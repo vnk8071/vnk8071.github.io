@@ -18,12 +18,17 @@
 //   3. SYSTEM_PROMPT   answers only from the numbered context; says so when the context lacks the answer
 // A filtered request gets HTTP 200 with `event: blocked` and a fixed refusal, never a model-written one.
 //
-// Stream format (Server-Sent Events):
-//   event: sources   data: [{"n":1,"title":"...","url":"/..."}]     numbered passages the model was given
-//   data: {"t":"token text"}                                         repeated
+// Stream format (Server-Sent Events). The response starts right after the cheap checks, then reports progress:
+//   event: status    data: {"step":"guard"}                                  checking the question (skipped for suggested questions)
+//   event: status    data: {"step":"context","count":5,"retrieved":["…"]}    passages handed to the model
+//   event: status    data: {"step":"thinking"}                               model is working (reasoning models think first)
+//   event: sources   data: [{"n":1,"title":"...","url":"/..."}]              numbered passages the model was given
+//   event: status    data: {"step":"writing"}                                first token is about to arrive
+//   data: {"t":"token text"}                                                 repeated
 //   event: done      data: {}
-//   event: blocked   data: {"reason":"off_topic"|"injection","message":"..."}   (instead of sources/tokens)
-//   event: error     data: {"message":"..."}
+//   event: blocked   data: {"reason":"off_topic"|"injection","message":"..."}   instead of the answer (followed by done)
+//   event: error     data: {"code":"guardrail_unavailable"|"model_unavailable"|"internal","message":"...","status":503}
+// Failures before the stream starts (origin, validation, rate limit, knowledge base) are plain HTTP errors with a JSON {error, code}.
 
 interface Env {
   AI: Ai;
@@ -83,7 +88,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 /** Core facts first (CV order), then the retrieved passages. Returns the prompt context and numbered sources. */
-export function buildContext(kb: Kb, ids: string[]): { context: string; sources: Source[] } {
+export function buildContext(kb: Kb, ids: string[]): { context: string; sources: Source[]; retrieved: string[] } {
   const byId = new Map(kb.chunks.map((c) => [c.id, c]));
   const picked: Chunk[] = kb.chunks.filter((c) => c.core);
   const have = new Set(picked.map((c) => c.id));
@@ -106,7 +111,7 @@ export function buildContext(kb: Kb, ids: string[]): { context: string; sources:
     blocks.push(block);
     sources.push({ n: sources.length + 1, title: c.title, url: c.url });
   }
-  return { context: blocks.join("\n\n"), sources };
+  return { context: blocks.join("\n\n"), sources, retrieved: picked.filter((c) => !c.core).slice(0, sources.length).map((c) => c.title) };
 }
 
 export function buildMessages(question: string, context: string) {
@@ -350,14 +355,14 @@ export function normalizeStream(src: ReadableStream<Uint8Array>, sources: Source
   const dec = new TextDecoder();
   const think = makeThinkFilter();
   let buf = "";
-  let started = false; // models like Qwen open the answer with blank lines
+  let started = false; // models like Qwen open the answer with blank lines (also: first token => "writing" status)
   const emit = (line: string, ctl: TransformStreamDefaultController<Uint8Array>) => {
     if (!line.startsWith("data:")) return;
     const raw = line.slice(5).trim();
     if (!raw || raw === "[DONE]") return;
     try {
       let t = think.push(extractToken(JSON.parse(raw)));
-      if (!started) { t = t.replace(/^\s+/, ""); if (t) started = true; }
+      if (!started) { t = t.replace(/^\s+/, ""); if (t) { started = true; ctl.enqueue(sse({ step: "writing" }, "status")); } }
       if (t) ctl.enqueue(sse({ t }));
     } catch {
       /* ignore keep-alives and partial lines */
@@ -466,6 +471,39 @@ async function sha256(s: string): Promise<string> {
   return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+/**
+ * Starts the SSE response immediately and lets `run` push progress events while it works, so visitors see
+ * "checking → reading context → thinking → writing" instead of a silent wait. Failures after this point are
+ * reported as `event: error` (the HTTP status is already 200).
+ */
+function streamResponse(
+  headers: Record<string, string>,
+  ctx: ExecutionContext,
+  run: (io: { emit: (data: unknown, event?: string) => Promise<void>; write: (chunk: Uint8Array) => Promise<void>; closed: () => boolean }) => Promise<void>,
+): Response {
+  const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>();
+  const writer = writable.getWriter();
+  let closed = false;
+  const write = async (chunk: Uint8Array) => {
+    if (closed) return;
+    try { await writer.write(chunk); } catch { closed = true; } // the visitor went away
+  };
+  const emit = (data: unknown, event?: string) => write(sse(data, event));
+  ctx.waitUntil(
+    (async () => {
+      try {
+        await run({ emit, write, closed: () => closed });
+      } catch (err) {
+        console.error("unhandled in stream", String(err), (err as Error)?.stack ?? "");
+        await emit({ code: "internal", message: "internal error", status: 500 }, "error");
+      } finally {
+        try { await writer.close(); } catch { /* already closed */ }
+      }
+    })(),
+  );
+  return new Response(readable, { headers });
+}
+
 async function handle(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const origin = allowedOrigin(request, env);
@@ -513,7 +551,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     // Identical question + passages + knowledge base + model => identical answer: serve it from the edge
     // cache (only effective on a custom domain; a no-op on *.workers.dev). Saves free-tier neurons on the
     // suggested questions that most visitors click.
-    const { context, sources } = buildContext(kb, ids);
+    const { context, sources, retrieved } = buildContext(kb, ids);
     const cacheKey = typeof caches !== "undefined"
       ? new Request(`https://ask-cache.invalid/${await sha256([env.MODEL, kb.hash, question.toLowerCase(), ...ids].join("|"))}`)
       : null;
@@ -522,53 +560,71 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       if (hit) return new Response(hit.body, { headers: { ...sseHeaders, "x-cache": "HIT" } });
     }
 
-    // guardrail 2: topic gate. The suggested questions are known-good and skip the classifier.
     const known = new Set((kb.suggestions ?? []).map(normalizeQuestion));
-    let guardModel = "(skipped: suggested question)";
-    if (!known.has(normalizeQuestion(question))) {
-      let onTopic: boolean;
-      try {
-        ({ onTopic, model: guardModel } = await classifyTopic(env, question));
-      } catch (err) {
-        console.error("guardrail classifier error", String(err));
-        const debug = env.DEBUG_ERRORS === "1" && err instanceof GuardError ? { attempts: err.attempts } : undefined;
-        return fail("guardrail_unavailable", "guardrail unavailable", 503, cors, debug); // fail closed
+    const debug = env.DEBUG_ERRORS === "1";
+
+    return streamResponse({ ...sseHeaders, "x-cache": "MISS" }, ctx, async ({ emit, write, closed }) => {
+      // guardrail 2: topic gate. The suggested questions are known-good and skip the classifier.
+      let guardModel = "(skipped: suggested question)";
+      if (!known.has(normalizeQuestion(question))) {
+        await emit({ step: "guard" }, "status");
+        let onTopic: boolean;
+        try {
+          ({ onTopic, model: guardModel } = await classifyTopic(env, question));
+        } catch (err) {
+          console.error("guardrail classifier error", String(err));
+          const extra = debug && err instanceof GuardError ? { attempts: err.attempts } : {};
+          await emit({ code: "guardrail_unavailable", message: "guardrail unavailable", status: 503, ...extra }, "error"); // fail closed
+          return;
+        }
+        if (!onTopic) {
+          console.log(JSON.stringify({ guardrail: "blocked", reason: "off_topic", chars: question.length }));
+          await emit({ reason: "off_topic", message: isVietnamese(question) ? REFUSAL.vi : REFUSAL.en }, "blocked");
+          await emit(debug ? { guardModel } : {}, "done");
+          return;
+        }
       }
-      if (!onTopic) return blocked("off_topic", question, { ...cors, ...debugHeaders(env, guardModel) });
-    }
 
-    let result: unknown;
-    try {
-      result = await env.AI.run(env.MODEL as keyof AiModels, {
-        messages: buildMessages(question, context),
-        stream: true,
-        max_tokens: 1500, // reasoning models (Qwen, DeepSeek) spend tokens on thinking before the answer
-        temperature: 0.2,
-      } as never);
-    } catch (err) {
-      console.error("workers-ai error", String(err));
-      return fail("model_unavailable", "model unavailable", 502, cors, env.DEBUG_ERRORS === "1" ? { detail: short(err) } : undefined);
-    }
+      await emit({ step: "context", count: sources.length, retrieved }, "status");
+      await emit({ step: "thinking" }, "status");
 
-    const out = result instanceof ReadableStream
-      ? normalizeStream(result as ReadableStream<Uint8Array>, sources)
-      : singleShot(result, sources);
+      let result: unknown;
+      try {
+        result = await env.AI.run(env.MODEL as keyof AiModels, {
+          messages: buildMessages(question, context),
+          stream: true,
+          max_tokens: 1500, // reasoning models (Qwen, DeepSeek) spend tokens on thinking before the answer
+          temperature: 0.2,
+        } as never);
+      } catch (err) {
+        console.error("workers-ai error", String(err));
+        await emit({ code: "model_unavailable", message: "model unavailable", status: 502, ...(debug ? { detail: short(err) } : {}) }, "error");
+        return;
+      }
 
-    if (cacheKey) {
-      const [toClient, toCache] = out.tee();
-      ctx.waitUntil(
-        (async () => {
-          const text = await new Response(toCache).text();
-          if (!/"t":/.test(text) || !text.includes("event: done")) return; // never cache empty/broken answers
-          await caches.default.put(
-            cacheKey,
-            new Response(text, { headers: { "content-type": "text/event-stream", "cache-control": `public, max-age=${ANSWER_TTL_S}` } }),
-          );
-        })().catch(() => {}),
-      );
-      return new Response(toClient, { headers: { ...sseHeaders, ...debugHeaders(env, guardModel), "x-cache": "MISS" } });
-    }
-    return new Response(out, { headers: { ...sseHeaders, ...debugHeaders(env, guardModel) } });
+      const out = result instanceof ReadableStream
+        ? normalizeStream(result as ReadableStream<Uint8Array>, sources)
+        : singleShot(result, sources);
+
+      // forward the model's stream, keeping a copy to cache a complete answer
+      const dec = new TextDecoder();
+      let copy = "";
+      const reader = out.getReader();
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        if (closed()) { await reader.cancel().catch(() => {}); return; }
+        if (cacheKey) copy += dec.decode(value, { stream: true });
+        await write(value);
+      }
+      if (debug) await emit({ guardModel }, "debug");
+      if (cacheKey && /"t":/.test(copy) && copy.includes("event: done")) { // never cache empty/broken answers
+        await caches.default.put(
+          cacheKey,
+          new Response(copy, { headers: { "content-type": "text/event-stream", "cache-control": `public, max-age=${ANSWER_TTL_S}` } }),
+        ).catch(() => {});
+      }
+    });
 }
 
 export default {

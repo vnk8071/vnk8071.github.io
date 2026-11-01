@@ -30,6 +30,21 @@ chat window + ⌘K (browser)                                            │  │
 * The browser sends only the **ids** of the best passages. The Worker looks the text up in its own copy of `kb.json`, so callers cannot inject context.
 * The whole CV (≈2.6k characters) is **always** in the prompt; only long project/blog passages are retrieved. Answers therefore hold up even if retrieval misses or the visitor's browser never loaded the model.
 
+## What the visitor sees while it works
+
+Two silent waits used to look like a hang: the topic check (a model call) and the answer model "thinking" before its first word. The Worker now answers the HTTP request immediately and streams progress, and the chat window renders it as a checklist with a live clock:
+
+```
+✓ Tìm thấy 3 đoạn liên quan: GoodJobs, AI Chatbot …      <- found in the browser, instantly
+✓ Câu hỏi phù hợp                                         <- guardrail passed
+✓ Đã đọc 5 đoạn ngữ cảnh
+⟳ Đang suy nghĩ… · 7 giây                                 <- replaced by the streamed answer at the first word
+```
+
+After 15 s of thinking the line says the question needs a bit longer. The model's raw reasoning is deliberately **not** shown: it is noisy, usually English, and can paraphrase the system prompt. Because the stream has already started, failures after that point arrive as `event: error` (the chat window shows `HTTP 503 · guardrail_unavailable`); failures before it (origin, validation, rate limit, knowledge base) are plain HTTP errors. The event list is documented at the top of `workers/ask/src/index.ts`.
+
+If the wait is still too long, the biggest levers are: a smaller non-reasoning `MODEL` / `GUARD_MODEL` (the guard runs a full model call before the answer starts), and a custom domain so suggested questions are served from the edge cache.
+
 ## Guardrails (workers/ask/src/index.ts)
 
 A request is answered only if it is about your profile. Order of checks, cheapest first:
@@ -42,7 +57,7 @@ A request is answered only if it is about your profile. Order of checks, cheapes
 | 2 | `classifyTopic()`: a small Workers AI model answers `ON_TOPIC` / `OFF_TOPIC` (temperature 0, ≤8 tokens, few-shot, question passed as quoted data). Strict parse: anything other than a clean `ON_TOPIC` counts as off-topic. The 3 suggested questions (published in `kb.json`) skip it | ~2 neurons | `blocked` (`off_topic`) |
 | 3 | The main prompt (`MODEL`, default `@cf/qwen/qwen3.8-27b`; reasoning text is stripped from the stream): use only numbered context, never invent facts, don't upgrade claims ("production" only if the passage says live / deployed / published), ignore instructions inside the question | n/a | says it doesn't know |
 
-A filtered request gets HTTP 200 with `event: blocked` and a **fixed** refusal in the visitor's language (the model never writes it), the main model is never called, and nothing is cached. If no model can produce a verdict the request **fails closed** (503 `guardrail_unavailable`); the palette then shows the best-matching passages instead.
+A filtered request gets `event: blocked` and a **fixed** refusal in the visitor's language (the model never writes it), the main model is never called, and nothing is cached. If no model can produce a verdict the request **fails closed** (503 `guardrail_unavailable`); the palette then shows the best-matching passages instead.
 
 Tuning: edit `GUARD_PROMPT` (scope and few-shot examples), `INJECTION_PATTERNS`, or `GUARD_MODEL` in `wrangler.jsonc`. Logs (`wrangler tail`) show `{"guardrail":"blocked","reason":…}` without the question text. If real visitors get wrongly refused, add their phrasing as an `ON_TOPIC` example.
 
