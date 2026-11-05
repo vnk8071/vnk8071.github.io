@@ -1,6 +1,6 @@
 {
  "version": 1,
- "hash": "7fd5219d70",
+ "hash": "502452b671",
  "suggestions": [
   "Tóm tắt thế mạnh cốt lõi trong 3 gạch đầu dòng",
   "Các dự án nào đã từng triển khai thực tế ở môi trường Production?",
@@ -16,12 +16,20 @@
    "url": "/"
   },
   {
-   "title": "ML Learning Path",
-   "url": "/machine-learning-learning-path/"
+   "title": "About",
+   "url": "/about/"
   },
   {
    "title": "Projects",
    "url": "/projects/"
+  },
+  {
+   "title": "ML Learning Path",
+   "url": "/machine-learning-learning-path/"
+  },
+  {
+   "title": "Contact",
+   "url": "/contact/"
   }
  ],
  "links": {
@@ -34,9 +42,9 @@
    "id": "profile",
    "type": "profile",
    "title": "Khoi Vo Nguyen",
-   "text": "Khoi Vo Nguyen — AI Engineer @ Qualcomm. Based in Ho Chi Minh City, Vietnam. AI Engineer @ Qualcomm — computer vision, deep learning, and AI systems.",
-   "url": "/#about",
-   "dedupe": "/#about",
+   "text": "Khoi Vo Nguyen — AI Engineer @ Qualcomm. Based in Ho Chi Minh City, Vietnam. AI Engineer at Qualcomm: computer vision, Edge AI and low-latency C++ inference on Snapdragon. Projects, open source and contact.",
+   "url": "/about/",
+   "dedupe": "/about/#profile",
    "core": true,
    "kw": "giới thiệu bản thân tóm tắt about summary overview hồ sơ",
    "label": "Profile"
@@ -46,8 +54,8 @@
    "type": "contact",
    "title": "Contact & links",
    "text": "GitHub: https://github.com/vnk8071. LinkedIn: https://www.linkedin.com/in/khoivn8071. Email: nguyenkhoi8071@gmail.com",
-   "url": "/#contact",
-   "dedupe": "/#contact",
+   "url": "/contact/",
+   "dedupe": "/contact/#contact",
    "core": true,
    "kw": "liên hệ email contact linkedin github mạng xã hội social",
    "label": "Contact"
@@ -56,9 +64,9 @@
    "id": "about",
    "type": "profile",
    "title": "About",
-   "text": "AI Engineer working across computer vision, Edge AI and low-latency inference — C++ runtimes and Snapdragon NPU deployment (QNN, TFLite, ExecuTorch) through to production services. I build and ship AI systems end to end, from research to production.",
-   "url": "/#about",
-   "dedupe": "/#about",
+   "text": "AI Engineer working across computer vision, Edge AI and low-latency inference: C++ runtimes and Snapdragon NPU deployment (QNN, TFLite, ExecuTorch) through to production services. I build and ship AI systems end to end, from research to production.",
+   "url": "/about/",
+   "dedupe": "/about/#about",
    "core": true,
    "kw": "giới thiệu bản thân tóm tắt about summary overview hồ sơ",
    "label": "Profile"
@@ -68,8 +76,8 @@
    "type": "experience",
    "title": "AI Engineer · Qualcomm",
    "text": "AI Engineer · Qualcomm. Apr 2026 — Present. Ho Chi Minh City, Vietnam. Current role. Contributing to Qualcomm's open-source AI runtime tooling — QNN HTP, TFLite and ExecuTorch (see Open Source).",
-   "url": "/#exp-qualcomm",
-   "dedupe": "/#exp-qualcomm",
+   "url": "/about/#exp-qualcomm",
+   "dedupe": "/about/#exp-qualcomm#exp-qualcomm",
    "core": true,
    "kw": "kinh nghiệm làm việc công ty vị trí experience career job work history resume cv",
    "label": "Experience"
@@ -79,8 +87,8 @@
    "type": "experience",
    "title": "AI Engineer · viAct",
    "text": "AI Engineer · viAct. Mar 2024 — Apr 2026 · 2 yrs 2 mos. Hong Kong SAR",
-   "url": "/#exp-viact",
-   "dedupe": "/#exp-viact",
+   "url": "/about/#exp-viact",
+   "dedupe": "/about/#exp-viact#exp-viact",
    "core": true,
    "kw": "kinh nghiệm làm việc công ty vị trí experience career job work history resume cv",
    "label": "Experience"
@@ -90,8 +98,8 @@
    "type": "experience",
    "title": "AI Engineer · FPT Software",
    "text": "AI Engineer · FPT Software. Sep 2022 — Feb 2024 · 1 yr 6 mos. Quy Nhơn, Vietnam",
-   "url": "/#exp-fpt-software",
-   "dedupe": "/#exp-fpt-software",
+   "url": "/about/#exp-fpt-software",
+   "dedupe": "/about/#exp-fpt-software#exp-fpt-software",
    "core": true,
    "kw": "kinh nghiệm làm việc công ty vị trí experience career job work history resume cv",
    "label": "Experience"
@@ -101,101 +109,63 @@
    "type": "experience",
    "title": "AI Engineer · A2DS Inc.",
    "text": "AI Engineer · A2DS Inc. Jul 2021 — Feb 2023 · 1 yr 8 mos. Ho Chi Minh City, Vietnam",
-   "url": "/#exp-a2ds",
-   "dedupe": "/#exp-a2ds",
+   "url": "/about/#exp-a2ds",
+   "dedupe": "/about/#exp-a2ds#exp-a2ds",
    "core": true,
    "kw": "kinh nghiệm làm việc công ty vị trí experience career job work history resume cv",
    "label": "Experience"
   },
   {
-   "id": "work-goodjobs",
-   "type": "project",
-   "title": "goodjobs",
-   "text": "goodjobs. A self-hosted job aggregator (goodjobs.io.vn) — 18 job boards, one query, with real-time SSE streaming, LLM intent detection, and vector-based recommendations. Highlights: 18 job boards, Real-time SSE streaming, LLM intent detection, Vector recommendations. FastAPI / TypeScript / Redis",
-   "url": "/#work-goodjobs",
-   "dedupe": "/#work-goodjobs",
+   "id": "edu-msc-ai-vnuhcm",
+   "type": "education",
+   "title": "M.Sc. Artificial Intelligence",
+   "text": "M.Sc. Artificial Intelligence. VNUHCM — University of Science. 2025 — 2027",
+   "url": "/about/#edu-msc-ai-vnuhcm",
+   "dedupe": "/about/#edu-msc-ai-vnuhcm#edu-msc-ai-vnuhcm",
    "core": true,
-   "kw": "dự án sản phẩm project product demo triển khai production sản phẩm đang chạy live trực tuyến triển khai production sản phẩm thực tế tuyển dụng việc làm tìm việc job search streaming vector recommendation llm",
-   "label": "Project"
+   "kw": "học vấn trường đại học thạc sĩ cử nhân education university degree master bachelor",
+   "label": "Education"
   },
   {
-   "id": "work-unified-ai-runtime",
-   "type": "project",
-   "title": "unified-ai-runtime",
-   "text": "unified-ai-runtime. One C API over several inference runtimes — with a llama.cpp backend, a stateful session API, and CUDA / Vulkan device selection. Highlights: 8 backends, Plain C ABI, QNN · ONNX Runtime · TensorRT, CUDA / Vulkan / Hexagon NPU. C / C++",
-   "url": "/#work-unified-ai-runtime",
-   "dedupe": "/#work-unified-ai-runtime",
+   "id": "edu-beng-bme-iu",
+   "type": "education",
+   "title": "B.Eng. Biomedical Engineering",
+   "text": "B.Eng. Biomedical Engineering. International University — VNU HCMC. 2018 — 2023",
+   "url": "/about/#edu-beng-bme-iu",
+   "dedupe": "/about/#edu-beng-bme-iu#edu-beng-bme-iu",
    "core": true,
-   "kw": "dự án sản phẩm project product demo triển khai production tối ưu phần cứng tăng tốc hardware acceleration npu gpu cuda vulkan tensorrt openvino on-device inference runtime llm",
-   "label": "Project"
+   "kw": "học vấn trường đại học thạc sĩ cử nhân education university degree master bachelor",
+   "label": "Education"
   },
   {
-   "id": "work-website-kit",
-   "type": "project",
-   "title": "website-kit",
-   "text": "website-kit. A starter kit for proof-of-concept websites — Cloudflare Workers and Terraform, six GitHub Pages templates, a WordPress stack and Apps Script projects — scaffolded into a fresh repo with one command. Cloudflare / Terraform / TypeScript",
-   "url": "/#work-website-kit",
-   "dedupe": "/#work-website-kit",
+   "id": "honor-zalo-ai-challenge-2022",
+   "type": "honor",
+   "title": "Zalo AI Challenge 2022 — Top 9 — Lyric Alignment",
+   "text": "Zalo AI Challenge 2022 — Top 9 — Lyric Alignment",
+   "url": "/about/#honors",
+   "dedupe": "/about/#honors#honor-zalo-ai-challenge-2022",
    "core": true,
-   "ext": "https://github.com/vnk8071/website-kit",
-   "kw": "dự án sản phẩm project product demo triển khai production bộ khởi tạo starter kit mẫu template scaffold poc website cloudflare workers terraform dns github pages wordpress apps script ci cd hạ tầng tự động hóa",
-   "label": "Project"
+   "kw": "giải thưởng thành tích cuộc thi honor award competition challenge",
+   "label": "Honor"
   },
   {
-   "id": "work-machine-learning-learning-path",
-   "type": "project",
-   "title": "machine-learning-learning-path",
-   "text": "machine-learning-learning-path. A structured, self-taught roadmap through machine learning and deep learning — notes, code, and projects. Jupyter / Python",
-   "url": "/#work-machine-learning-learning-path",
-   "dedupe": "/#work-machine-learning-learning-path",
+   "id": "honor-fpt-ai-center-2021",
+   "type": "honor",
+   "title": "FPT AI Center 2021 — Top 15 — Data-Centric AI",
+   "text": "FPT AI Center 2021 — Top 15 — Data-Centric AI",
+   "url": "/about/#honors",
+   "dedupe": "/about/#honors#honor-fpt-ai-center-2021",
    "core": true,
-   "ext": "https://github.com/vnk8071/machine-learning-learning-path",
-   "kw": "dự án sản phẩm project product demo triển khai production lộ trình học học máy học sâu roadmap tự học nanodegree",
-   "label": "Project"
-  },
-  {
-   "id": "work-e2e-ai-chatbot",
-   "type": "project",
-   "title": "E2E-AI-Chatbot",
-   "text": "E2E-AI-Chatbot. An end-to-end AI chatbot — retrieval-augmented generation wired from data to a deployable service. Python",
-   "url": "/#work-e2e-ai-chatbot",
-   "dedupe": "/#work-e2e-ai-chatbot",
-   "core": true,
-   "ext": "https://github.com/vnk8071/E2E-AI-Chatbot",
-   "kw": "dự án sản phẩm project product demo triển khai production chatbot rag truy xuất sinh văn bản llm dịch vụ service triển khai",
-   "label": "Project"
-  },
-  {
-   "id": "work-anomaly-detection-in-industry-manufacturing",
-   "type": "project",
-   "title": "anomaly-detection-in-industry-manufacturing",
-   "text": "anomaly-detection-in-industry-manufacturing. Computer-vision anomaly detection for industrial manufacturing defect inspection. Python / PyTorch",
-   "url": "/#work-anomaly-detection-in-industry-manufacturing",
-   "dedupe": "/#work-anomaly-detection-in-industry-manufacturing",
-   "core": true,
-   "ext": "https://github.com/vnk8071/anomaly-detection-in-industry-manufacturing",
-   "kw": "dự án sản phẩm project product demo triển khai production phát hiện bất thường lỗi sản phẩm nhà máy kiểm tra chất lượng defect inspection thị giác máy tính anomalib",
-   "label": "Project"
-  },
-  {
-   "id": "work-ai-on-cpp",
-   "type": "project",
-   "title": "AI-on-Cpp",
-   "text": "AI-on-Cpp. Running deep-learning inference in C++ — bringing models closer to production performance. C++",
-   "url": "/#work-ai-on-cpp",
-   "dedupe": "/#work-ai-on-cpp",
-   "core": true,
-   "ext": "https://github.com/vnk8071/AI-on-Cpp",
-   "kw": "dự án sản phẩm project product demo triển khai production tối ưu hiệu năng triển khai deploy c++ inference tốc độ latency",
-   "label": "Project"
+   "kw": "giải thưởng thành tích cuộc thi honor award competition challenge",
+   "label": "Honor"
   },
   {
    "id": "oss-qualcomm-qai-appbuilder",
    "type": "opensource",
    "title": "qualcomm/qai-appbuilder",
    "text": "qualcomm/qai-appbuilder. Linux and Android TFLite and ExecuTorch support, plus a fix to run the Android TFLite YOLOX sample on QNN HTP. 3 merged PRs · C++ / Android",
-   "url": "/#oss-qualcomm-qai-appbuilder",
-   "dedupe": "/#oss-qualcomm-qai-appbuilder",
+   "url": "/about/#oss-qualcomm-qai-appbuilder",
+   "dedupe": "/about/#oss-qualcomm-qai-appbuilder#oss-qualcomm-qai-appbuilder",
    "core": true,
    "ext": "https://github.com/qualcomm/qai-appbuilder/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged",
    "kw": "mã nguồn mở đóng góp pull request open source contribution merged pr tối ưu phần cứng npu htp qnn android edge on-device tflite executorch",
@@ -206,8 +176,8 @@
    "type": "opensource",
    "title": "qualcomm/GenieX",
    "text": "qualcomm/GenieX. Structured decisions (JEV) for the GenieX CLI. 1 merged PR",
-   "url": "/#oss-qualcomm-geniex",
-   "dedupe": "/#oss-qualcomm-geniex",
+   "url": "/about/#oss-qualcomm-geniex",
+   "dedupe": "/about/#oss-qualcomm-geniex#oss-qualcomm-geniex",
    "core": true,
    "ext": "https://github.com/qualcomm/GenieX/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged",
    "kw": "mã nguồn mở đóng góp pull request open source contribution merged pr",
@@ -218,8 +188,8 @@
    "type": "opensource",
    "title": "career-ops-hq/career-ops",
    "text": "career-ops-hq/career-ops. Vietnamese market mode and README, plus the ITviec and CareerViet job-board providers — the first Vietnamese sources. 4 merged PRs",
-   "url": "/#oss-career-ops-hq-career-ops",
-   "dedupe": "/#oss-career-ops-hq-career-ops",
+   "url": "/about/#oss-career-ops-hq-career-ops",
+   "dedupe": "/about/#oss-career-ops-hq-career-ops#oss-career-ops-hq-career-ops",
    "core": true,
    "ext": "https://github.com/career-ops-hq/career-ops/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged",
    "kw": "mã nguồn mở đóng góp pull request open source contribution merged pr",
@@ -230,73 +200,52 @@
    "type": "opensource",
    "title": "ultralytics/ultralytics",
    "text": "ultralytics/ultralytics. A C++ MNN example for YOLOv8 inference, and its README. 2 merged PRs · C++",
-   "url": "/#oss-ultralytics-ultralytics",
-   "dedupe": "/#oss-ultralytics-ultralytics",
+   "url": "/about/#oss-ultralytics-ultralytics",
+   "dedupe": "/about/#oss-ultralytics-ultralytics#oss-ultralytics-ultralytics",
    "core": true,
    "ext": "https://github.com/ultralytics/ultralytics/pulls?q=is%3Apr+author%3Avnk8071+is%3Amerged",
    "kw": "mã nguồn mở đóng góp pull request open source contribution merged pr",
    "label": "Open source"
   },
   {
-   "id": "edu-msc-ai-vnuhcm",
-   "type": "education",
-   "title": "M.Sc. Artificial Intelligence",
-   "text": "M.Sc. Artificial Intelligence. VNUHCM — University of Science. 2025 — 2027",
-   "url": "/#edu-msc-ai-vnuhcm",
-   "dedupe": "/#edu-msc-ai-vnuhcm",
+   "id": "websites",
+   "type": "project",
+   "title": "Live websites",
+   "text": "Public websites: goodjobs.io.vn (https://goodjobs.io.vn/) — Job aggregator across 21 sources (see the project page). kilomet.com.vn (https://kilomet.com.vn/) — Public website.",
+   "url": "/about/#websites",
+   "dedupe": "/about/#websites#websites",
    "core": true,
-   "kw": "học vấn trường đại học thạc sĩ cử nhân education university degree master bachelor",
-   "label": "Education"
-  },
-  {
-   "id": "edu-beng-bme-iu",
-   "type": "education",
-   "title": "B.Eng. Biomedical Engineering",
-   "text": "B.Eng. Biomedical Engineering. International University — VNU HCMC. 2018 — 2023",
-   "url": "/#edu-beng-bme-iu",
-   "dedupe": "/#edu-beng-bme-iu",
-   "core": true,
-   "kw": "học vấn trường đại học thạc sĩ cử nhân education university degree master bachelor",
-   "label": "Education"
+   "kw": "dự án sản phẩm project product demo triển khai production",
+   "label": "Project"
   },
   {
    "id": "skills",
    "type": "skills",
    "title": "Focus & tooling",
    "text": "Focus and tooling. Edge & Inference: C++, QNN (Qualcomm HTP), TensorRT, ONNX Runtime, ExecuTorch, TFLite, llama.cpp, OpenVINO, DeepStream. Modeling & AI: PyTorch, Computer Vision, Deep Learning, NLP, LLM / RAG. Backend & Infra: Python, FastAPI, Redis, Docker, AWS, Cloudflare Workers, MLOps, Linux / Android",
-   "url": "/#skills",
-   "dedupe": "/#skills",
+   "url": "/about/#skills",
+   "dedupe": "/about/#skills#skills",
    "core": true,
    "kw": "kỹ năng công nghệ stack tooling skills technology công cụ edge ai suy luận độ trễ thấp inference npu snapdragon qnn tensorrt onnx executorch tflite computer vision thị giác máy tính deep learning học sâu pytorch python c++ docker aws fastapi mlops nlp deepstream llm",
    "label": "Skills"
   },
   {
-   "id": "honor-zalo-ai-challenge-2022",
-   "type": "honor",
-   "title": "Zalo AI Challenge 2022 — Top 9 — Lyric Alignment",
-   "text": "Zalo AI Challenge 2022 — Top 9 — Lyric Alignment",
-   "url": "/#honor-zalo-ai-challenge-2022",
-   "dedupe": "/#honor-zalo-ai-challenge-2022",
+   "id": "work-ai-chatbot",
+   "type": "project",
+   "title": "E2E-AI-Chatbot",
+   "text": "E2E-AI-Chatbot. An end-to-end AI chatbot: retrieval-augmented generation wired from data to a deployable service. Ingestion, embeddings, retrieval and a serving layer in one repository. Role: Author. Stack: Python, RAG. Year: 2023. Runs locally and deploys as a small service; the source is on GitHub.",
+   "url": "/projects/ai-chatbot/",
+   "dedupe": "/projects/ai-chatbot/",
    "core": true,
-   "kw": "giải thưởng thành tích cuộc thi honor award competition challenge",
-   "label": "Honor"
-  },
-  {
-   "id": "honor-fpt-ai-center-2021",
-   "type": "honor",
-   "title": "FPT AI Center 2021 — Top 15 — Data-Centric AI",
-   "text": "FPT AI Center 2021 — Top 15 — Data-Centric AI",
-   "url": "/#honor-fpt-ai-center-2021",
-   "dedupe": "/#honor-fpt-ai-center-2021",
-   "core": true,
-   "kw": "giải thưởng thành tích cuộc thi honor award competition challenge",
-   "label": "Honor"
+   "ext": "https://github.com/vnk8071/E2E-AI-Chatbot",
+   "kw": "dự án sản phẩm project product demo triển khai production chatbot rag truy xuất sinh văn bản llm dịch vụ service triển khai",
+   "label": "Project"
   },
   {
    "id": "project-ai-chatbot-1",
    "type": "project",
-   "title": "End-to-end AI Chatbot",
-   "text": "Pipeline LLMs offline combine with own context for generating answer",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service",
+   "text": "An end-to-end AI chatbot: retrieval-augmented generation wired from data to a deployable service.\n\nIngestion, embeddings, retrieval and a serving layer in one repository.",
    "url": "/projects/ai-chatbot/",
    "dedupe": "/projects/ai-chatbot/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -305,7 +254,7 @@
   {
    "id": "project-ai-chatbot-2",
    "type": "project",
-   "title": "End-to-end AI Chatbot",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service",
    "text": "Pipeline | Installation | User Interface | Model | Database | Search | Contact",
    "url": "/projects/ai-chatbot/",
    "dedupe": "/projects/ai-chatbot/",
@@ -315,7 +264,7 @@
   {
    "id": "project-ai-chatbot-3",
    "type": "project",
-   "title": "End-to-end AI Chatbot — Next stage:",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service — Next stage:",
    "text": "- [x] FastAPI & Gradio backend\n- [x] Dockerize packages\n- [x] Add UI ingest upload file\n- [ ] Add login page\n- [ ] Add docs\n- [ ] Nginx for http and https\n- [ ] K8s\n- [ ] CI/CD cloud (AWS/Azure)",
    "url": "/projects/ai-chatbot/#next-stage",
    "dedupe": "/projects/ai-chatbot/",
@@ -325,7 +274,7 @@
   {
    "id": "project-ai-chatbot-4",
    "type": "project",
-   "title": "End-to-end AI Chatbot — Installation Requirements",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service — Installation Requirements",
    "text": "- Minimum CPU 8GiB RAM\n- Uncomment line 8 packages = [{include = \"**\"}] to use all internal packages (Passing Flake8)\n- Install packages and download GPT4All model by\n1. Run locally\n- Build MongoDB, Mongo Express, Logstash, Elasticsearch and Kibana\n2. Run docker",
    "url": "/projects/ai-chatbot/#installation-requirements",
    "dedupe": "/projects/ai-chatbot/",
@@ -335,7 +284,7 @@
   {
    "id": "project-ai-chatbot-5",
    "type": "project",
-   "title": "End-to-end AI Chatbot — User Interface App",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service — User Interface App",
    "text": "Run on: http://localhost:8071\n\n1. Chatbot:\n\n2. Ingest PDF:\n\n(back to top)",
    "url": "/projects/ai-chatbot/#user-interface-app",
    "dedupe": "/projects/ai-chatbot/",
@@ -345,7 +294,7 @@
   {
    "id": "project-ai-chatbot-6",
    "type": "project",
-   "title": "End-to-end AI Chatbot — Model",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service — Model",
    "text": "1. GPT4ALL: Current best commercially licensable model based on GPT-J and trained by Nomic AI on the latest curated GPT4All dataset.",
    "url": "/projects/ai-chatbot/#model",
    "dedupe": "/projects/ai-chatbot/",
@@ -355,7 +304,7 @@
   {
    "id": "project-ai-chatbot-7",
    "type": "project",
-   "title": "End-to-end AI Chatbot — Search",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service — Search",
    "text": "1. Elasticsearch & Kibana\nElasticsearch run on: http://localhost:9200\n\nKibana run on: http://localhost:5601",
    "url": "/projects/ai-chatbot/#search",
    "dedupe": "/projects/ai-chatbot/",
@@ -365,7 +314,7 @@
   {
    "id": "project-ai-chatbot-8",
    "type": "project",
-   "title": "End-to-end AI Chatbot — Contact",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service — Contact",
    "text": "- KhoiVN - @linkedin-khoivn8071 - nguyenkhoi8071@gmail.com\n- Project Link: Github-E2E-AI-Chatbot\n- Website: khoispace.io.vn",
    "url": "/projects/ai-chatbot/#contact",
    "dedupe": "/projects/ai-chatbot/",
@@ -375,7 +324,7 @@
   {
    "id": "project-ai-chatbot-9",
    "type": "project",
-   "title": "End-to-end AI Chatbot — Impressive",
+   "title": "E2E AI Chatbot: RAG from data to a deployable service — Impressive",
    "text": "- From Langchain Framework: https://github.com/hwchase17/langchain\n- From GPT4All: https://github.com/nomic-ai/gpt4all\n(back to top)",
    "url": "/projects/ai-chatbot/#impressive",
    "dedupe": "/projects/ai-chatbot/",
@@ -383,10 +332,22 @@
    "label": "Project"
   },
   {
+   "id": "work-anomaly-detection",
+   "type": "project",
+   "title": "anomaly-detection",
+   "text": "anomaly-detection. Computer-vision anomaly detection for industrial manufacturing defect inspection. A web pipeline for training and inference on Anomalib models, with a UI for MVTec-style datasets and per-image predictions. Role: Author. Stack: Python, PyTorch, Flask. Year: 2022. Source on GitHub; details in the Anomalib discussion forum.",
+   "url": "/projects/anomaly-detection/",
+   "dedupe": "/projects/anomaly-detection/",
+   "core": true,
+   "ext": "https://github.com/vnk8071/anomaly-detection-in-industry-manufacturing",
+   "kw": "dự án sản phẩm project product demo triển khai production phát hiện bất thường lỗi sản phẩm nhà máy kiểm tra chất lượng defect inspection thị giác máy tính anomalib",
+   "label": "Project"
+  },
+  {
    "id": "project-anomaly-detection-1",
    "type": "project",
-   "title": "Anomaly Detection in Industry Manufacturing",
-   "text": "Web-based Pipeline for Training and Inference\n\nThis project showcases an end-to-end training and inference pipeline build on top of Anomalib. It provides a web-based UI for uploading MVTec style datasets and training them on the available Anomalib models. It also has sections for calling inference on individual images as well as listing all the images with their predictions in the database.\n\nYou can view the project on Github\nFor more details see the Discussion forum",
+   "title": "Anomaly Detection in Industry Manufacturing (PyTorch)",
+   "text": "Computer-vision anomaly detection for industrial manufacturing defect inspection.\n\nA web pipeline for training and inference on Anomalib models, with a UI for MVTec-style datasets and per-image predictions.\n\nThis project showcases an end-to-end training and inference pipeline build on top of Anomalib. It provides a web-based UI for uploading MVTec style datasets and training them on the available Anomalib models. It also has sections for calling inference on individual images as well as listing all the images with their predictions in the database.\n\nYou can view the project on Github\nFor more details see the Discussion forum",
    "url": "/projects/anomaly-detection/",
    "dedupe": "/projects/anomaly-detection/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -395,7 +356,7 @@
   {
    "id": "project-anomaly-detection-2",
    "type": "project",
-   "title": "Anomaly Detection in Industry Manufacturing — App Flask",
+   "title": "Anomaly Detection in Industry Manufacturing (PyTorch) — App Flask",
    "text": "Open local URL: http://127.0.0.1:5000\n\nDefault account login:\n- Username: anomalib\n\nModels supported:\n\nLogin:\n\nSignup:\n\nHomepage:\n\nTrain:\n\nInference:\n\nDatabase:",
    "url": "/projects/anomaly-detection/#app-flask",
    "dedupe": "/projects/anomaly-detection/",
@@ -403,10 +364,22 @@
    "label": "Project"
   },
   {
+   "id": "work-git-tutorial",
+   "type": "project",
+   "title": "git-tutorial",
+   "text": "git-tutorial. A practical Git tutorial: configuration, branches, merge, revert, reset, remote and stash. The 20% of Git commands used 80% of the time, with a worked example. Role: Author. Stack: Git. Year: 2023. Source in the machine-learning-learning-path repository.",
+   "url": "/projects/git-tutorial/",
+   "dedupe": "/projects/git-tutorial/",
+   "core": true,
+   "ext": "https://github.com/vnk8071/machine-learning-learning-path/tree/main/examples/git_tutorial",
+   "kw": "dự án sản phẩm project product demo triển khai production hướng dẫn git quản lý phiên bản version control branch merge",
+   "label": "Project"
+  },
+  {
    "id": "project-git-tutorial-1",
    "type": "project",
-   "title": "Git Tutorial",
-   "text": "Make basic version control",
+   "title": "Git Tutorial: the commands you use most, with examples",
+   "text": "A practical Git tutorial: configuration, branches, merge, revert, reset, remote and stash.\n\nThe 20% of Git commands used 80% of the time, with a worked example.",
    "url": "/projects/git-tutorial/",
    "dedupe": "/projects/git-tutorial/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -415,7 +388,7 @@
   {
    "id": "project-git-tutorial-2",
    "type": "project",
-   "title": "Git Tutorial — Overview",
+   "title": "Git Tutorial: the commands you use most, with examples — Overview",
    "text": "Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later. It allows you to revert files or project to a previous version, track modifications and modifying individuals, and compare changes. It is essential for the integrity of the project and the people working on it.\n\nAnd last but not least, 80% of the time we're just going to use about 20% of the available git commands.",
    "url": "/projects/git-tutorial/#overview",
    "dedupe": "/projects/git-tutorial/",
@@ -425,7 +398,7 @@
   {
    "id": "project-git-tutorial-3",
    "type": "project",
-   "title": "Git Tutorial — Commands and definitions (2)",
+   "title": "Git Tutorial: the commands you use most, with examples — Commands and definitions (2)",
    "text": "| 1 | git clone .git | Clone a repository into a new directory |\n| 2 | git checkout -b | Create a new branch and switch to it |\n| 3 | git add . | Add all files to staging area |\n| 4 | git commit -m \"message\" | Commit changes to head |\n| 5 | git push origin | Push changes to remote repository |\n| 6 | git log | Show commit logs |\n| 7 | git revert | Revert a commit |\n| 8 | git reset --hard | Reset to a commit |\n| 9 | git branch | List all local branches |\n| 10 | git branch -r | List all remote branches |\n| 11 | git branch -a | List all local and remote branches |\n| 12 | git branch -d | Delete a local branch |\n| 13 | git push origin --delete | Delete a remote branch |\n| 14 | git checkout | Switch to a branch |\n| 15 | git checkout - | Switch to the previous branch |\n| 16 | git checkout -- | Discard changes to a file |\n| 17 | git merge | Merge a branch into the active branch |\n| 18 | git fetch",
    "url": "/projects/git-tutorial/#commands-and-definitions",
    "dedupe": "/projects/git-tutorial/",
@@ -435,7 +408,7 @@
   {
    "id": "project-git-tutorial-4",
    "type": "project",
-   "title": "Git Tutorial — Commands and definitions (3)",
+   "title": "Git Tutorial: the commands you use most, with examples — Commands and definitions (3)",
    "text": "| Fetch changes from remote repository |\n| 19 | git pull | Fetch and merge changes from remote repository |\n| 20 | git stash | Stash changes in a dirty working directory |\n| 21 | git stash list | List all stashed changesets |\n| 22 | git stash pop | Apply stashed changes to working directory |\n| 23 | git stash drop | Discard stashed changesets |\n| 24 | git rebase | Reapply commits on top of another base tip |\n| 25 | git rebase -i HEAD~ | Rebase interactive |\n| 26 | git rebase --continue | Continue rebase after resolving conflicts |\n| 27 | git rebase --abort | Abort rebase |\n\nNote:\n- git pull = git fetch + git merge\n- git pull --rebase = git fetch + git rebase\n\nDetails in Git Cheat Sheet and Book",
    "url": "/projects/git-tutorial/#commands-and-definitions",
    "dedupe": "/projects/git-tutorial/",
@@ -445,7 +418,7 @@
   {
    "id": "project-git-tutorial-5",
    "type": "project",
-   "title": "Git Tutorial — Basic flow",
+   "title": "Git Tutorial: the commands you use most, with examples — Basic flow",
    "text": "Example:\nFollow the instructions in flow.py:\n\nCheck remote branches:",
    "url": "/projects/git-tutorial/#basic-flow",
    "dedupe": "/projects/git-tutorial/",
@@ -455,7 +428,7 @@
   {
    "id": "project-git-tutorial-6",
    "type": "project",
-   "title": "Git Tutorial — Single branch workflow",
+   "title": "Git Tutorial: the commands you use most, with examples — Single branch workflow",
    "text": "- Use a single branch for all changes.\n- Use tags to mark important commits.\n\n| # | Benefits | Drawbacks |\n\n| 1 | It is simple. | It is not recommended to use in remote branches. |\n| 2 | It is easy to resolve conflicts. | It is not recommended to use in large projects. |\n| 3 | It is easy to revert a commit. | It is not recommended to use in colaborating with others. |\n\n@source: A successful Git branching model",
    "url": "/projects/git-tutorial/#single-branch-workflow",
    "dedupe": "/projects/git-tutorial/",
@@ -465,7 +438,7 @@
   {
    "id": "project-git-tutorial-7",
    "type": "project",
-   "title": "Git Tutorial — Branch based development workflow",
+   "title": "Git Tutorial: the commands you use most, with examples — Branch based development workflow",
    "text": "- The master/main is never committed to directly.\n- New features are developed in separate branches, and then if colaborating with others, merged could be approved by pull request into the master/main branch.\n\n@source: Trunk Based Development\n\n| # | Benefits | Drawbacks |\n\n| 1 | It is easy to revert a commit. | It is harder to resolve conflicts. |\n| 2 | It is easy to review changes. | It is not recommended to use in local branches. |\n| 3 | It is easy to collaborate with others. | Need dedicated time to review changes. |",
    "url": "/projects/git-tutorial/#branch-based-development-workflow",
    "dedupe": "/projects/git-tutorial/",
@@ -475,7 +448,7 @@
   {
    "id": "project-git-tutorial-8",
    "type": "project",
-   "title": "Git Tutorial — Revert",
+   "title": "Git Tutorial: the commands you use most, with examples — Revert",
    "text": "Example:\nFollow the instructions in revert.py:\n\nWe want to revert the commit 0fcd910e9488b06d2206ff59c556e92a03a6f4ca:\n\nResult:\n\nWe can see that the commit 0fcd910e9488b06d2206ff59c556e92a03a6f4ca is reverted.",
    "url": "/projects/git-tutorial/#revert",
    "dedupe": "/projects/git-tutorial/",
@@ -485,7 +458,7 @@
   {
    "id": "project-git-tutorial-9",
    "type": "project",
-   "title": "Git Tutorial — Reset",
+   "title": "Git Tutorial: the commands you use most, with examples — Reset",
    "text": "We can see that the commit 0fcd910e9488b06d2206ff59c556e92a03a6f4ca is reset.",
    "url": "/projects/git-tutorial/#reset",
    "dedupe": "/projects/git-tutorial/",
@@ -495,7 +468,7 @@
   {
    "id": "project-git-tutorial-10",
    "type": "project",
-   "title": "Git Tutorial — Merge",
+   "title": "Git Tutorial: the commands you use most, with examples — Merge",
    "text": "Follow the instructions in merge.py:\nÌf merge conflict, we need to resolve it first.\n\nExample:\n\nThen accept the changes could be current | incoming | both and commit:",
    "url": "/projects/git-tutorial/#merge",
    "dedupe": "/projects/git-tutorial/",
@@ -505,7 +478,7 @@
   {
    "id": "project-git-tutorial-11",
    "type": "project",
-   "title": "Git Tutorial — Remote",
+   "title": "Git Tutorial: the commands you use most, with examples — Remote",
    "text": "Before we can push to a team repository, we need to pull and resolve conflicts first.\n\nThen we can push to the team repository.",
    "url": "/projects/git-tutorial/#remote",
    "dedupe": "/projects/git-tutorial/",
@@ -515,7 +488,7 @@
   {
    "id": "project-git-tutorial-12",
    "type": "project",
-   "title": "Git Tutorial — Stash",
+   "title": "Git Tutorial: the commands you use most, with examples — Stash",
    "text": "Using git stash to save changes in a dirty working directory and then pull latest changes from remote repository.\n\nThen we can apply stashed changes to working directory.\n\nExample:\n\nThen raise a bug and fix it.\n\nIn this case, we can stash changes and pull latest changes from remote repository.\n\nThen we can apply stashed changes to working directory.\n\nExample:\nIt squashes all commits of into one commit and reapply on top of .\n\nThen it rewrites the history of and we need to force push to the remote repository.\n\n| # | Benefits | Drawbacks |\n\n| 1 | It keeps the history clean. | It is harder to resolve conflicts. |\n| 2 | It is easier to revert a commit. | It loses the context of the commits. |\n| 3 | Using in local branches. | It is not recommended to use in remote branches. |",
    "url": "/projects/git-tutorial/#stash",
    "dedupe": "/projects/git-tutorial/",
@@ -525,7 +498,7 @@
   {
    "id": "project-git-tutorial-13",
    "type": "project",
-   "title": "Git Tutorial — Squash",
+   "title": "Git Tutorial: the commands you use most, with examples — Squash",
    "text": "Using squash to combine multiple commits into one commit.\n\nNote: Not recommended to use in remote branches when colaborating with others.",
    "url": "/projects/git-tutorial/#squash",
    "dedupe": "/projects/git-tutorial/",
@@ -535,7 +508,7 @@
   {
    "id": "project-git-tutorial-14",
    "type": "project",
-   "title": "Git Tutorial — Less used commands",
+   "title": "Git Tutorial: the commands you use most, with examples — Less used commands",
    "text": "| # | Command | Definition |\n\n| 1 | git rename | Rename a file |\n| 2 | git remote rename | Rename a remote |\n| 3 | git restore --staged | Unstage a file |",
    "url": "/projects/git-tutorial/#less-used-commands",
    "dedupe": "/projects/git-tutorial/",
@@ -543,10 +516,22 @@
    "label": "Project"
   },
   {
+   "id": "work-goodjobs",
+   "type": "project",
+   "title": "goodjobs.io.vn",
+   "text": "goodjobs.io.vn. A self-hosted job aggregator across 21 sources: one query, real-time results and recommendations that understand the role. 21 sources searched at once, with real-time SSE streaming, LLM intent detection and vector recommendations. Role: Design, backend, frontend. Stack: FastAPI, TypeScript, Redis. Year: 2026. The site runs at goodjobs.io.vn; the source is on GitHub.",
+   "url": "/goodjobs/",
+   "dedupe": "/goodjobs/",
+   "core": true,
+   "ext": "https://goodjobs.io.vn",
+   "kw": "dự án sản phẩm project product demo triển khai production sản phẩm đang chạy live trực tuyến triển khai production sản phẩm thực tế tuyển dụng việc làm tìm việc job search streaming vector recommendation llm",
+   "label": "Project"
+  },
+  {
    "id": "project-goodjobs-1",
    "type": "project",
-   "title": "GoodJobs — Job Aggregator",
-   "text": "18 job boards, one query — real-time streaming with LLM intent detection\n\nLive at goodjobs.io.vn",
+   "title": "goodjobs.io.vn: job aggregator across 21 sources",
+   "text": "A self-hosted job aggregator across 21 sources: one query, real-time results and recommendations that understand the role.\n\n21 sources searched at once, with real-time SSE streaming, LLM intent detection and vector recommendations.",
    "url": "/goodjobs/",
    "dedupe": "/goodjobs/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -555,8 +540,8 @@
   {
    "id": "project-goodjobs-2",
    "type": "project",
-   "title": "GoodJobs — Job Aggregator",
-   "text": "Live | Repo\n\nA self-hosted job aggregator that scrapes listings from 18 job boards across\nVietnam and global markets (US, UK, Singapore) and streams the results back in\nreal time. Search by job title or paste a CV — results are deduplicated, cached,\nand ranked with vector similarity.",
+   "title": "goodjobs.io.vn: job aggregator across 21 sources",
+   "text": "Live | Repo\n\nA self-hosted job aggregator that scrapes listings from 21 sources across\nVietnam and global markets (US, UK, Singapore) and streams the results back in\nreal time. Search by job title or paste a CV — results are deduplicated, cached,\nand ranked with vector similarity.",
    "url": "/goodjobs/",
    "dedupe": "/goodjobs/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -565,8 +550,8 @@
   {
    "id": "project-goodjobs-3",
    "type": "project",
-   "title": "GoodJobs — Job Aggregator — Highlights",
-   "text": "- Real-time SSE streaming of job results — \"18 sources, one query\"\n- LLM-powered intent detection and city normalization\n- Vector-based related-job recommendations\n- Auto-extracted tech skill tags\n- Self-warming cache (~30 keyword pairs every 2 hours)\n- Fair concurrency control with semaphore queuing",
+   "title": "goodjobs.io.vn: job aggregator across 21 sources — Highlights",
+   "text": "- Real-time SSE streaming of job results — \"21 sources, one query\"\n- LLM-powered intent detection and city normalization\n- Vector-based related-job recommendations\n- Auto-extracted tech skill tags\n- Self-warming cache (~30 keyword pairs every 2 hours)\n- Fair concurrency control with semaphore queuing",
    "url": "/goodjobs/#highlights",
    "dedupe": "/goodjobs/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -575,7 +560,7 @@
   {
    "id": "project-goodjobs-4",
    "type": "project",
-   "title": "GoodJobs — Job Aggregator — Tech stack",
+   "title": "goodjobs.io.vn: job aggregator across 21 sources — Tech stack",
    "text": "- Backend: FastAPI (Python), Redis caching, embeddings for vector search\n- Frontend: TypeScript\n- Scraping: Playwright / Chromium\n- Infra: Docker Compose",
    "url": "/goodjobs/#tech-stack",
    "dedupe": "/goodjobs/",
@@ -585,7 +570,7 @@
   {
    "id": "project-goodjobs-5",
    "type": "project",
-   "title": "GoodJobs — Job Aggregator — Contact",
+   "title": "goodjobs.io.vn: job aggregator across 21 sources — Contact",
    "text": "- Gmail: nguyenkhoi8071@gmail.com\n- Website: khoispace.io.vn\n- GitHub: github.com/vnk8071",
    "url": "/goodjobs/#contact",
    "dedupe": "/goodjobs/",
@@ -593,10 +578,22 @@
    "label": "Project"
   },
   {
+   "id": "work-ml-learning-path",
+   "type": "project",
+   "title": "ML Learning Path",
+   "text": "ML Learning Path. A structured, self-taught roadmap through machine learning and deep learning: notes, code and projects. Ordered notes and notebooks from fundamentals to deployment, kept as a public study log. Role: Author. Stack: Jupyter, Python. Year: 2023. Public on GitHub, with notes for each course and the projects built along the way.",
+   "url": "/machine-learning-learning-path/",
+   "dedupe": "/machine-learning-learning-path/",
+   "core": true,
+   "ext": "https://github.com/vnk8071/machine-learning-learning-path",
+   "kw": "dự án sản phẩm project product demo triển khai production lộ trình học học máy học sâu roadmap tự học nanodegree",
+   "label": "Project"
+  },
+  {
    "id": "project-ml-learning-path-1",
    "type": "project",
-   "title": "Machine Learning Learning Path",
-   "text": "A roadmap of Machine Learning\n\nLink repo: vnk8071/machine-learning-learning-path",
+   "title": "Machine Learning Learning Path: notes and projects",
+   "text": "A structured, self-taught roadmap through machine learning and deep learning: notes, code and projects.\n\nOrdered notes and notebooks from fundamentals to deployment, kept as a public study log.\n\nLink repo: vnk8071/machine-learning-learning-path",
    "url": "/machine-learning-learning-path/",
    "dedupe": "/machine-learning-learning-path/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -605,7 +602,7 @@
   {
    "id": "project-ml-learning-path-2",
    "type": "project",
-   "title": "Machine Learning Learning Path — Nanodegree",
+   "title": "Machine Learning Learning Path: notes and projects — Nanodegree",
    "text": "NanoDegree is a series of courses in a specific field. It is a paid course. You can learn more about Nanodegree here.\n\nNoted nanodegrees: Udacity - Google drive",
    "url": "/machine-learning-learning-path/#nanodegree",
    "dedupe": "/machine-learning-learning-path/",
@@ -615,7 +612,7 @@
   {
    "id": "project-ml-learning-path-3",
    "type": "project",
-   "title": "Machine Learning Learning Path — Data Analyst (nd002)",
+   "title": "Machine Learning Learning Path: notes and projects — Data Analyst (nd002)",
    "text": "- Syllabus: Syllabus\n- Noted course: Google Drive\n\nProjects:\n#### 1. Introduction to Data Analysis with Pandas and NumPy\n- Learn the data analysis process of questioning, wrangling, exploring, analyzing, and communicating data. You will work with data in Python using libraries like NumPy and pandas.\n- Project: Investigate a Dataset\n- Source code: vnk8071/investigate_a_dataset\n\n#### 2. Advanced Data Wrangling\n- Data wrangling is a set of processes for turning raw and messy data into a clean format to answer interesting questions from the data. In this course, you will learn the three phases of data wrangling: gathering, assessing, and cleaning data.\n- Project: Real World Data Wrangling with Python\n- Source code: vnk8071/advanced_data_wrangling",
    "url": "/machine-learning-learning-path/#data-analyst-nd002",
    "dedupe": "/machine-learning-learning-path/",
@@ -625,7 +622,7 @@
   {
    "id": "project-ml-learning-path-4",
    "type": "project",
-   "title": "Machine Learning Learning Path — Data Analyst (nd002) (2)",
+   "title": "Machine Learning Learning Path: notes and projects — Data Analyst (nd002) (2)",
    "text": "#### 3. Data Visualization with Matplotlib and Seaborn\n- Learn to apply sound design and data visualization principles to the data analysis process. Learn how to use analysis and visualizations to tell a story with data.\n- Project: Communicate Data Findings\n- Source code: vnk8071/communicate_data_findings",
    "url": "/machine-learning-learning-path/#data-analyst-nd002",
    "dedupe": "/machine-learning-learning-path/",
@@ -635,7 +632,7 @@
   {
    "id": "project-ml-learning-path-5",
    "type": "project",
-   "title": "Machine Learning Learning Path — Intermediate Python Nanodegree (nd303)",
+   "title": "Machine Learning Learning Path: notes and projects — Intermediate Python Nanodegree (nd303)",
    "text": "- Syllabus: Syllabus\n- Noted course: Google Drive\n\nProjects:\n#### 1. Advanced Python Techniques\n- In this course, you will learn advanced Python skills and master a myriad of modern subject matter.\n- Project: Exploring Near-Earth Objects\n- Source code: vnk8071/advanced_python_techniques",
    "url": "/machine-learning-learning-path/#intermediate-python-nanodegree-nd303",
    "dedupe": "/machine-learning-learning-path/",
@@ -645,7 +642,7 @@
   {
    "id": "project-ml-learning-path-6",
    "type": "project",
-   "title": "Machine Learning Learning Path — Intermediate Python Nanodegree (nd303) (2)",
+   "title": "Machine Learning Learning Path: notes and projects — Intermediate Python Nanodegree (nd303) (2)",
    "text": "#### 2. Large Python Codebases with Libraries\n- Learn how you can write, structure, and extend your code to be able to support developing large systems at scale. Understand how you can leverage open source libraries to quickly add advanced functionality to your code and how you can package your code into libraries of your own. Apply Object Oriented Programming to ensure that your code remains modular, clear, and understandable. Honing these skills are the foundations for building codebases that are maintainable and efficient as they grow to tens of thousands of lines.\n- Project: Motivational Meme Generator\n- Source code: vnk8071/meme_generator",
    "url": "/machine-learning-learning-path/#intermediate-python-nanodegree-nd303",
    "dedupe": "/machine-learning-learning-path/",
@@ -655,7 +652,7 @@
   {
    "id": "project-ml-learning-path-7",
    "type": "project",
-   "title": "Machine Learning Learning Path — Full Stack Web Developer (nd0044)",
+   "title": "Machine Learning Learning Path: notes and projects — Full Stack Web Developer (nd0044)",
    "text": "- Syllabus: Syllabus\n- Noted course: Google Drive\n\nProjects:\n#### 1. SQL and Data Modeling for the Web\n- You'll learn the skills needed to traverse the stack and develop an entire database-backed web application. By the end of the course, you'll have the fundamentals you need to start building web applications, including how to do Create, Read, Update, and Delete (CRUD) operations on a database, how to apply these operations across both databases and web applications, how to set up relationships between elements of an application, and ultimately how to think about important principles and patterns in building data models for a web application\n- Project: Fyyur: Artist Booking Site\n- Source code: vnk8071/sql_data_modeling_for_web",
    "url": "/machine-learning-learning-path/#full-stack-web-developer-nd0044",
    "dedupe": "/machine-learning-learning-path/",
@@ -665,7 +662,7 @@
   {
    "id": "project-ml-learning-path-8",
    "type": "project",
-   "title": "Machine Learning Learning Path — Full Stack Web Developer (nd0044) (2)",
+   "title": "Machine Learning Learning Path: notes and projects — Full Stack Web Developer (nd0044) (2)",
    "text": "#### 2. API Development and Documentation\n- In this project, you will use the skills you’ve developed to build a Trivia API. The goal of this project is to use APIs to control and manage a web application using existing data models. You’ll be given a set of data models and the application front end. Your task will be to implement the API in Flask to make the Trivia game functional.\n- Project: Trivia API\n- Source code: vnk8071/api_development_documentation\n\n#### 3. Identity Access Management\n- In this part, you will build the backend for a coffee shop application. You’ll add user accounts and authentication to your application and use role-based access management strategies to control different types of user behavior in the app.\n- Project: Coffee Shop Full Stack\n- Source code: vnk8071/identity_access_management",
    "url": "/machine-learning-learning-path/#full-stack-web-developer-nd0044",
    "dedupe": "/machine-learning-learning-path/",
@@ -675,7 +672,7 @@
   {
    "id": "project-ml-learning-path-9",
    "type": "project",
-   "title": "Machine Learning Learning Path — Full Stack Web Developer (nd0044) (3)",
+   "title": "Machine Learning Learning Path: notes and projects — Full Stack Web Developer (nd0044) (3)",
    "text": "#### 4. Server Deployment and Containerization\n- Develop an understanding of containerized environments, use Docker to share and store containers, and deploy a Docker\ncontainer to AWS Elastic Kubernetes Service using the CI/CD pipeline.\n- Project: Deploy Your Flask App to Kubernetes Using EKS\n- Source code: vnk8071/server_deployment_containerization\n- Template: vnk8071/pipeline-deploy-kubernetes-on-aws\n\n#### 5. Full Stack Capstone\n- You will now combine all of the new skills you’ve learned and developed in this course to construct a database-backed web API with user access control. You will choose what app to build and then you’ll design and build out all of the API endpoints needed for the application and properly secure them for use in any front end application (web or mobile).\n- Capstone Coffee Shop Fullstack\n- Source code: vnk8071/capstone_fullstack_web",
    "url": "/machine-learning-learning-path/#full-stack-web-developer-nd0044",
    "dedupe": "/machine-learning-learning-path/",
@@ -685,7 +682,7 @@
   {
    "id": "project-ml-learning-path-10",
    "type": "project",
-   "title": "Machine Learning Learning Path — Machine Learning Engineer (nd009t)",
+   "title": "Machine Learning Learning Path: notes and projects — Machine Learning Engineer (nd009t)",
    "text": "- Syllabus: Syllabus\n- Noted course: Google Drive\n\nProjects:\n#### 1.Introduction to Machine Learning\n- In this course, you'll start learning what machine learning is by being introduced to the high level concepts through AWS SageMaker. You'll begin by using SageMaker Studio to perform exploratory data analysis. Know how and when to apply the basic concepts of machine learning to real world scenarios. Create machine learning workflows, starting with data cleaning and feature engineering, to evaluation and hyperparameter tuning. Finally, you'll build new ML workflows with highly sophisticated models such as XGBoost and AutoGluon.\n- Project: Predict Bike Sharing Demand with AutoGluon\n- Source code: vnk8071/predict_bike_sharing_demand",
    "url": "/machine-learning-learning-path/#machine-learning-engineer-nd009t",
    "dedupe": "/machine-learning-learning-path/",
@@ -695,7 +692,7 @@
   {
    "id": "project-ml-learning-path-11",
    "type": "project",
-   "title": "Machine Learning Learning Path — Machine Learning Engineer (nd009t) (2)",
+   "title": "Machine Learning Learning Path: notes and projects — Machine Learning Engineer (nd009t) (2)",
    "text": "#### 2. Developing Your First ML Workflow\n- This course discusses how to use AWS services to train a model, deploy a model, and how to use AWS Lambda Functions, Step Functions to compose your model and services into an event-driven application.\n- Project: Build a ML Workflow For Scones Unlimited On Amazon SageMaker\n- Source code: vnk8071/ml_workflow_for_scones_unlimited\n\n#### 3. Deep Learning Topics within Computer Vision & NLP\n- Project: Image Classification using AWS SageMaker\n- Source code: vnk8071/image_classification_using_sagemaker",
    "url": "/machine-learning-learning-path/#machine-learning-engineer-nd009t",
    "dedupe": "/machine-learning-learning-path/",
@@ -705,7 +702,7 @@
   {
    "id": "project-ml-learning-path-12",
    "type": "project",
-   "title": "Machine Learning Learning Path — Machine Learning Engineer (nd009t) (3)",
+   "title": "Machine Learning Learning Path: notes and projects — Machine Learning Engineer (nd009t) (3)",
    "text": "#### 4. Operationalizing Machine Learning on SageMaker\n- This course covers advanced topics related to deploying professional machine learning projects on SageMaker. Students will learn how to maximize output while decreasing costs. They will also learn how to deploy projects that can handle high traffic, how to work with especially large datasets, and how to approach security in machine learning AWS applications.\n- Project: Operationalizing an AWS ML Project\n- Source code: vnk8071/operationalizing_aws_ml\n\n#### 5. Capstone Project: Build Your Own Machine Learning Portfolio\n- Project: Build Your Own Machine Learning Portfolio\n- Source code: vnk8071/capstone_ml_engineer",
    "url": "/machine-learning-learning-path/#machine-learning-engineer-nd009t",
    "dedupe": "/machine-learning-learning-path/",
@@ -715,7 +712,7 @@
   {
    "id": "project-ml-learning-path-13",
    "type": "project",
-   "title": "Machine Learning Learning Path — Machine Learning DevOps Engineer (nd0821)",
+   "title": "Machine Learning Learning Path: notes and projects — Machine Learning DevOps Engineer (nd0821)",
    "text": "- Syllabus: Syllabus\n- Noted course: Google Drive\n\nProjects:\n#### 1. Clean Code Principles\n- Develop skills that are essential for deploying production machine learning models. First, you will put your coding best practices on auto-pilot by learning how to use PyLint and AutoPEP8. Then you will further expand your git and Github skills to work with teams. Finally, you will learn best practices associated with testing and logging used in production settings in order to ensure your models can stand the test of time.\n- Project: Predict Customer Churn with Clean Code\n- Source code: vnk8071/clean_code",
    "url": "/machine-learning-learning-path/#machine-learning-devops-engineer-nd0821",
    "dedupe": "/machine-learning-learning-path/",
@@ -725,7 +722,7 @@
   {
    "id": "project-ml-learning-path-14",
    "type": "project",
-   "title": "Machine Learning Learning Path — Machine Learning DevOps Engineer (nd0821) (2)",
+   "title": "Machine Learning Learning Path: notes and projects — Machine Learning DevOps Engineer (nd0821) (2)",
    "text": "#### 2. Building a Reproducible Model Workflow\n- This course empowers the students to be more efficient, effective, and productive in modern, real-world ML projects by adopting best practices around reproducible workflows. In particular, it teaches the fundamentals of MLops and how to: a) create a clean, organized, reproducible, end-to-end machine learning pipeline from scratch using MLflow b) clean and validate the data using pytest c) track experiments, code, and results using GitHub and Weights & Biases d) select the best-performing model for production and e) deploy a model using MLflow. Along the way, it also touches on other technologies like Kubernetes, Kubeflow, and Great Expectations and how they relate to the content of the class.\n- Project: Build an ML Pipeline for Short-term Rental Prices in NYC\n- Source code: vnk8071/reproducible_model_workflow",
    "url": "/machine-learning-learning-path/#machine-learning-devops-engineer-nd0821",
    "dedupe": "/machine-learning-learning-path/",
@@ -733,10 +730,22 @@
    "label": "Project"
   },
   {
+   "id": "work-unified-ai-runtime",
+   "type": "project",
+   "title": "unified-ai-runtime",
+   "text": "unified-ai-runtime. One C API over QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO and NCNN. Write the application code once and choose the backend by name; a device or SDK mismatch returns an error instead of silently falling back to the CPU. Role: Author. Stack: C, C++, Python. Year: 2026. Published on PyPI as uairt; the source is on GitHub.",
+   "url": "/unified-ai-runtime/",
+   "dedupe": "/unified-ai-runtime/",
+   "core": true,
+   "ext": "https://github.com/vnk8071/unified-ai-runtime",
+   "kw": "dự án sản phẩm project product demo triển khai production tối ưu phần cứng tăng tốc hardware acceleration npu gpu cuda vulkan tensorrt openvino on-device inference runtime llm",
+   "label": "Project"
+  },
+  {
    "id": "project-unified-ai-runtime-1",
    "type": "project",
-   "title": "Unified AI Runtime (UAIRT)",
-   "text": "One C API over QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO and NCNN",
+   "title": "Unified AI Runtime (UAIRT): one C API, eight backends",
+   "text": "One C API over QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO and NCNN.\n\nWrite the application code once and choose the backend by name; a device or SDK mismatch returns an error instead of silently falling back to the CPU.",
    "url": "/unified-ai-runtime/",
    "dedupe": "/unified-ai-runtime/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -745,7 +754,7 @@
   {
    "id": "project-unified-ai-runtime-2",
    "type": "project",
-   "title": "Unified AI Runtime (UAIRT)",
+   "title": "Unified AI Runtime (UAIRT): one C API, eight backends",
    "text": "Repo | PyPI\n\nOne C API to run compiled AI models on QNN (Qualcomm NPUs), ONNX Runtime, TFLite,\nCoreML, llama.cpp (GGUF language models), TensorRT, OpenVINO and NCNN. Write the\napplication code once; choose the backend by name when you create an engine.\n\nUAIRT loads artifacts that each vendor's toolchain already produced and runs them\nthrough that vendor's runtime. It does not convert or quantize models, and a\ndevice or SDK mismatch returns an error instead of silently falling back to the CPU.",
    "url": "/unified-ai-runtime/",
    "dedupe": "/unified-ai-runtime/",
@@ -755,7 +764,7 @@
   {
    "id": "project-unified-ai-runtime-3",
    "type": "project",
-   "title": "Unified AI Runtime (UAIRT) — Highlights",
+   "title": "Unified AI Runtime (UAIRT): one C API, eight backends — Highlights",
    "text": "- Plain C ABI with a plugin per backend, so other languages can bind to it\n- Python bindings: AutoModel.from_file(\"model.onnx\", device=\"cpu\")\n- Stateful session API for language models (.gguf) with token streaming\n- llama.cpp device selection — CUDA, Vulkan, OpenCL, Hexagon NPU\n- Verified against each vendor's own tool on real hardware (Snapdragon, Apple M5, NVIDIA, Intel)",
    "url": "/unified-ai-runtime/#highlights",
    "dedupe": "/unified-ai-runtime/",
@@ -765,7 +774,7 @@
   {
    "id": "project-unified-ai-runtime-4",
    "type": "project",
-   "title": "Unified AI Runtime (UAIRT) — Tech stack",
+   "title": "Unified AI Runtime (UAIRT): one C API, eight backends — Tech stack",
    "text": "- Core: C / C++, CMake\n- Bindings: Python (wheels on PyPI), Rust\n- Backends: QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO, NCNN",
    "url": "/unified-ai-runtime/#tech-stack",
    "dedupe": "/unified-ai-runtime/",
@@ -773,10 +782,22 @@
    "label": "Project"
   },
   {
+   "id": "work-website-kit",
+   "type": "project",
+   "title": "website-kit",
+   "text": "website-kit. A starter kit for proof-of-concept websites: Cloudflare Workers and Terraform, six GitHub Pages templates, WordPress and Apps Script. One command scaffolds a self-contained repo from any module, with CI and agent skills included. Role: Author. Stack: Cloudflare, Terraform, TypeScript. Year: 2026. Public on GitHub; every module is validated on its own in CI.",
+   "url": "/website-kit/",
+   "dedupe": "/website-kit/",
+   "core": true,
+   "ext": "https://github.com/vnk8071/website-kit",
+   "kw": "dự án sản phẩm project product demo triển khai production bộ khởi tạo starter kit mẫu template scaffold poc website cloudflare workers terraform dns github pages wordpress apps script ci cd hạ tầng tự động hóa",
+   "label": "Project"
+  },
+  {
    "id": "project-website-kit-1",
    "type": "project",
-   "title": "Website Kit — PoC starter kit",
-   "text": "Four independent modules — Cloudflare, GitHub Pages, WordPress and Apps Script — and one command that scaffolds a proof-of-concept website into a fresh repo",
+   "title": "website-kit: a starter kit for proof-of-concept websites",
+   "text": "A starter kit for proof-of-concept websites: Cloudflare Workers and Terraform, six GitHub Pages templates, WordPress and Apps Script.\n\nOne command scaffolds a self-contained repo from any module, with CI and agent skills included.",
    "url": "/website-kit/",
    "dedupe": "/website-kit/",
    "kw": "dự án sản phẩm project product demo triển khai production",
@@ -785,7 +806,7 @@
   {
    "id": "project-website-kit-2",
    "type": "project",
-   "title": "Website Kit — PoC starter kit",
+   "title": "website-kit: a starter kit for proof-of-concept websites",
    "text": "Repo\n\nA starter kit for spinning up a proof-of-concept website with minimal setup. It has four\nmodules; each is fully independent, so you use one or any combination and nothing in one\nmodule imports, links to or requires another.\n\nThe script copies one module into a fresh directory, installs its CI templates as\n.github/workflows/ and makes the first commit. The result has no connection back to the kit.",
    "url": "/website-kit/",
    "dedupe": "/website-kit/",
@@ -795,7 +816,7 @@
   {
    "id": "project-website-kit-3",
    "type": "project",
-   "title": "Website Kit — PoC starter kit — Modules",
+   "title": "website-kit: a starter kit for proof-of-concept websites — Modules",
    "text": "- Cloudflare — Terraform for DNS, zone security, Pages, Workers resources (KV, D1, R2), WAF, Tunnel, Access, Turnstile and Email Routing, each behind an enable_* flag; nine runnable Worker examples (REST API over D1 + KV + R2, cron to queue, Turnstile contact form, Workers AI, Durable Objects, an email-server mailbox and more); a Pages site with Functions; CI templates.\n- GitHub Pages — six deployable templates (plain HTML, Jekyll, Hugo, Astro, Vite + React, MkDocs). Each folder is a complete repo with its own workflow.\n- WordPress — a Docker stack (WordPress, MariaDB, Mailpit), a one-command WP-CLI bootstrap, a block theme, a core plugin, a hardening mu-plugin, deploy workflows and a static export.\n- Apps Script — four clasp projects: a Sheets-backed JSON API, a contact-form backend, a web app UI and a scheduled email digest, with a test harness that runs against fakes of the Google",
    "url": "/website-kit/#modules",
    "dedupe": "/website-kit/",
@@ -805,7 +826,7 @@
   {
    "id": "project-website-kit-4",
    "type": "project",
-   "title": "Website Kit — PoC starter kit — Highlights",
+   "title": "website-kit: a starter kit for proof-of-concept websites — Highlights",
    "text": "- Pick-the-platform guidance: which module fits which kind of site, what each costs on free tiers, and how they combine (for example a GitHub Pages site on a Cloudflare-managed domain, or a static front end with a Worker API)\n- Agent skills in .claude/skills/ that recommend a platform, scaffold a PoC and design its UI\n- A CI workflow that validates every module independently\n- Each module's README ends with an explicit \"what has and has not been verified\" section\n- Used as the reference for the Cloudflare Worker behind the chatbot on this site",
    "url": "/website-kit/#highlights",
    "dedupe": "/website-kit/",
@@ -815,7 +836,7 @@
   {
    "id": "project-website-kit-5",
    "type": "project",
-   "title": "Website Kit — PoC starter kit — Tech stack",
+   "title": "website-kit: a starter kit for proof-of-concept websites — Tech stack",
    "text": "- Infrastructure: Terraform (Cloudflare provider), Wrangler\n- Edge: Cloudflare Workers, Pages Functions, D1, KV, R2, Queues, Durable Objects, Workers AI\n- Sites: Jekyll, Hugo, Astro, Vite + React, MkDocs, WordPress (PHP, Docker)\n- Automation: Google Apps Script (clasp), GitHub Actions",
    "url": "/website-kit/#tech-stack",
    "dedupe": "/website-kit/",

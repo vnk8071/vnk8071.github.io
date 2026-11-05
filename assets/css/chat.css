@@ -184,3 +184,8 @@ html.has-chatbot footer.site { padding-bottom: 84px; }
   .cb-log { scroll-behavior: auto; }
 }
 @media print { .cb-launcher, .cb-win { display: none !important; } }
+
+/* the analytics consent banner is centred at the bottom; lift the launcher above it on narrow screens */
+@media (max-width: 760px) {
+  html:has(.consent) .cb-launcher { bottom: calc(168px + env(safe-area-inset-bottom)); }
+}

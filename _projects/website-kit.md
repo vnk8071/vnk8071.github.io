@@ -1,11 +1,23 @@
 ---
-title: "Website Kit — PoC starter kit"
+title: 'website-kit: a starter kit for proof-of-concept websites'
 collection: projects
 permalink: /website-kit/
-excerpt: "Four independent modules — Cloudflare, GitHub Pages, WordPress and Apps Script — and one command that scaffolds a proof-of-concept website into a fresh repo"
 date: 2026-11-01
+card_title: website-kit
+tagline: 'A starter kit for proof-of-concept websites: Cloudflare Workers and Terraform, six GitHub Pages templates, WordPress and Apps Script.'
+summary: One command scaffolds a self-contained repo from any module, with CI and agent skills included.
+role: Author
+stack: Cloudflare, Terraform, TypeScript
+result: Public on GitHub; every module is validated on its own in CI.
+repo: https://github.com/vnk8071/website-kit
+description: website-kit scaffolds a proof-of-concept website from Cloudflare, GitHub Pages, WordPress or Apps Script modules with one command, CI and agent skills included.
+cover_alt: Terminal output of the website-kit new-poc.sh script listing nine modules and creating a repo from github-pages/astro
+featured: true
+cover: /assets/projects/website-kit.webp
+image: /assets/projects/website-kit-og.jpg
+image_alt: Terminal output of the website-kit new-poc.sh script listing nine modules and creating a repo from github-pages/astro
+last_modified_at: 2026-11-05
 ---
-
 # Website Kit 🧰
 
 [**Repo**](https://github.com/vnk8071/website-kit)

@@ -7,7 +7,8 @@
 //   3. palette navigation (nav links + social links)
 //
 // Sources, in order:
-//   - _layouts/home.html   every element marked data-kb="<type>" with an id (the CV: experience, projects, ...)
+//   - _data/cv.yml         the CV: summary, experience, education, honours, open source, skills (also renders /about/)
+//   - _projects/*.md       front matter (card facts) -> one always-in-context chunk per project, plus the page body
 //   - _config.yml          name / bio / location / contact links
 //   - _projects, _posts, _publications   markdown, split by heading into <= MAX_CHUNK char chunks
 //   - _data/profile.yml    extra facts (`facts:`) and search aliases (`keywords:`)
@@ -199,55 +200,37 @@ function pageChunks({ idBase, type, pageTitle, url, body, intro = "" }) {
 
 // ---- sources ---------------------------------------------------------------------------------
 
-function homeChunks(root) {
-  const html = parseHtml(readFileSync(join(root, "_layouts/home.html"), "utf8"));
-  const seen = new Set();
-  const chunks = [];
-  for (const el of html.querySelectorAll("[data-kb]")) {
-    const id = el.getAttribute("id");
-    const type = el.getAttribute("data-kb");
-    if (!id) throw new Error(`home.html: data-kb="${type}" element has no id`);
-    if (seen.has(id)) throw new Error(`home.html: duplicate id "${id}"`);
-    if (!(type in TYPE_LABEL)) throw new Error(`home.html: unknown data-kb type "${type}" on #${id}`);
-    seen.add(id);
-
-    const pick = (sel) => clean(el.querySelector(sel)?.text ?? "");
-    let title, text;
-    if (type === "experience") {
-      el.querySelectorAll(".badge-now").forEach((b) => b.remove());
-      const current = el.classList.contains("current");
-      title = pick(".what");
-      text = joinSentences([pick(".what"), pick(".when"), pick(".where"), current && "Current role", pick(".blurb")]);
-    } else if (type === "project" || type === "opensource") {
-      title = pick(".repo-name");
-      const metrics = el.querySelectorAll(".metrics li").map((li) => clean(li.text)).join(", ");
-      text = joinSentences([title, pick(".repo-desc"), metrics && `Highlights: ${metrics}`, pick(".repo-meta")]);
-    } else if (type === "education" || type === "honor") {
-      title = type === "honor" ? joinSentences([pick(".k"), pick(".t")], " — ") : pick(".t");
-      text = joinSentences([title, pick(".s"), type === "education" ? pick(".k") : ""]);
-    } else if (type === "skills") {
-      title = "Focus & tooling";
-      const groups = el.querySelectorAll(".tag-group");
-      text = groups.length
-        ? "Focus and tooling. " + groups.map((g) => `${clean(g.querySelector(".tag-label")?.text ?? "")}: ${g.querySelectorAll(".tag").map((t) => clean(t.text)).join(", ")}`).join(". ")
-        : "Focus and tooling: " + el.querySelectorAll(".tag").map((t) => clean(t.text)).join(", ");
-    } else {
-      title = "About";
-      text = clean(el.text);
-    }
-    const href = el.getAttribute("href");
-    chunks.push({
-      id,
-      type,
-      title,
-      text: clean(text),
-      url: "/#" + id,
-      dedupe: "/#" + id,
-      core: true, // the whole CV is small: always handed to the LLM
-      ...(href ? { ext: href } : {}),
-    });
+function cvChunks(root) {
+  const cv = readYaml(join(root, "_data/cv.yml"), {}) ?? {};
+  const out = [];
+  const c = (id, type, title, text, url, extra = {}) =>
+    out.push({ id, type, title, text: clean(text), url, dedupe: url + "#" + id, core: true, ...extra });
+  if (cv.person?.summary) c("about", "profile", "About", cv.person.summary, "/about/");
+  for (const x of cv.experience ?? []) {
+    c(`exp-${x.id}`, "experience", `${x.role} · ${x.company}`,
+      joinSentences([`${x.role} · ${x.company}`, `${x.from} — ${x.to}${x.duration ? " · " + x.duration : ""}`, x.place, x.current && "Current role", x.note]),
+      `/about/#exp-${x.id}`);
   }
-  return chunks;
+  for (const x of cv.education ?? []) {
+    c(`edu-${x.id}`, "education", x.degree, joinSentences([x.degree, x.school, x.years]), `/about/#edu-${x.id}`);
+  }
+  for (const x of cv.honors ?? []) {
+    c(`honor-${x.id}`, "honor", `${x.event} ${x.year} — ${x.result}`, `${x.event} ${x.year} — ${x.result}`, "/about/#honors");
+  }
+  for (const x of cv.opensource ?? []) {
+    c(`oss-${x.id}`, "opensource", x.repo,
+      joinSentences([x.repo, x.desc, `${x.prs} merged PR${x.prs > 1 ? "s" : ""}${x.tags ? " · " + x.tags : ""}`]),
+      `/about/#oss-${x.id}`, { ext: x.url });
+  }
+  if (cv.websites?.length) {
+    c("websites", "project", "Live websites",
+      "Public websites: " + cv.websites.map((w) => `${w.name} (${w.url}) — ${w.desc}`).join(" "), "/about/#websites");
+  }
+  if (cv.skills?.length) {
+    c("skills", "skills", "Focus & tooling",
+      "Focus and tooling. " + cv.skills.map((g) => `${g.label}: ${g.items.join(", ")}`).join(". "), "/about/#skills");
+  }
+  return out;
 }
 
 function configChunks(cfg) {
@@ -263,8 +246,8 @@ function configChunks(cfg) {
       type: "profile",
       title: cfg.name ?? a.name,
       text: clean(`${cfg.name ?? a.name} — ${a.bio ?? ""}. Based in ${a.location ?? "n/a"}. ${cfg.description ?? ""}`),
-      url: "/#about",
-      dedupe: "/#about",
+      url: "/about/",
+      dedupe: "/about/#profile",
       core: true,
     },
     {
@@ -272,8 +255,8 @@ function configChunks(cfg) {
       type: "contact",
       title: "Contact & links",
       text: links.join(". "),
-      url: "/#contact",
-      dedupe: "/#contact",
+      url: "/contact/",
+      dedupe: "/contact/#contact",
       core: true,
     },
   ];
@@ -296,7 +279,21 @@ function collectionChunks(root, dir, type, urlFor) {
       data.citation && `Citation: ${clean(String(data.citation))}`,
       data.paperurl && `Paper: ${data.paperurl}`,
     ].filter(Boolean).join(". ");
-    const excerpt = type === "project" && data.excerpt ? mdToPlain(String(data.excerpt)) : "";
+    const excerpt = type === "project" ? mdToPlain(String(data.excerpt ?? [data.tagline, data.summary].filter(Boolean).join("\n\n"))) : "";
+    if (type === "project" && data.tagline) {
+      const year = data.date ? new Date(data.date).toISOString().slice(0, 4) : "";
+      out.push({
+        id: `work-${data.cover ? basename(String(data.cover)).replace(/\.\w+$/, "") : slug}`,
+        type: "project",
+        title: String(data.card_title ?? title),
+        text: clean(joinSentences([String(data.card_title ?? title), data.tagline, data.summary,
+          data.role && `Role: ${data.role}`, data.stack && `Stack: ${data.stack}`, year && `Year: ${year}`, data.result])),
+        url,
+        dedupe: url,
+        core: true,
+        ...(data.live || data.repo ? { ext: data.live ?? data.repo } : {}),
+      });
+    }
     out.push(
       ...pageChunks({
         idBase: `${type}-${slug}`,
@@ -338,7 +335,7 @@ export function buildKb(root = ROOT) {
 
   const chunks = [
     ...configChunks(cfg),
-    ...homeChunks(root),
+    ...cvChunks(root),
     ...extraChunks(profile),
     ...collectionChunks(root, "_projects", "project", ({ slug }) => `/projects/${slug}/`),
     ...collectionChunks(root, "_publications", "publication", ({ slug }) => `/publications/${slug}/`),

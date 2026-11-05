@@ -1,11 +1,24 @@
 ---
-title: "Unified AI Runtime (UAIRT)"
+title: 'Unified AI Runtime (UAIRT): one C API, eight backends'
 collection: projects
 permalink: /unified-ai-runtime/
-excerpt: "One C API over QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO and NCNN"
 date: 2026-10-07
+card_title: unified-ai-runtime
+tagline: One C API over QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO and NCNN.
+summary: Write the application code once and choose the backend by name; a device or SDK mismatch returns an error instead of silently falling back to the CPU.
+role: Author
+stack: C, C++, Python
+result: Published on PyPI as uairt; the source is on GitHub.
+package: https://pypi.org/project/uairt/
+repo: https://github.com/vnk8071/unified-ai-runtime
+description: Unified AI Runtime (UAIRT) is a plain C API that runs compiled models on QNN, ONNX Runtime, TFLite, CoreML, llama.cpp, TensorRT, OpenVINO and NCNN.
+cover_alt: 'Unified AI Runtime: one API for every inference runtime, with a benchmark of six ways to run the same model on one Mac'
+featured: true
+cover: /assets/projects/unified-ai-runtime.webp
+image: /assets/projects/unified-ai-runtime-og.jpg
+image_alt: 'Unified AI Runtime: one API for every inference runtime, with a benchmark of six ways to run the same model on one Mac'
+last_modified_at: 2026-11-05
 ---
-
 # Unified AI Runtime (UAIRT) ⚙️
 
 [**Repo**](https://github.com/vnk8071/unified-ai-runtime) | [**PyPI**](https://pypi.org/project/uairt/)

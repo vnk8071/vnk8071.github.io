@@ -218,7 +218,6 @@
     }));
     const L = kb.links || {};
     const extra = [
-      { title: "Chuyển giao diện sáng / tối", sub: "Toggle theme", keys: "theme dark light giao dien sang toi mode", run: () => document.querySelector(".theme-toggle")?.click(), stay: true },
       L.github && { title: "GitHub", sub: L.github, keys: "github code repo source", run: () => window.open(L.github, "_blank", "noopener") },
       L.linkedin && { title: "LinkedIn", sub: L.linkedin, keys: "linkedin social network", run: () => window.open(L.linkedin, "_blank", "noopener") },
       L.email && { title: "Gửi email", sub: L.email.replace("mailto:", ""), keys: "email mail contact lien he", run: () => { location.href = L.email; } },
@@ -262,6 +261,7 @@
   // ---- DOM ------------------------------------------------------------------------------------------
   function build() {
     const overlay = el("div", "cmdk-overlay");
+    overlay.lang = "vi";
     overlay.innerHTML = `
       <div class="cmdk-panel" role="dialog" aria-modal="true" aria-label="Command palette">
         <div class="cmdk-bar">

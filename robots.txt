@@ -1,0 +1,10 @@
+---
+layout: null
+permalink: /robots.txt
+sitemap: false
+---
+# Search and AI-search crawlers are welcome; only the 404 page is excluded from the index (it carries noindex).
+User-agent: *
+Allow: /
+
+Sitemap: {{ "/sitemap.xml" | absolute_url }}

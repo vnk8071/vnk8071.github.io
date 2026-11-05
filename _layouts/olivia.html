@@ -1,0 +1,29 @@
+{%- assign wfk = page.wf | default: 'home' -%}
+<!DOCTYPE html>
+<html data-wf-domain="khois-fresh-site-942de4.webflow.io" data-wf-page="{{ site.data.olivia.pages[wfk].id }}" data-wf-site="{{ site.data.olivia.site_id }}" data-wf-status="1" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+{% include olivia/seo.html %}
+<link href="{{ '/assets/favicon.png' | relative_url }}" rel="icon" type="image/png"/>
+<link href="{{ '/assets/webclip.jpg' | relative_url }}" rel="apple-touch-icon"/>
+<link crossorigin="anonymous" href="https://cdn.prod.website-files.com" rel="preconnect"/>
+<link href="{{ '/assets/site.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}" rel="stylesheet" type="text/css"/>
+<link href="{{ '/assets/css/olivia-extra.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}" rel="stylesheet" type="text/css"/>
+{%- if site.command_palette.enabled != false %}
+<link href="{{ '/assets/css/palette.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}" rel="stylesheet" type="text/css"/>
+{%- endif %}
+{%- if site.command_palette.chatbot != false %}
+<link href="{{ '/assets/css/chat.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}" rel="stylesheet" type="text/css"/>
+{%- endif %}
+{%- capture head_part %}olivia/head/{{ wfk }}.html{% endcapture %}
+{%- include {{ head_part }} %}
+{%- if page.preload_image %}
+<link rel="preload" as="image" href="{{ page.preload_image | relative_url }}" fetchpriority="high"/>
+{%- endif %}
+</head>
+<body>
+{{ content }}
+{% include olivia/scripts.html %}
+</body>
+</html>

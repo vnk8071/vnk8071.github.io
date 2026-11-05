@@ -1,0 +1,88 @@
+# Webflow runtime wiring per page type (page id, page-specific entry scripts, interaction/grid ids).
+# Generated from the Webflow export of the "Olivia" design; the ids must match the markup in _layouts/ and _includes/olivia/.
+site_id: 6aea00d5326df7e53f12d86d
+pages:
+  home:
+    id: 6aea00d6326df7e53f12d8d9
+    scripts:
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.f2efb3c5440a81cf.js
+      integrity: sha384-VK02VJvMib7ytrF5M2joPWNtDQs366FZgEQ5B+Iwnjx0WBnwQXfootyziSYxdrmS
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.58b9ce0423d942b2.js
+      integrity: sha384-tbBcOS+SFXmGNgnoroFVWxB3QjEbK8K+gMDkI+iF/9PbdNL+ry2cf0NXKHbu5F9A
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.0d3800e8.675d4bde3130dea1.js
+      integrity: sha384-XwUjoddJ1ljArKkRpo4tfzCWEKBhTEN7CtgQsWXRWjbHRgTYfdrwwv9bfojrq7PM
+  about:
+    id: 6aea00d6326df7e53f12d8da
+    scripts:
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.f2efb3c5440a81cf.js
+      integrity: sha384-VK02VJvMib7ytrF5M2joPWNtDQs366FZgEQ5B+Iwnjx0WBnwQXfootyziSYxdrmS
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.58b9ce0423d942b2.js
+      integrity: sha384-tbBcOS+SFXmGNgnoroFVWxB3QjEbK8K+gMDkI+iF/9PbdNL+ry2cf0NXKHbu5F9A
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.a57694a4.10923a2af717a6bf.js
+      integrity: sha384-oFate1E7NWOvMVywYz4TGyQYbHJ1C1kpUCmZUIyO2pbHNREYyr7UWb5VSBUBoPQd
+  work:
+    id: 6aea00d6326df7e53f12d8dd
+    scripts: &id001
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.f2efb3c5440a81cf.js
+      integrity: sha384-VK02VJvMib7ytrF5M2joPWNtDQs366FZgEQ5B+Iwnjx0WBnwQXfootyziSYxdrmS
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.58b9ce0423d942b2.js
+      integrity: sha384-tbBcOS+SFXmGNgnoroFVWxB3QjEbK8K+gMDkI+iF/9PbdNL+ry2cf0NXKHbu5F9A
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.04f3480d557ea517.js
+      integrity: sha384-mLXsrwd3dsT0mjShKmeaIdIZpu33Camp/S1UvqbYExXZn/4EmJMD/3N3cXDmPze8
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.82157a49.085457c78ffa2ca6.js
+      integrity: sha384-z9Mp6MVhKHgaTjs6WB5//XCt5QWYfatqs4Equh5tjl568fk9FryROkJCeU10CauG
+  detail:
+    id: 6aea00d6326df7e53f12d8df
+    scripts:
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.f2efb3c5440a81cf.js
+      integrity: sha384-VK02VJvMib7ytrF5M2joPWNtDQs366FZgEQ5B+Iwnjx0WBnwQXfootyziSYxdrmS
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.58b9ce0423d942b2.js
+      integrity: sha384-tbBcOS+SFXmGNgnoroFVWxB3QjEbK8K+gMDkI+iF/9PbdNL+ry2cf0NXKHbu5F9A
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.04f3480d557ea517.js
+      integrity: sha384-mLXsrwd3dsT0mjShKmeaIdIZpu33Camp/S1UvqbYExXZn/4EmJMD/3N3cXDmPze8
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.82157a49.085457c78ffa2ca6.js
+      integrity: sha384-z9Mp6MVhKHgaTjs6WB5//XCt5QWYfatqs4Equh5tjl568fk9FryROkJCeU10CauG
+  contact:
+    id: 6aea00d6326df7e53f12d8de
+    scripts:
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.f2efb3c5440a81cf.js
+      integrity: sha384-VK02VJvMib7ytrF5M2joPWNtDQs366FZgEQ5B+Iwnjx0WBnwQXfootyziSYxdrmS
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.58b9ce0423d942b2.js
+      integrity: sha384-tbBcOS+SFXmGNgnoroFVWxB3QjEbK8K+gMDkI+iF/9PbdNL+ry2cf0NXKHbu5F9A
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.04f3480d557ea517.js
+      integrity: sha384-mLXsrwd3dsT0mjShKmeaIdIZpu33Camp/S1UvqbYExXZn/4EmJMD/3N3cXDmPze8
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.1172a1f2.1e3f6e9974338640.js
+      integrity: sha384-hxBmu2k9ML73jbpixCcVaeYOSj8oN4kxZ0/3vL+Uk/ou/Ss7WM/8UYmhUKZSfN9c
+  privacy:
+    id: 6aea00d6326df7e53f12d8de
+    scripts:
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.f2efb3c5440a81cf.js
+      integrity: sha384-VK02VJvMib7ytrF5M2joPWNtDQs366FZgEQ5B+Iwnjx0WBnwQXfootyziSYxdrmS
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.58b9ce0423d942b2.js
+      integrity: sha384-tbBcOS+SFXmGNgnoroFVWxB3QjEbK8K+gMDkI+iF/9PbdNL+ry2cf0NXKHbu5F9A
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.schunk.04f3480d557ea517.js
+      integrity: sha384-mLXsrwd3dsT0mjShKmeaIdIZpu33Camp/S1UvqbYExXZn/4EmJMD/3N3cXDmPze8
+    - src: https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/js/webflow.1172a1f2.1e3f6e9974338640.js
+      integrity: sha384-hxBmu2k9ML73jbpixCcVaeYOSj8oN4kxZ0/3vL+Uk/ou/Ss7WM/8UYmhUKZSfN9c
+  notfound:
+    id: 6aea00d6326df7e53f12d8dc
+    scripts: *id001
+home_cards:
+- card: f1d7483e-da7b-968b-ed90-b34c58fd3356
+  image: d4614ac0-551f-fa17-8f64-4e6cf40c46a6
+- card: 33bc0918-7dae-01f7-8bd9-dd774a47cb8e
+  image: 33bc0918-7dae-01f7-8bd9-dd774a47cb90
+- card: b965f07b-8ac3-51cb-a304-939ddc582606
+  image: b965f07b-8ac3-51cb-a304-939ddc582608
+- card: 17c566a1-20e0-6a0a-885f-d34cc1c0b78b
+  image: 17c566a1-20e0-6a0a-885f-d34cc1c0b78d
+work_cards: []
+award_nodes:
+- num: f4890c4a-9fd9-d1ce-f1e2-d8a65f45ae60-3f12d8da
+  res: f4890c4a-9fd9-d1ce-f1e2-d8a65f45ae67-3f12d8da
+- num: f4890c4a-9fd9-d1ce-f1e2-d8a65f45ae73-3f12d8da
+  res: f4890c4a-9fd9-d1ce-f1e2-d8a65f45ae7a-3f12d8da
+- num: f4890c4a-9fd9-d1ce-f1e2-d8a65f45ae86-3f12d8da
+  res: f4890c4a-9fd9-d1ce-f1e2-d8a65f45ae8d-3f12d8da
+- num: f4890c4a-9fd9-d1ce-f1e2-d8a65f45ae99-3f12d8da
+  res: f4890c4a-9fd9-d1ce-f1e2-d8a65f45aea0-3f12d8da

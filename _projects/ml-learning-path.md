@@ -1,13 +1,23 @@
 ---
-title: "Machine Learning Learning Path"
+title: 'Machine Learning Learning Path: notes and projects'
 collection: projects
 permalink: /machine-learning-learning-path/
-excerpt: "A roadmap of Machine Learning<br/><br/><img src='https://www.researchgate.net/publication/333650038/figure/fig2/AS:767001307914241@1559878770115/Machine-Learning-Production-Pipeline.png' width='70%'>"
 date: 2023-11-02
+card_title: ML Learning Path
+tagline: 'A structured, self-taught roadmap through machine learning and deep learning: notes, code and projects.'
+summary: Ordered notes and notebooks from fundamentals to deployment, kept as a public study log.
+role: Author
+stack: Jupyter, Python
+result: Public on GitHub, with notes for each course and the projects built along the way.
+repo: https://github.com/vnk8071/machine-learning-learning-path
+description: 'A structured, self-taught roadmap through machine learning and deep learning: notes for each Udacity nanodegree and the projects built along the way.'
+cover_alt: 'Three project screenshots from the learning path: an AWS inference notebook, a Flask web app and a meme generator'
+featured: true
+cover: /assets/projects/ml-learning-path.webp
+image: /assets/projects/ml-learning-path-og.jpg
+image_alt: 'Three project screenshots from the learning path: an AWS inference notebook, a Flask web app and a meme generator'
+last_modified_at: 2026-11-05
 ---
-
-<img src='https://www.researchgate.net/publication/333650038/figure/fig2/AS:767001307914241@1559878770115/Machine-Learning-Production-Pipeline.png' width='70%'>
-
 Link repo: [vnk8071/machine-learning-learning-path](https://github.com/vnk8071/machine-learning-learning-path)
 
 ## Nanodegree

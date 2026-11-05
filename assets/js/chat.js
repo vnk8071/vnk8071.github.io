@@ -82,12 +82,14 @@
     const launcher = el("button", "cb-launcher",
       `<span class="cb-ico">${ICON.bot}</span><span class="cb-launch-label">${esc(T.launchLabel)}</span>`);
     launcher.type = "button";
+    launcher.lang = "vi"; // the widget UI is Vietnamese inside an English page
     launcher.setAttribute("aria-label", T.launch);
     launcher.setAttribute("aria-expanded", "false");
     launcher.setAttribute("aria-controls", "cb-win");
 
     const win = el("section", "cb-win");
     win.id = "cb-win";
+    win.lang = "vi";
     win.setAttribute("role", "dialog");
     win.setAttribute("aria-label", T.title);
     win.hidden = true;

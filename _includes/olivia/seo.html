@@ -1,0 +1,69 @@
+{%- comment -%}
+  Per-page metadata. Front matter drives it: title (<= 60 chars), description (150-160 chars), image (1200x630),
+  noindex, schema (home | about | projects | project | contact | page), nav. Canonical is always the production URL.
+{%- endcomment -%}
+{%- assign cvp = site.data.cv.person -%}
+{%- assign page_path = page.url | replace: 'index.html', '' -%}
+{%- assign canonical_url = page_path | absolute_url -%}
+{%- assign meta_title = page.title -%}
+{%- assign meta_desc = page.description | default: site.description -%}
+{%- assign meta_image = page.image | default: '/assets/og.png' | absolute_url -%}
+{%- assign meta_image_alt = page.image_alt | default: 'Khoi Vo Nguyen, AI Engineer' -%}
+<title>{{ meta_title | escape }}</title>
+<meta name="description" content="{{ meta_desc | escape }}"/>
+<link rel="canonical" href="{{ canonical_url }}"/>
+{%- if page.noindex %}
+<meta name="robots" content="noindex,follow"/>
+{%- else %}
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+{%- endif %}
+<meta name="author" content="{{ cvp.name }}"/>
+<meta name="theme-color" content="#030303"/>
+<meta property="og:site_name" content="{{ cvp.name }}"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:type" content="{{ page.og_type | default: 'website' }}"/>
+<meta property="og:title" content="{{ meta_title | escape }}"/>
+<meta property="og:description" content="{{ meta_desc | escape }}"/>
+<meta property="og:url" content="{{ canonical_url }}"/>
+<meta property="og:image" content="{{ meta_image }}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="{{ meta_image_alt | escape }}"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="{{ meta_title | escape }}"/>
+<meta name="twitter:description" content="{{ meta_desc | escape }}"/>
+<meta name="twitter:image" content="{{ meta_image }}"/>
+<meta name="twitter:image:alt" content="{{ meta_image_alt | escape }}"/>
+{%- unless page.noindex %}
+{%- capture person_ld -%}
+{"@type":"Person","@id":{{ '/#person' | absolute_url | jsonify }},"name":{{ cvp.name | jsonify }},"alternateName":{{ cvp.brand | jsonify }},"jobTitle":{{ cvp.job_title | jsonify }},"url":{{ '/' | absolute_url | jsonify }},"image":{{ cvp.image | absolute_url | jsonify }},"address":{"@type":"PostalAddress","addressLocality":"Ho Chi Minh City","addressCountry":"VN"},"worksFor":{"@type":"Organization","name":{{ cvp.employer | jsonify }}},"alumniOf":[{% for e in site.data.cv.education %}{"@type":"CollegeOrUniversity","name":{{ e.school | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}],"sameAs":{{ cvp.same_as | jsonify }},"knowsAbout":{{ cvp.knows_about | jsonify }}}
+{%- endcapture -%}
+{%- capture website_ld -%}
+{"@type":"WebSite","@id":{{ '/#website' | absolute_url | jsonify }},"url":{{ '/' | absolute_url | jsonify }},"name":{{ cvp.name | jsonify }},"alternateName":{{ cvp.brand | jsonify }},"inLanguage":"en","publisher":{"@id":{{ '/#person' | absolute_url | jsonify }}}}
+{%- endcapture -%}
+{%- capture crumbs_ld -%}
+{%- if page.layout == 'project' -%}
+{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":{{ '/' | absolute_url | jsonify }}},{"@type":"ListItem","position":2,"name":"Projects","item":{{ '/projects/' | absolute_url | jsonify }}},{"@type":"ListItem","position":3,"name":{{ page.title | jsonify }}}]}
+{%- elsif page.schema and page.schema != 'home' -%}
+{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":{{ '/' | absolute_url | jsonify }}},{"@type":"ListItem","position":2,"name":{{ page.crumb | default: page.title | jsonify }}}]}
+{%- endif -%}
+{%- endcapture -%}
+{%- capture page_ld -%}
+{%- if page.schema == 'home' -%}
+{{ website_ld }},{{ person_ld }}
+{%- elsif page.schema == 'about' -%}
+{"@type":"ProfilePage","@id":{{ canonical_url | append: '#webpage' | jsonify }},"url":{{ canonical_url | jsonify }},"name":{{ meta_title | jsonify }},"description":{{ meta_desc | jsonify }},"mainEntity":{"@id":{{ '/#person' | absolute_url | jsonify }}},"isPartOf":{"@id":{{ '/#website' | absolute_url | jsonify }}}},{{ person_ld }},{{ crumbs_ld }}
+{%- elsif page.schema == 'projects' -%}
+{"@type":"CollectionPage","@id":{{ canonical_url | append: '#webpage' | jsonify }},"url":{{ canonical_url | jsonify }},"name":{{ meta_title | jsonify }},"description":{{ meta_desc | jsonify }},"isPartOf":{"@id":{{ '/#website' | absolute_url | jsonify }}},"mainEntity":{"@type":"ItemList","itemListElement":[{% assign ld_projects = site.projects | sort: 'date' | reverse %}{% for pr in ld_projects %}{"@type":"ListItem","position":{{ forloop.index }},"url":{{ pr.url | absolute_url | jsonify }},"name":{{ pr.title | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}]}},{{ crumbs_ld }}
+{%- elsif page.layout == 'project' -%}
+{"@type":"SoftwareSourceCode","@id":{{ canonical_url | append: '#code' | jsonify }},"name":{{ page.title | jsonify }},"description":{{ meta_desc | jsonify }},"url":{{ canonical_url | jsonify }},"image":{{ meta_image | jsonify }},"author":{"@id":{{ '/#person' | absolute_url | jsonify }}},"dateCreated":{{ page.date | date: '%Y-%m-%d' | jsonify }}{% if page.repo %},"codeRepository":{{ page.repo | jsonify }}{% endif %}{% if page.stack %},"keywords":{{ page.stack | jsonify }}{% endif %}},{{ crumbs_ld }}
+{%- elsif page.schema == 'contact' -%}
+{"@type":"ContactPage","@id":{{ canonical_url | append: '#webpage' | jsonify }},"url":{{ canonical_url | jsonify }},"name":{{ meta_title | jsonify }},"description":{{ meta_desc | jsonify }},"isPartOf":{"@id":{{ '/#website' | absolute_url | jsonify }}},"about":{"@id":{{ '/#person' | absolute_url | jsonify }}}},{{ crumbs_ld }}
+{%- elsif page.schema -%}
+{"@type":"WebPage","@id":{{ canonical_url | append: '#webpage' | jsonify }},"url":{{ canonical_url | jsonify }},"name":{{ meta_title | jsonify }},"description":{{ meta_desc | jsonify }},"isPartOf":{"@id":{{ '/#website' | absolute_url | jsonify }}}},{{ crumbs_ld }}
+{%- endif -%}
+{%- endcapture -%}
+{%- if page_ld != '' %}
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{{ page_ld | strip }}]}</script>
+{%- endif %}
+{%- endunless %}

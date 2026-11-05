@@ -35,10 +35,10 @@ command_palette:
 # Site Settings
 # resume_url: "/files/Khoi-Vo-Nguyen-CV.pdf"   # optional: the "Resume / CV" button also appears on its own once a PDF is in files/
 locale: "en-US"
-title: "Khoi Space"
+title: "Khoi Vo Nguyen"
 title_separator: "-"
 name: &name "Khoi Vo Nguyen"
-description: &description "AI Engineer @ Qualcomm — computer vision, deep learning, and AI systems."
+description: &description "AI Engineer at Qualcomm: computer vision, Edge AI and low-latency C++ inference on Snapdragon. Projects, open source and contact."
 url: "https://khoispace.io.vn" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl: "" # the subpath of your site, e.g. "/blog"
 repository: "vnk8071/vnk8071.github.io"
@@ -166,6 +166,8 @@ exclude:
   - scripts
   - workers
   - docs
+  - README.md
+  - package.json
   - "*.sublime-project"
   - "*.sublime-workspace"
   - .asset-cache
@@ -266,7 +268,7 @@ defaults:
       path: ""
       type: projects
     values:
-      layout: dark
+      layout: project
   # _teaching
   - scope:
       path: ""
@@ -319,7 +321,6 @@ plugins:
   - jekyll-paginate
   - jekyll-sitemap
   - jekyll-gist
-  - jekyll-feed
   - jemoji
   - jekyll-redirect-from
 # mimic GitHub Pages with --safe
@@ -327,7 +328,6 @@ whitelist:
   - jekyll-paginate
   - jekyll-sitemap
   - jekyll-gist
-  - jekyll-feed
   - jemoji
 
 # Archives

@@ -1,48 +1,16 @@
-<!doctype html>
-<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}">
-<head>
-  {% include space-head.html %}
-  <title>{{ page.title }} — {{ site.author.name }}</title>
-  <meta name="description" content="Selected projects by {{ site.author.name }}.">
-</head>
-<body>
-
-  {% include space-nav.html %}
-
-  <header class="page-head">
-    <div class="wrap">
-      <div class="kicker reveal d1">Projects</div>
-      <h1 class="reveal d1">Things I've built</h1>
-      <p class="lede reveal d2">End-to-end AI systems, research pipelines, and tools — spanning computer vision, LLMs, and MLOps.</p>
-    </div>
-  </header>
-
-  <main>
-    <section class="page-body">
-      <div class="wrap">
-        <div class="repos reveal d2">
-          {%- assign projects = site.projects | sort: 'date' | reverse -%}
-          {%- for post in projects -%}
-          <a class="repo" href="{{ post.url | relative_url }}">
-            <div class="repo-top">
-              <span class="repo-name">{{ post.title }}</span>
-              <span class="repo-arr">→</span>
-            </div>
-            {%- if post.excerpt -%}
-            <div class="repo-desc">{{ post.excerpt | markdownify | strip_html | strip_newlines | truncate: 160 }}</div>
-            {%- endif -%}
-            {%- if post.date -%}
-            <div class="repo-meta"><span><span class="lang-dot"></span>{{ post.date | date: "%b %Y" }}</span></div>
-            {%- endif -%}
-          </a>
-          {%- endfor -%}
-        </div>
-        <a class="all-repos reveal d3" href="https://github.com/{{ site.author.github }}" target="_blank" rel="noopener">View all repositories on GitHub ↗</a>
-      </div>
-    </section>
-  </main>
-
-  {% include space-footer.html %}
-
-</body>
-</html>
+---
+layout: olivia
+wf: work
+nav: work
+---
+<div class="page-wrapper">{% include olivia/navbar.html %}<section class="margin-top"><div class="page-padding"><div class="container margin-top"><div class="global-heading" data-w-id="9af4273f-934d-bd65-5d62-ab1e25b1e817" style="opacity:0"><h1 class="display-01">Projects</h1></div><div class="top-bar" data-w-id="a6660f6c-7023-b5c4-a54b-0b758e8dcba7" data-wf--top-bar--variant="base"><div class="body-text-5 caps">/ All projects</div><div class="body-text-5 caps">N. 01</div></div><div class="w-dyn-list"><div class="b-project-wrap w-dyn-items" role="list">{% assign all_projects = site.projects | sort: "date" | reverse %}{% for pr in all_projects %}<div class="w-dyn-item" role="listitem"><div class="project-card" data-w-id="{{ site.data.olivia.work_cards[0].card }}" style="opacity:0"><a class="project-card-link w-inline-block" href="{{ pr.url | relative_url }}" aria-label="{{ pr.card_title | default: pr.title | escape }}: {{ pr.tagline | escape }}"><img alt="{{ pr.cover_alt | escape }}" class="project-image" height="1000" loading="{% if forloop.index <= 2 %}eager{% else %}lazy{% endif %}" src="{{ pr.cover | relative_url }}" width="1500"/></a><div class="project-info"><div class="body-text-4">{{ pr.card_title | default: pr.title }}</div><div class="body-text-4 soft-text">/{{ pr.date | date: "%Y" }}</div></div></div></div>{% endfor %}</div></div><div class="b-project-wrap hide"></div></div></div></section><section><div class="page-padding"><div class="container padding-top"><div class="top-bar" data-w-id="a6660f6c-7023-b5c4-a54b-0b758e8dcba7" data-wf--top-bar--variant="base"><div class="body-text-5 caps">/FAQ</div><div class="body-text-5 caps">N. 02</div></div><div class="faq-holder w-tabs" data-current="" data-duration-in="300" data-duration-out="100" data-easing="ease"><div class="faq-wrap w-tab-menu"><a class="faq-item w-inline-block w-tab-link" data-w-id="b4562ddc-737d-025a-17d8-677c93f9ec91" data-w-tab="Tab 1"><div class="faq-question"><div class="body-text-3">What kind of AI work do you take on?</div><div class="expand-icon"><div class="faq-icon-2 w-embed"><svg class="bi bi-plus" fill="currentColor" height="24" viewbox="0 0 16 16" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+</svg></div></div></div><div class="faq-answer"><div class="body-text-5">Computer vision and edge deployment: model optimisation, C++ inference runtimes, and the service around them. I am most useful when a model has to run on real hardware with a latency budget.</div></div></a><a class="faq-item w-inline-block w-tab-link" data-w-id="b4562ddc-737d-025a-17d8-677c93f9ec9a" data-w-tab="Tab 2"><div class="faq-question"><div class="body-text-3">Which hardware and runtimes do you know?</div><div class="expand-icon"><div class="faq-icon-2 w-embed"><svg class="bi bi-plus" fill="currentColor" height="24" viewbox="0 0 16 16" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+</svg></div></div></div><div class="faq-answer"><div class="body-text-5">Qualcomm QNN (HTP) on Snapdragon, TensorRT and ONNX Runtime on NVIDIA, ExecuTorch and TFLite on mobile, llama.cpp on CPU, plus CUDA, Vulkan and Hexagon device selection.</div></div></a><a class="faq-item w-inline-block w-tab-link" data-w-id="b4562ddc-737d-025a-17d8-677c93f9eca3" data-w-tab="Tab 3"><div class="faq-question"><div class="body-text-3">Can you improve an existing model instead of starting over?</div><div class="expand-icon"><div class="faq-icon-2 w-embed"><svg class="bi bi-plus" fill="currentColor" height="24" viewbox="0 0 16 16" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+</svg></div></div></div><div class="faq-answer"><div class="body-text-5">Usually yes. Profiling first: find where the time and memory actually go, then decide between graph changes, quantisation, a different runtime, or a smaller architecture.</div></div></a><a class="faq-item w-inline-block w-tab-link" data-w-id="b4562ddc-737d-025a-17d8-677c93f9ecac" data-w-tab="Tab 4"><div class="faq-question"><div class="body-text-3">Are you open to freelance work or a new role?</div><div class="expand-icon"><div class="faq-icon-2 w-embed"><svg class="bi bi-plus" fill="currentColor" height="24" viewbox="0 0 16 16" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+</svg></div></div></div><div class="faq-answer"><div class="body-text-5">I am open to conversations about Edge AI, inference runtimes and AI products. Email is the fastest way to reach me; I reply within one business day.<br/></div></div></a><a class="faq-item w-inline-block w-tab-link" data-w-id="b4562ddc-737d-025a-17d8-677c93f9ecb5" data-w-tab="Tab 5"><div class="faq-question"><div class="body-text-3">How should we start?</div><div class="expand-icon"><div class="faq-icon-2 w-embed"><svg class="bi bi-plus" fill="currentColor" height="24" viewbox="0 0 16 16" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+</svg></div></div></div><div class="faq-answer"><div class="body-text-5">Send the model or task, the target hardware, and what success looks like. A repository, a benchmark number or a failing profile is even better.</div></div></a></div><div class="tabs-content w-tab-content"><div class="w-tab-pane" data-w-tab="Tab 1"></div><div class="w-tab-pane" data-w-tab="Tab 2"></div><div class="w-tab-pane" data-w-tab="Tab 3"></div><div class="w-tab-pane" data-w-tab="Tab 4"></div><div class="w-tab-pane" data-w-tab="Tab 5"></div></div></div></div></div></section><section class="section"><div class="cta-bg-image"><img alt="Close-up of textured black sand with subtle wave-like patterns and small sparkling grains." class="cta-image" loading="lazy" sizes="(max-width: 2500px) 100vw, 2500px" src="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d938_CTA_bg_Image.webp" srcset="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d938_fc68f1b3c4e46270486697f07ba96471_CTA_bg_Image-p-500.webp 500w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d938_fc68f1b3c4e46270486697f07ba96471_CTA_bg_Image-p-800.webp 800w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d938_fc68f1b3c4e46270486697f07ba96471_CTA_bg_Image-p-1080.webp 1080w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d938_fc68f1b3c4e46270486697f07ba96471_CTA_bg_Image-p-1600.webp 1600w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d938_fc68f1b3c4e46270486697f07ba96471_CTA_bg_Image-p-2000.webp 2000w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d938_CTA_bg_Image.webp 2500w"/><div class="dark-gradient"></div></div><div class="page-padding"><div class="container padding-top"><div class="cta-wrap"><div class="cta-title"><div class="display-02" data-w-id="b62c7602-cee9-edbd-b3cf-73e71a721fdf" text_scrolling_effect="Stagger">Have a project in mind?<br/><span class="soft-text">Let’s Talk</span></div><a class="button-secondary w-inline-block" data-w-id="f6ec44d3-8216-96f9-9497-1599d6d0435d" href="/contact/"><div>Email me</div><div class="button-bg-seondary"></div></a></div><div class="cta-image-wrap"><img alt="Profile of a man wearing a red puffer jacket with a large, fluffy red fur collar against a plain background." class="cta-image-main" loading="lazy" sizes="(max-width: 729px) 100vw, 729px" src="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d93b_Personal%20Portrait.webp" srcset="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d93b_444711bd9af2b787d3f305f2e0e85b8c_Personal%2520Portrait-p-500.webp 500w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d93b_Personal%20Portrait.webp 729w"/><img alt="Profile of a person with dark skin wearing a black turtleneck and large red futuristic glasses against a light teal background." class="cta-image-right" loading="lazy" sizes="(max-width: 767px) 100vw, 608px" src="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d924_CTA_Image_2.webp" srcset="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d924_CTA_Image_2-p-500.webp 500w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d924_CTA_Image_2.webp 608w"/><img alt="Portrait of a young man wearing an orange hat, viewed through a circular frame, with a thoughtful expression." class="cta-image-left" loading="lazy" sizes="(max-width: 767px) 100vw, 608px" src="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d926_CTA_Image_3.webp" srcset="https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d926_CTA_Image_3-p-500.webp 500w, https://cdn.prod.website-files.com/6aea00d5326df7e53f12d86d/6aea00d6326df7e53f12d926_CTA_Image_3.webp 608w"/></div></div></div></div></section>{% include olivia/footer.html %}</div>

@@ -1,8 +1,21 @@
 ---
-title: "Git Tutorial"
+title: 'Git Tutorial: the commands you use most, with examples'
 collection: projects
-excerpt: "Make basic version control<br/><br/><img src='https://camo.githubusercontent.com/4ae64306a7f06d6f2813d0a96fdec7df0c966337ce6bc062c2c3208a73954409/68747470733a2f2f6e7669652e636f6d2f696d672f6769742d6d6f64656c4032782e706e67' width='70%'>"
 date: 2023-10-02
+card_title: git-tutorial
+tagline: 'A practical Git tutorial: configuration, branches, merge, revert, reset, remote and stash.'
+summary: The 20% of Git commands used 80% of the time, with a worked example.
+role: Author
+stack: Git
+result: Source in the machine-learning-learning-path repository.
+repo: https://github.com/vnk8071/machine-learning-learning-path/tree/main/examples/git_tutorial
+description: A practical Git tutorial covering configuration, branching workflows, merge, revert, reset, remote and stash, built around the commands used most often.
+cover_alt: Git history graph from the tutorial repository showing the main and git-flow branches and commit messages
+featured: false
+cover: /assets/projects/git-tutorial.webp
+image: /assets/projects/git-tutorial-og.jpg
+image_alt: Git history graph from the tutorial repository showing the main and git-flow branches and commit messages
+last_modified_at: 2026-11-05
 ---
 # GIT Tutorial
 

@@ -1,10 +1,12 @@
-# main links links
+# main links (the ⌘K palette reads these)
 main:
   - title: "Home"
     url: /
-
-  - title: "ML Learning Path"
-    url: /machine-learning-learning-path/
-
+  - title: "About"
+    url: /about/
   - title: "Projects"
     url: /projects/
+  - title: "ML Learning Path"
+    url: /machine-learning-learning-path/
+  - title: "Contact"
+    url: /contact/

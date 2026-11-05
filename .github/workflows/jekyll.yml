@@ -56,6 +56,9 @@ jobs:
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
+      - name: SEO checks on the built site
+        # Fails on missing titles/canonicals/alt text/broken internal links; warnings never fail the build
+        run: node scripts/seo-check.mjs _site
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
