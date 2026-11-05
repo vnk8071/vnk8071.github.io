@@ -2,7 +2,7 @@
   "name": "khoispace-kb-tools",
   "private": true,
   "type": "module",
-  "description": "Build-time tooling for the portfolio knowledge base (assets/data/kb.json). Not shipped to the site.",
+  "description": "Build-time tooling for the portfolio knowledge base (public/assets/data/kb.json). Not shipped to the site.",
   "scripts": {
     "build:kb": "node build-kb.mjs",
     "test": "node --test"

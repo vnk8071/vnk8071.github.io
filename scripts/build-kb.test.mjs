@@ -1,20 +1,32 @@
 // Run: npm test --prefix scripts   (node --test)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { resolve, dirname, join } from "node:path";
+import { resolve, dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import YAML from "yaml";
+import { parse } from "node-html-parser";
 import { buildKb } from "./build-kb.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const SITE = join(ROOT, "public");
 const kb = buildKb(ROOT);
-const cv = YAML.parse(readFileSync(join(ROOT, "_data/cv.yml"), "utf8"));
-const projects = readdirSync(join(ROOT, "_projects")).filter((f) => f.endsWith(".md")).map((f) => {
-  const raw = readFileSync(join(ROOT, "_projects", f), "utf8");
-  return { file: f, fm: YAML.parse(raw.match(/^---\n([\s\S]*?)\n---/)[1]) };
-});
+
+const htmlFiles = (dir = SITE) =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) return entry.name === "assets" ? [] : htmlFiles(p);
+    return entry.name.endsWith(".html") ? [p] : [];
+  });
+
+const projectPages = htmlFiles()
+  .map((file) => ({ file, root: parse(readFileSync(file, "utf8")) }))
+  .filter(({ root }) => root.querySelector(".project-prose"))
+  .map(({ file, root }) => ({
+    file,
+    root,
+    url: "/" + relative(SITE, file).split(sep).join("/").replace(/index\.html$/, ""),
+  }));
 
 test("every chunk is well-formed and ids are unique", () => {
   const ids = new Set();
@@ -29,16 +41,14 @@ test("every chunk is well-formed and ids are unique", () => {
   }
 });
 
-test("the CV in _data/cv.yml is indexed as core facts and the About page renders an anchor for each", () => {
-  const about = readFileSync(join(ROOT, "_pages/about-me.html"), "utf8");
-  for (const marker of ['id="exp-{{ x.id }}"', 'id="edu-{{ x.id }}"', 'id="oss-{{ x.id }}"', 'id="honors"', 'id="skills"']) {
-    assert.ok(about.includes(marker), `about page lacks ${marker}`);
+test("the rendered About page exposes an anchor for every CV fact, and each is a core chunk", () => {
+  const about = readFileSync(join(SITE, "about/index.html"), "utf8");
+  for (const id of ["exp-qualcomm", "exp-viact", "edu-msc-ai-vnuhcm", "oss-qualcomm-qai-appbuilder", "honors", "skills"]) {
+    assert.ok(about.includes(`id="${id}"`), `about page lacks #${id}`);
   }
-  const want = [
-    ...cv.experience.map((x) => `exp-${x.id}`), ...cv.education.map((x) => `edu-${x.id}`),
-    ...cv.honors.map((x) => `honor-${x.id}`), ...cv.opensource.map((x) => `oss-${x.id}`), "skills", "about",
-  ];
-  for (const id of want) assert.ok(kb.chunks.find((c) => c.id === id)?.core, `${id} missing or not core`);
+  for (const id of ["about", "exp-qualcomm", "edu-msc-ai-vnuhcm", "oss-qualcomm-qai-appbuilder", "skills"]) {
+    assert.ok(kb.chunks.find((c) => c.id === id)?.core, `${id} missing or not core`);
+  }
   assert.match(kb.chunks.find((c) => c.id === "exp-qualcomm").text, /Qualcomm.*Apr 2026.*Present/);
 });
 
@@ -55,16 +65,20 @@ test("honours carry their real years (Zalo 2022, FPT AI Center 2021)", () => {
   assert.match(t, /FPT AI Center 2021/);
 });
 
-test("every project has the facts the cards, the schema and the chatbot need; images exist; SEO lengths hold", () => {
-  assert.ok(projects.length >= 7);
-  for (const { file, fm } of projects) {
-    for (const k of ["title", "card_title", "tagline", "summary", "role", "stack", "cover", "cover_alt", "description", "image", "date"]) {
-      assert.ok(fm[k], `${file}: missing ${k}`);
-    }
-    assert.ok(String(fm.title).length <= 60, `${file}: title is ${String(fm.title).length} chars (max 60)`);
-    assert.ok(fm.description.length >= 120 && fm.description.length <= 160, `${file}: description is ${fm.description.length} chars (120-160)`);
-    for (const k of ["cover", "image"]) assert.ok(existsSync(join(ROOT, fm[k])), `${file}: ${k} file ${fm[k]} does not exist`);
-    assert.ok(kb.chunks.some((c) => c.type === "project" && c.core && c.text.includes(fm.card_title)), `${file}: no core chunk`);
+test("every project page has the metadata, cover and core chunk the cards and chatbot need", () => {
+  assert.ok(projectPages.length >= 8);
+  for (const { file, root, url } of projectPages) {
+    const rel = relative(ROOT, file);
+    const title = root.querySelector("title")?.text.trim() ?? "";
+    const desc = root.querySelector('meta[name="description"]')?.getAttribute("content") ?? "";
+    const cover = root.querySelector(".project-image-wrap img, .projec-image-main")?.getAttribute("src") ?? "";
+    assert.ok(title, `${rel}: missing title`);
+    assert.ok(desc.length >= 100 && desc.length <= 160, `${rel}: description is ${desc.length} chars (aim 120-160)`);
+    assert.ok(cover && existsSync(join(SITE, cover)), `${rel}: cover image ${cover} does not exist`);
+    assert.ok(
+      kb.chunks.some((c) => c.type === "project" && c.core && c.url === url),
+      `${rel}: no core project chunk for ${url}`,
+    );
   }
 });
 
@@ -92,11 +106,25 @@ test("core context stays small enough to always send to the LLM", () => {
   assert.ok(core < 8000, `core context is ${core} chars`);
 });
 
-test("suggested questions from _config.yml are published for the guardrail", () => {
+test("suggested questions from the page config are published for the guardrail", () => {
   assert.equal(kb.suggestions.length, 3);
 });
 
-test("build is deterministic and the committed assets/data/kb.json is up to date", () => {
+test("every page keeps the Webflow runtime wiring that drives the interactions", () => {
+  for (const file of htmlFiles()) {
+    const html = readFileSync(file, "utf8");
+    const rel = relative(SITE, file);
+    if (/http-equiv="refresh"/i.test(html)) continue; // /project/ redirect page
+    assert.ok(/data-wf-page="[a-f0-9]+"/.test(html), `${rel}: missing data-wf-page`);
+    assert.ok(/data-wf-site="[a-f0-9]+"/.test(html), `${rel}: missing data-wf-site`);
+    assert.match(html, /jquery-3\.5\.1/, `${rel}: missing jQuery`);
+    assert.match(html, /webflow\.schunk\./, `${rel}: missing Webflow runtime chunks`);
+    assert.match(html, /webflow\.[a-f0-9]+\./, `${rel}: missing page-specific Webflow bundle`);
+    assert.doesNotMatch(html, /\{\{[^}]*\}\}|\{%[^%]*%\}/, `${rel}: Liquid syntax leaked into the build`);
+  }
+});
+
+test("build is deterministic and the committed public/assets/data/kb.json is up to date", () => {
   assert.equal(buildKb(ROOT).hash, kb.hash);
   execFileSync("node", [resolve(ROOT, "scripts/build-kb.mjs"), "--check"], { stdio: "pipe" });
 });

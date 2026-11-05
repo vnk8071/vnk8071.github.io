@@ -1,6 +1,3 @@
-_site/
-vendor/
-.bundle/
 .DS_Store
 *.pdf
 !files/*.pdf
@@ -9,3 +6,6 @@ vendor/
 node_modules/
 .wrangler/
 .dev.vars
+
+# Playwright MCP artefacts
+.playwright-mcp/

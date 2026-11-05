@@ -1,0 +1,54 @@
+name: Deploy static site to Pages
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: scripts/package-lock.json
+
+      # Rebuild the ⌘K / chatbot knowledge base from the rendered pages.
+      - name: Build knowledge base
+        run: |
+          npm ci --prefix scripts
+          node scripts/build-kb.mjs
+
+      # Fails on missing titles/canonicals/alt text/broken internal links; warnings never fail the build.
+      - name: SEO checks on the static site
+        run: node scripts/seo-check.mjs public
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

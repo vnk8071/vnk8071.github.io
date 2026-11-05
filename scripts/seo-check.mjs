@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// SEO guardrails for the BUILT site (Jekyll's _site). Checks follow the claude-seo checklists
+// SEO guardrails for the static site. Checks follow the claude-seo checklists
 // (technical, page, schema, sitemap, images): metadata, canonicals, headings, Open Graph, JSON-LD, images,
 // internal links + anchors, sitemap coverage, robots.
 //
-//   node scripts/seo-check.mjs _site [--base https://khoispace.io.vn]
+//   node scripts/seo-check.mjs public [--base https://khoispace.io.vn]
 //
 // Exit code 1 when there is at least one ERROR; warnings are reported but never fail.
 
@@ -12,7 +12,7 @@ import { join, resolve, extname, relative } from "node:path";
 import { parse } from "node-html-parser";
 
 const args = process.argv.slice(2);
-const dir = resolve(args.find((a) => !a.startsWith("--")) ?? "_site");
+const dir = resolve(args.find((a) => !a.startsWith("--")) ?? "public");
 const baseIdx = args.indexOf("--base");
 const BASE = (baseIdx >= 0 ? args[baseIdx + 1] : "https://khoispace.io.vn").replace(/\/$/, "");
 

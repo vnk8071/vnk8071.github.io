@@ -12,12 +12,12 @@ Two entry points that share one knowledge base:
 ## How it fits together
 
 ```
- Jekyll site (GitHub Pages)                                     Cloudflare
- ───────────────────────────                                    ──────────
- _layouts/home.html (CV, data-kb ids)  ┐
- _projects/ _posts/ _publications/     ├─ scripts/build-kb.mjs ─► assets/data/kb.json ◄──── fetched + cached 5 min
- _data/profile.yml (extra facts)       ┘                              │  │                         │
-                                                                      │  │                  ┌──────┴────────────┐
+ Static site (GitHub Pages)                                     Cloudflare
+ ──────────────────────────                                     ──────────
+ public/*.html (the rendered CV + project pages) ┐
+ public/about/index.html                         ├─ scripts/build-kb.mjs ─► public/assets/data/kb.json ◄── fetched + cached 5 min
+ content/profile.yml (extra facts + aliases)     ┘                              │  │                         │
+                                                                                │  │                  ┌──────┴────────────┐
 chat window + ⌘K (browser)                                            │  │                  │ workers/ask       │
   ├─ keyword index (instant)  ◄───────────────────────────────────────┘  │                  │  1 screenInput()  │ injection patterns
   ├─ Web Worker: multilingual-e5-small (ONNX/WASM, cached in browser)    │                  │  2 classifyTopic()│ Workers AI, small model
@@ -65,8 +65,8 @@ Tuning: edit `GUARD_PROMPT` (scope and few-shot examples), `INJECTION_PATTERNS`,
 
 1. **Build the knowledge base** (CI does this on every deploy; run it locally after editing content):
    ```bash
-   cd scripts && npm ci && cd ..
-   node scripts/build-kb.mjs        # writes assets/data/kb.json
+   npm ci --prefix scripts
+   node scripts/build-kb.mjs        # writes public/assets/data/kb.json from the rendered pages
    ```
 2. **Deploy the Worker** (needs a Cloudflare account; Workers AI has a free daily allowance):
    ```bash
@@ -78,34 +78,34 @@ Tuning: edit `GUARD_PROMPT` (scope and few-shot examples), `INJECTION_PATTERNS`,
    ```
    Wrangler prints the URL (`https://khoispace-ask.<you>.workers.dev`). To use your own domain (recommended; the answer cache only works on custom domains), uncomment `routes` in `workers/ask/wrangler.jsonc`, e.g. `ask.khoispace.io.vn`.
    For CI deploys add the repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (`.github/workflows/ask-worker.yml`).
-3. **Point the site at it**: in `_config.yml` set
-   ```yaml
-   command_palette:
-     ask_endpoint: "https://ask.khoispace.io.vn/api/ask"
+3. **Point the site at it**: set `ask` in `public/assets/js/cmdk-config.js`
+   ```js
+   ask: "https://ask.khoispace.io.vn/api/ask",
    ```
-   and make sure `ALLOWED_ORIGINS` and `KB_URL` in `wrangler.jsonc` match your real domain. Until `ask_endpoint` is set, the palette still searches and, for questions, shows the best-matching passages.
+   and make sure `ALLOWED_ORIGINS` and `KB_URL` in `wrangler.jsonc` match your real domain. Until `ask` is set, the palette still searches and, for questions, shows the best-matching passages.
 
-Local dev: `bundle exec jekyll serve` (site on :4000, already an allowed origin) and `npx wrangler dev` in `workers/ask` (Workers AI always calls Cloudflare, even locally); set `ask_endpoint: "http://localhost:8787/api/ask"` and `KB_URL` to `http://localhost:4000/assets/data/kb.json` via `.dev.vars`/`--var`.
+Local dev: `python3 -m http.server -d public 8000` (site on :8000, already an allowed origin) and `npx wrangler dev` in `workers/ask` (Workers AI always calls Cloudflare, even locally); set `ask` to `http://localhost:8787/api/ask` in `public/assets/js/cmdk-config.js` and `KB_URL` to `http://localhost:8000/assets/data/kb.json` via `.dev.vars`/`--var`.
 
 ## Adding content
 
 | You add | Where | Indexed as |
 | --- | --- | --- |
-| A job, project card, honor, tag on the home page | `_layouts/home.html` (keep the `id` + `data-kb="…"` attributes) | core facts, always sent to the AI; the palette jumps to the element |
-| A project write-up | `_projects/*.md` | chunked by `##` heading, retrieved on demand |
-| A blog post | `_posts/*.md` | same, under "Blog" |
-| A publication | `_publications/*.md` with `title`, `date`, `venue`, `paperurl`, `citation` front matter | same, under "Publication" |
-| Facts that exist nowhere else (what you did at a job, production systems, results) | `_data/profile.yml` → `facts:` | core (or retrievable with `core: false`) |
-| Better search for a chunk | `_data/profile.yml` → `keywords:` (VI + EN synonyms; never shown to the AI) | keyword search |
+| A job, education entry, honour, open-source item or website | `public/about/index.html` (keep the `id="exp-…"`, `id="oss-…"`, … anchors) | core facts, always sent to the AI; the palette jumps to the element |
+| A project write-up | `public/<slug>/index.html` or `public/projects/<slug>/index.html` | one core card chunk, then chunked by heading on demand |
+| Facts that exist nowhere else (what you did at a job, production systems, results) | `content/profile.yml` → `facts:` | core (or retrievable with `core: false`) |
+| Better search for a chunk | `content/profile.yml` → `keywords:` (VI + EN synonyms; never shown to the AI) | keyword search |
 
 **The assistant can only say what the index contains.** Today the home page lists roles and one-line project descriptions, so detailed answers ("what did you do at viAct?", "which systems run in production?") need real material in `facts:` or in project pages. Don't paste anything you wouldn't want quoted: it is public and the model will repeat it.
 
-## Configuration (`_config.yml` → `command_palette`)
+## Configuration (`public/assets/js/cmdk-config.js`)
+
+Remove the `cmdk-config.js` script tag from the pages (or set `semantic: "off"`) to turn the feature off.
+The object keys are:
 
 | Key | Meaning |
 | --- | --- |
-| `enabled` | turn the whole feature off |
-| `ask_endpoint` | the Worker's `/api/ask` URL; empty = passages only |
+| `ask` | the Worker's `/api/ask` URL; empty = passages only |
+| `chatbot` | show the robot button and chat window |
 | `semantic` | `auto` (download the model on first open, except on touch devices / Save-Data), `ask` (visitor must click "Bật"), `off` |
 | `embedding_model`, `embedding_dtype`, `query_prefix`, `passage_prefix`, `embedding_mb` | the embedding model. Default `Xenova/multilingual-e5-small`, q8, needs the `query: ` / `passage: ` prefixes. English-only alternative (~25 MB): `Xenova/all-MiniLM-L6-v2` with empty prefixes |
 | `semantic_window` | semantic hits within this cosine distance of the best one are kept (0.05 default; tune against real queries) |

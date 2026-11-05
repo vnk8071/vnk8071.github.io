@@ -1,24 +1,25 @@
 #!/usr/bin/env node
-// Builds assets/data/kb.json - the static knowledge base behind the ⌘K command palette.
+// Builds public/assets/data/kb.json — the static knowledge base behind the ⌘K command palette.
 //
 // One file feeds three consumers:
 //   1. the in-browser semantic / keyword search (assets/js/palette.worker.js)
 //   2. the "Ask my profile" micro-RAG (the Cloudflare Worker in workers/ask fetches this same file)
 //   3. palette navigation (nav links + social links)
 //
-// Sources, in order:
-//   - _data/cv.yml         the CV: summary, experience, education, honours, open source, skills (also renders /about/)
-//   - _projects/*.md       front matter (card facts) -> one always-in-context chunk per project, plus the page body
-//   - _config.yml          name / bio / location / contact links
-//   - _projects, _posts, _publications   markdown, split by heading into <= MAX_CHUNK char chunks
-//   - _data/profile.yml    extra facts (`facts:`) and search aliases (`keywords:`)
+// The site itself is plain static HTML (see public/). This script reads the rendered pages so the
+// index always matches what visitors see:
+//   - public/index.html              profile, contact links, command-palette suggestions
+//   - public/about/index.html        experience, education, honours, open source, websites, skills
+//   - public/**/index.html           one always-in-context chunk per project, plus the prose by heading
+//   - content/profile.yml            extra facts (`facts:`) and search aliases (`keywords:`)
+//   - content/navigation.yml         palette navigation links
 //
-// Usage: node scripts/build-kb.mjs [--out assets/data/kb.json] [--check]
+// Usage: node scripts/build-kb.mjs [--out public/assets/data/kb.json] [--check]
 //   --check  exit 1 if the committed file differs from a fresh build (CI guard)
 
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, writeFileSync, mkdirSync } from "node:fs";
-import { dirname, join, resolve, basename } from "node:path";
+import { dirname, join, resolve, relative, basename, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseHtml } from "node-html-parser";
 import YAML from "yaml";
@@ -58,8 +59,9 @@ const TYPE_KEYWORDS = {
 };
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const SITE = join(ROOT, "public");
 
-const clean = (s) => s.replace(/\s+/g, " ").trim();
+const clean = (s) => String(s ?? "").replace(/\s+/g, " ").trim();
 // join fragments with ". " without doubling punctuation
 const joinSentences = (parts, sep = ". ") =>
   parts.filter(Boolean).reduce((acc, p) => (acc ? acc + (/[.!?]$/.test(acc) && sep === ". " ? " " : sep) + p : p), "");
@@ -69,10 +71,64 @@ function readYaml(path, fallback) {
   return existsSync(path) ? YAML.parse(readFileSync(path, "utf8")) ?? fallback : fallback;
 }
 
-function splitFrontMatter(raw) {
-  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
-  if (!m) return { data: {}, body: raw };
-  return { data: YAML.parse(m[1]) ?? {}, body: m[2] };
+// ---- HTML -> text / markdown ----------------------------------------------------------------
+
+function page(rel, siteDir = SITE) {
+  return parseHtml(readFileSync(join(siteDir, rel), "utf8"));
+}
+
+const textOf = (el) => clean(el?.text ?? "");
+const attr = (el, name) => el?.getAttribute(name) ?? "";
+
+function jsonLd(root) {
+  for (const s of root.querySelectorAll('script[type="application/ld+json"]')) {
+    try {
+      const data = JSON.parse(s.text);
+      return (data["@graph"] ?? [data]).filter(Boolean);
+    } catch {
+      // ignore malformed blocks
+    }
+  }
+  return [];
+}
+
+// The project layout demotes markdown headings by one level (<h1> -> <h2>). Undo that so the
+// markdown splitter below sees the same headings the author wrote.
+function htmlToMarkdown(rootEl) {
+  const blocks = [];
+  const push = (s) => {
+    const v = clean(s);
+    if (v) blocks.push(v);
+  };
+  const walk = (node) => {
+    for (const child of node.childNodes) {
+      const tag = (child.rawTagName ?? "").toLowerCase();
+      if (!tag) continue;
+      if (/^h[1-6]$/.test(tag)) {
+        const level = Math.max(1, Number(tag[1]) - 1);
+        push("#".repeat(level) + " " + child.text);
+      } else if (tag === "p") {
+        push(child.text);
+      } else if (tag === "ul" || tag === "ol") {
+        const items = child.childNodes
+          .filter((li) => (li.rawTagName ?? "").toLowerCase() === "li")
+          .map((li) => "- " + clean(li.text))
+          .filter((li) => li.length > 2);
+        if (items.length) blocks.push(items.join("\n"));
+      } else if (tag === "table") {
+        for (const tr of child.querySelectorAll("tr")) {
+          const cells = tr.querySelectorAll("th,td").map(textOf).filter(Boolean);
+          if (cells.length) push(cells.join(" | "));
+        }
+      } else if (tag === "pre" || tag === "script" || tag === "style") {
+        continue;
+      } else {
+        walk(child);
+      }
+    }
+  };
+  walk(rootEl);
+  return blocks.join("\n\n");
 }
 
 // ---- markdown -> plain text ------------------------------------------------------------------
@@ -108,9 +164,6 @@ function mdToPlain(md) {
       .replace(/^\s*\[[^\]]+\]:\s*\S+.*$/gm, "") // link reference definitions (badges)
       .replace(/!\[[^\]]*\]\([^)]*\)/g, "") // images
       .replace(/!\[[^\]]*\]\[[^\]]*\]/g, "")
-      .replace(/<img[^>]*>/gi, "")
-      .replace(/\[\s*\]\([^)]*\)|\[\s*\]\[[^\]]*\]/g, "") // links left empty after removing images
-      .replace(/<br\s*\/?>/gi, "\n")
       .replace(/<[^>]+>/g, "")
       .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1") // [text](url) -> text
       .replace(/\[([^\]]+)\]\[[^\]]*\]/g, "$1")
@@ -125,15 +178,14 @@ function mdToPlain(md) {
   );
 }
 
-// kramdown-style auto id for a heading (what Jekyll gives `## Some Heading`)
+// kramdown-style auto id for a heading (what Webflow/Jekyll gives `## Some Heading`)
 function headingId(text) {
-  const id = text
+  return text
     .replace(/[^\p{L}\p{N} _-]/gu, "")
     .replace(/^[^\p{L}]+/u, "")
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-");
-  return id;
 }
 
 function splitSections(body) {
@@ -200,61 +252,64 @@ function pageChunks({ idBase, type, pageTitle, url, body, intro = "" }) {
 
 // ---- sources ---------------------------------------------------------------------------------
 
-function cvChunks(root) {
-  const cv = readYaml(join(root, "_data/cv.yml"), {}) ?? {};
-  const out = [];
-  const c = (id, type, title, text, url, extra = {}) =>
-    out.push({ id, type, title, text: clean(text), url, dedupe: url + "#" + id, core: true, ...extra });
-  if (cv.person?.summary) c("about", "profile", "About", cv.person.summary, "/about/");
-  for (const x of cv.experience ?? []) {
-    c(`exp-${x.id}`, "experience", `${x.role} · ${x.company}`,
-      joinSentences([`${x.role} · ${x.company}`, `${x.from} — ${x.to}${x.duration ? " · " + x.duration : ""}`, x.place, x.current && "Current role", x.note]),
-      `/about/#exp-${x.id}`);
-  }
-  for (const x of cv.education ?? []) {
-    c(`edu-${x.id}`, "education", x.degree, joinSentences([x.degree, x.school, x.years]), `/about/#edu-${x.id}`);
-  }
-  for (const x of cv.honors ?? []) {
-    c(`honor-${x.id}`, "honor", `${x.event} ${x.year} — ${x.result}`, `${x.event} ${x.year} — ${x.result}`, "/about/#honors");
-  }
-  for (const x of cv.opensource ?? []) {
-    c(`oss-${x.id}`, "opensource", x.repo,
-      joinSentences([x.repo, x.desc, `${x.prs} merged PR${x.prs > 1 ? "s" : ""}${x.tags ? " · " + x.tags : ""}`]),
-      `/about/#oss-${x.id}`, { ext: x.url });
-  }
-  if (cv.websites?.length) {
-    c("websites", "project", "Live websites",
-      "Public websites: " + cv.websites.map((w) => `${w.name} (${w.url}) — ${w.desc}`).join(" "), "/about/#websites");
-  }
-  if (cv.skills?.length) {
-    c("skills", "skills", "Focus & tooling",
-      "Focus and tooling. " + cv.skills.map((g) => `${g.label}: ${g.items.join(", ")}`).join(". "), "/about/#skills");
-  }
-  return out;
+function profileChunks(indexRoot, siteDir = SITE) {
+  const graph = jsonLd(indexRoot);
+  const person = graph.find((n) => n["@type"] === "Person") ?? {};
+  const website = graph.find((n) => n["@type"] === "WebSite") ?? {};
+  const address = person.address ?? {};
+  const description = attr(indexRoot.querySelector('meta[name="description"]'), "content");
+  const about = page("about/index.html", siteDir);
+  const aboutText = textOf(about.querySelector(".about_hero-intro h1"));
+  return {
+    meta: {
+      name: person.name ?? "Khoi Vo Nguyen",
+      url: (website.url ?? "https://khoispace.io.vn").replace(/\/$/, ""),
+    },
+    chunks: [
+      {
+        id: "profile",
+        type: "profile",
+        title: person.name ?? "Khoi Vo Nguyen",
+        text: clean(
+          `${person.name ?? "Khoi Vo Nguyen"} — ${person.jobTitle ?? "AI Engineer"} at ${
+            person.worksFor?.name ?? "Qualcomm"
+          }. Based in ${address.addressLocality ?? "Ho Chi Minh City"}, ${
+            address.addressCountry ?? "VN"
+          }. ${description}`,
+        ),
+        url: "/about/",
+        dedupe: "/about/#profile",
+        core: true,
+      },
+      aboutText && {
+        id: "about",
+        type: "profile",
+        title: "About",
+        text: aboutText,
+        url: "/about/",
+        dedupe: "/about/#about",
+        core: true,
+      },
+    ].filter(Boolean),
+  };
 }
 
-function configChunks(cfg) {
-  const a = cfg.author ?? {};
-  const links = [
-    a.github && `GitHub: https://github.com/${a.github}`,
-    a.linkedin && `LinkedIn: https://www.linkedin.com/in/${a.linkedin}`,
-    a.email && `Email: ${a.email}`,
-  ].filter(Boolean);
+function contactChunks(contactRoot) {
+  const anchors = contactRoot.querySelectorAll(".contact-direct a");
+  const href = (needle) => anchors.find((a) => attr(a, "href").includes(needle))?.getAttribute("href");
+  const github = href("github.com");
+  const linkedin = href("linkedin.com");
+  const email = href("mailto:");
   return [
-    {
-      id: "profile",
-      type: "profile",
-      title: cfg.name ?? a.name,
-      text: clean(`${cfg.name ?? a.name} — ${a.bio ?? ""}. Based in ${a.location ?? "n/a"}. ${cfg.description ?? ""}`),
-      url: "/about/",
-      dedupe: "/about/#profile",
-      core: true,
-    },
     {
       id: "contact",
       type: "contact",
       title: "Contact & links",
-      text: links.join(". "),
+      text: joinSentences([
+        github && `GitHub: ${github}`,
+        linkedin && `LinkedIn: ${linkedin}`,
+        email && `Email: ${email.replace(/^mailto:/, "")}`,
+      ]),
       url: "/contact/",
       dedupe: "/contact/#contact",
       core: true,
@@ -262,57 +317,174 @@ function configChunks(cfg) {
   ];
 }
 
-function collectionChunks(root, dir, type, urlFor) {
-  const base = join(root, dir);
-  if (!existsSync(base)) return [];
+function itemText(el) {
+  const pos = el.querySelector(".experience-position");
+  return {
+    label: textOf(pos?.querySelector(".body-text-2")),
+    soft: pos?.querySelectorAll(".soft-text").map(textOf) ?? [],
+    meta: textOf(el.querySelector(".experiencr-year")),
+  };
+}
+
+function cvChunks(aboutRoot) {
   const out = [];
-  for (const file of readdirSync(base).filter((f) => /\.(md|markdown)$/.test(f)).sort()) {
-    const { data, body } = splitFrontMatter(readFileSync(join(base, file), "utf8"));
-    if (data.published === false) continue;
-    const name = basename(file).replace(/\.(md|markdown)$/, "");
-    const slug = name.replace(/^\d{4}-\d{2}-\d{2}-/, "");
-    const title = String(data.title ?? slug);
-    const url = data.permalink ?? urlFor({ slug, data });
-    const meta = [
-      type === "publication" && data.venue && `Venue: ${data.venue}`,
-      data.date && type !== "project" && `Date: ${new Date(data.date).toISOString().slice(0, 10)}`,
-      data.citation && `Citation: ${clean(String(data.citation))}`,
-      data.paperurl && `Paper: ${data.paperurl}`,
-    ].filter(Boolean).join(". ");
-    const excerpt = type === "project" ? mdToPlain(String(data.excerpt ?? [data.tagline, data.summary].filter(Boolean).join("\n\n"))) : "";
-    if (type === "project" && data.tagline) {
-      const year = data.date ? new Date(data.date).toISOString().slice(0, 4) : "";
-      out.push({
-        id: `work-${data.cover ? basename(String(data.cover)).replace(/\.\w+$/, "") : slug}`,
-        type: "project",
-        title: String(data.card_title ?? title),
-        text: clean(joinSentences([String(data.card_title ?? title), data.tagline, data.summary,
-          data.role && `Role: ${data.role}`, data.stack && `Stack: ${data.stack}`, year && `Year: ${year}`, data.result])),
-        url,
-        dedupe: url,
-        core: true,
-        ...(data.live || data.repo ? { ext: data.live ?? data.repo } : {}),
-      });
+  const c = (id, type, title, text, url, extra = {}) =>
+    out.push({ id, type, title, text: clean(text), url, dedupe: url + "#" + id, core: true, ...extra });
+
+  for (const el of aboutRoot.querySelectorAll('.experience-item[id^="exp-"]')) {
+    const id = attr(el, "id");
+    const { label, soft, meta } = itemText(el);
+    const [companyPlace = "", note = ""] = soft;
+    const [company = companyPlace, ...placeParts] = companyPlace.split(",");
+    const place = placeParts.join(",").trim();
+    const years = meta.replace(/\s+-\s+/, " — ");
+    c(
+      id,
+      "experience",
+      `${label} · ${clean(company)}`,
+      joinSentences([`${label} · ${clean(company)}`, years, place, note]),
+      `/about/#${id}`,
+    );
+  }
+
+  for (const el of aboutRoot.querySelectorAll('.experience-item[id^="edu-"]')) {
+    const id = attr(el, "id");
+    const { label, soft, meta } = itemText(el);
+    c(id, "education", label, joinSentences([label, ...soft, meta]), `/about/#${id}`);
+  }
+
+  for (const el of aboutRoot.querySelectorAll(".award-wrapper")) {
+    const event = textOf(el.querySelector(".display-02"));
+    const year = textOf(el.querySelector(".award-title-wrap > div:nth-child(2)"));
+    const result = textOf(el.querySelector(".award-bottom-wrap > div:last-child"));
+    if (!event || event.includes("/")) continue; // the rest of this strip lists open-source repos
+    c(
+      `honor-${slugify(`${event} ${year}`)}`,
+      "honor",
+      `${event} ${year} — ${result}`,
+      `${event} ${year} — ${result}`,
+      "/about/#honors",
+    );
+  }
+
+  for (const el of aboutRoot.querySelectorAll('.experience-item[id^="oss-"]')) {
+    const id = attr(el, "id");
+    const { label, soft, meta } = itemText(el);
+    const link = el.querySelector("a");
+    c(
+      id,
+      "opensource",
+      label,
+      joinSentences([label, ...soft, meta]),
+      `/about/#${id}`,
+      link ? { ext: attr(link, "href") } : {},
+    );
+  }
+
+  const websites = [];
+  for (const el of aboutRoot.querySelectorAll("#websites .experience-item")) {
+    const { label, soft } = itemText(el);
+    const link = el.querySelector("a")?.getAttribute("href");
+    if (label) websites.push(`${label}${link ? ` (${link})` : ""} — ${soft.join(" ")}`);
+  }
+  if (websites.length) {
+    c(
+      "websites",
+      "project",
+      "Live websites",
+      "Public websites: " + joinSentences(websites),
+      "/about/#websites",
+    );
+  }
+
+  const skills = [];
+  for (const el of aboutRoot.querySelectorAll("#skills .experience-item")) {
+    const { label, soft } = itemText(el);
+    if (label) skills.push(`${label}: ${soft.join(" ")}`);
+  }
+  if (skills.length) {
+    c("skills", "skills", "Focus & tooling", "Focus and tooling. " + skills.join(". "), "/about/#skills");
+  }
+
+  return out;
+}
+
+function htmlFiles(dir = SITE) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) return entry.name === "assets" ? [] : htmlFiles(p);
+    return entry.name.endsWith(".html") ? [p] : [];
+  });
+}
+
+function projectChunks(siteDir = SITE) {
+  const chunks = [];
+  for (const file of htmlFiles(siteDir).sort()) {
+    const root = parseHtml(readFileSync(file, "utf8"));
+    const prose = root.querySelector(".project-prose");
+    if (!prose) continue;
+
+    const rel = relative(siteDir, file).split(sep).join("/").replace(/index\.html$/, "");
+    const url = "/" + rel;
+    const graph = jsonLd(root);
+    const code = graph.find((n) => n["@type"] === "SoftwareSourceCode") ?? {};
+    const h1 = textOf(root.querySelector("h1"));
+    const title = code.name ?? h1;
+    const cardTitle = h1 || title;
+    const tagline = textOf(root.querySelector(".global-heading .heading-subtitle"));
+    const details = root.querySelectorAll(".project-details-block");
+    const summary = textOf(details[0]?.querySelector(".project-details-title"));
+    const result = textOf(details[1]?.querySelector(".project-details-title"));
+    const facts = {};
+    for (const item of details[0]?.querySelectorAll(".project-item") ?? []) {
+      const cells = item.querySelectorAll(".body-text-2");
+      if (cells.length >= 2) facts[textOf(cells[0])] = textOf(cells[1]);
     }
-    out.push(
+    const year = facts.Year ?? (code.dateCreated ? String(code.dateCreated).slice(0, 4) : "");
+    const cover = basename(attr(root.querySelector(".project-image-wrap img, .projec-image-main"), "src"));
+    const slug = cover
+      ? cover.replace(/\.\w+$/, "")
+      : basename(dirname(file)) === "." ? "home" : basename(dirname(file));
+    const ext = attr(root.querySelector(".project-links a"), "href") || undefined;
+    const coreText = joinSentences([
+      cardTitle,
+      tagline,
+      summary,
+      facts.Role && `Role: ${facts.Role}`,
+      facts.Stack && `Stack: ${facts.Stack}`,
+      year && `Year: ${year}`,
+      result,
+    ]);
+    chunks.push({
+      id: cover ? `work-${cover.replace(/\.\w+$/, "")}` : `work-${slug}`,
+      type: "project",
+      title: cardTitle,
+      text: clean(coreText),
+      url,
+      dedupe: url,
+      core: true,
+      ...(ext ? { ext } : {}),
+    });
+
+    chunks.push(
       ...pageChunks({
-        idBase: `${type}-${slug}`,
-        type,
+        idBase: `project-${slug}`,
+        type: "project",
         pageTitle: title,
         url,
-        body,
-        intro: [meta, excerpt].filter(Boolean).join("\n\n"),
+        body: htmlToMarkdown(prose),
+        intro: [tagline, summary].filter(Boolean).join("\n\n"),
       }),
     );
   }
-  return out;
+  return chunks;
 }
 
 function extraChunks(profile) {
   return (profile.facts ?? []).map((f, i) => {
-    if (!f.title || !f.text) throw new Error(`_data/profile.yml facts[${i}] needs title and text`);
+    if (!f.title || !f.text) throw new Error(`content/profile.yml facts[${i}] needs title and text`);
     const type = f.type ?? "note";
-    if (!(type in TYPE_LABEL)) throw new Error(`_data/profile.yml facts[${i}]: unknown type "${type}"`);
+    if (!(type in TYPE_LABEL)) throw new Error(`content/profile.yml facts[${i}]: unknown type "${type}"`);
     return {
       id: f.id ?? `fact-${slugify(f.title)}`,
       type,
@@ -329,20 +501,24 @@ function extraChunks(profile) {
 // ---- build -----------------------------------------------------------------------------------
 
 export function buildKb(root = ROOT) {
-  const cfg = readYaml(join(root, "_config.yml"), {});
-  const profile = readYaml(join(root, "_data/profile.yml"), {}) ?? {};
-  const nav = readYaml(join(root, "_data/navigation.yml"), {});
+  const site = join(root, "public");
+  const indexRoot = parseHtml(readFileSync(join(site, "index.html"), "utf8"));
+  const aboutRoot = parseHtml(readFileSync(join(site, "about/index.html"), "utf8"));
+  const contactRoot = parseHtml(readFileSync(join(site, "contact/index.html"), "utf8"));
+  const profile = readYaml(join(root, "content/profile.yml"), {}) ?? {};
+  const nav = readYaml(join(root, "content/navigation.yml"), {});
+  const cfgJs = readFileSync(join(site, "assets/js/cmdk-config.js"), "utf8");
+  const cfgJson = cfgJs.match(/window\.__CMDK_CONFIG__\s*=\s*(\{[\s\S]*?\});/)?.[1];
+  if (!cfgJson) throw new Error("public/assets/js/cmdk-config.js must assign window.__CMDK_CONFIG__");
+  const palette = JSON.parse(cfgJson);
+  const { meta, chunks: baseChunks } = profileChunks(indexRoot, site);
 
   const chunks = [
-    ...configChunks(cfg),
-    ...cvChunks(root),
+    ...baseChunks,
+    ...contactChunks(contactRoot),
+    ...cvChunks(aboutRoot),
     ...extraChunks(profile),
-    ...collectionChunks(root, "_projects", "project", ({ slug }) => `/projects/${slug}/`),
-    ...collectionChunks(root, "_publications", "publication", ({ slug }) => `/publications/${slug}/`),
-    ...collectionChunks(root, "_posts", "post", ({ slug, data }) => {
-      const cats = [].concat(data.categories ?? data.category ?? []).filter(Boolean);
-      return "/" + [...cats, slug].join("/") + "/";
-    }),
+    ...projectChunks(site),
   ];
 
   const ids = new Set();
@@ -354,20 +530,20 @@ export function buildKb(root = ROOT) {
     c.label = TYPE_LABEL[c.type];
   }
 
-  const links = {
-    github: cfg.author?.github && `https://github.com/${cfg.author.github}`,
-    linkedin: cfg.author?.linkedin && `https://www.linkedin.com/in/${cfg.author.linkedin}`,
-    email: cfg.author?.email && `mailto:${cfg.author.email}`,
-  };
-
+  const linkText = chunks.find((c) => c.id === "contact")?.text ?? "";
+  const pick = (label) => linkText.match(new RegExp(`${label}: (\\S+)`))?.[1]?.replace(/[.,;]+$/, "");
   const hash = createHash("sha1").update(JSON.stringify(chunks)).digest("hex").slice(0, 10);
   return {
     version: 1,
     hash,
-    suggestions: cfg.command_palette?.suggestions ?? [],
-    site: { name: cfg.name ?? cfg.author?.name, url: cfg.url },
+    suggestions: palette.suggestions ?? [],
+    site: meta,
     nav: (nav.main ?? []).map((n) => ({ title: n.title, url: n.url })),
-    links,
+    links: {
+      github: pick("GitHub"),
+      linkedin: pick("LinkedIn"),
+      email: pick("Email") && `mailto:${pick("Email")}`,
+    },
     chunks,
   };
 }
@@ -375,7 +551,7 @@ export function buildKb(root = ROOT) {
 function main() {
   const args = process.argv.slice(2);
   const outIdx = args.indexOf("--out");
-  const out = resolve(ROOT, outIdx >= 0 ? args[outIdx + 1] : "assets/data/kb.json");
+  const out = resolve(ROOT, outIdx >= 0 ? args[outIdx + 1] : "public/assets/data/kb.json");
   const kb = buildKb();
   const json = JSON.stringify(kb, null, 1) + "\n";
 
