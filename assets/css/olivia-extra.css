@@ -47,3 +47,18 @@ html.wf-fallback .menu-button { display: none !important; }
 .project-prose hr { border: 0; border-top: 1px solid #2f2f2f; }
 .project-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 24px; }
 .project-links a { font-size: 1rem; text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---- home: the stacked project cards (sticky) must be opaque, otherwise the titles of the cards underneath show through and overlap ---- */
+.collection-list-wrap .project-card { background-color: #050505; }
+
+/* ---- Expertise: compact cards (the Webflow template leaves a 300px gap between icon and label) ---- */
+.service-card { grid-row-gap: 48px; row-gap: 48px; grid-column-gap: 0; column-gap: 0; padding: 28px 32px; }
+.service-info { align-items: flex-end; }
+.service-left { grid-row-gap: 8px; row-gap: 8px; }
+@media screen and (max-width: 479px) { .service-card { grid-row-gap: 32px; row-gap: 32px; padding: 20px; } }
+
+/* ---- footer: social icons instead of two-letter abbreviations ---- */
+.social-icon-wrap { align-items: center; gap: 18px; }
+.social-link { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-bottom: 0; opacity: 0.85; transition: opacity .2s, transform .2s; }
+.social-link svg { display: block; }
+.social-link:hover, .social-link:focus-visible { opacity: 1; border-bottom: 0; transform: translateY(-1px); }
