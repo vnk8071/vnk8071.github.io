@@ -12,7 +12,7 @@ result: The site runs at kilomet.com.vn.
 live: https://kilomet.com.vn
 description: kilomet.com.vn is a running community and coaching site with personalized training plans, on-trail sessions with coaches and race teams, in Vietnamese and English.
 cover_alt: 'Kilomet homepage: a trail runner on a green mountain slope with the headline "Đồng hành cùng runner trên hành trình chạy bộ"'
-featured: false
+featured: true
 cover: /assets/projects/kilomet.webp
 image: /assets/projects/kilomet-og.jpg
 image_alt: 'Kilomet homepage: a trail runner on a green mountain slope with the headline "Đồng hành cùng runner trên hành trình chạy bộ"'

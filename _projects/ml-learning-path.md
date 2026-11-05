@@ -12,7 +12,7 @@ result: Public on GitHub, with notes for each course and the projects built alon
 repo: https://github.com/vnk8071/machine-learning-learning-path
 description: 'A structured, self-taught roadmap through machine learning and deep learning: notes for each Udacity nanodegree and the projects built along the way.'
 cover_alt: 'Three project screenshots from the learning path: an AWS inference notebook, a Flask web app and a meme generator'
-featured: true
+featured: false
 cover: /assets/projects/ml-learning-path.webp
 image: /assets/projects/ml-learning-path-og.jpg
 image_alt: 'Three project screenshots from the learning path: an AWS inference notebook, a Flask web app and a meme generator'
