@@ -45,13 +45,14 @@ public/privacy/                          analytics and consent disclosure
 public/404.html
 public/assets/site.css                   Webflow stylesheet + local overrides at the end
 public/assets/css/                       Olivia overrides, palette and chat styles
-public/assets/js/                        ⌘K palette, chat window, Web Worker and cmdk-config.js
+public/assets/js/                        ⌘K palette, chat window, Web Worker, cmdk-config.js, website carousel
 public/assets/data/kb.json               knowledge base for search + chatbot
 public/assets/fonts/                     BDO Grotesk (self-hosted)
 public/assets/hero.webp                  blue-duotone hero photo
 public/assets/about.webp                 Qualcomm portrait
 public/assets/footer-gradient-blue.webp  footer glow (black → blue, with 500/800/1080w variants)
 public/assets/projects/                  project covers + 1200x630 OG images
+public/assets/websites/                  live screenshots for the / Website carousel
 public/assets/analytics.js               consent-gated GA4 loader
 
 content/profile.yml                      extra chatbot facts and search aliases
@@ -73,6 +74,9 @@ workers/ask/                             Cloudflare Worker behind "Ask my profil
 - Keep each page's `data-wf-page` / `data-wf-site` attributes and its page-specific `webflow.*.js`
   bundle: they select the Webflow interactions that animate that page. The home bundle differs from
   the work/detail bundle and from About/Contact; do not copy a script block between pages.
+- The / Website carousel shows one live screenshot at a time: arrows, thumbnails, arrow keys and swipe
+  switch websites, and it advances every 10 s while visible (paused on hover/focus and for reduced-motion
+  users). Replace the files in `public/assets/websites/` to refresh the previews.
 - Analytics is off until a visitor accepts. The measurement ID sits on the `analytics.js` script tag in
   every page (`data-ga-id`); empty it to disable.
 - When adding pages, update `public/sitemap.xml` and `public/robots.txt`, and add the page to both

@@ -64,3 +64,36 @@ html.wf-fallback .menu-button { display: none !important; }
 .social-link { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-bottom: 0; opacity: 0.85; transition: opacity .2s, transform .2s; }
 .social-link svg { display: block; }
 .social-link:hover, .social-link:focus-visible { opacity: 1; border-bottom: 0; transform: translateY(-1px); }
+
+/* ---- Website: one large live preview with previous/next controls ---- */
+.website-carousel { position: relative; margin-top: 40px; }
+.website-viewport { position: relative; overflow: hidden; background: #050a14; }
+.website-track { display: flex; transition: transform .55s cubic-bezier(.22, .61, .36, 1); will-change: transform; }
+.website-slide { flex: 0 0 100%; min-width: 0; }
+.website-link { display: block; overflow: hidden; }
+.website-image { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top center; }
+.website-caption { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding: 18px 0 0; }
+.website-arrow { position: absolute; top: 50%; z-index: 2; display: grid; place-items: center; width: 58px; height: 58px; padding: 0; border: 1px solid rgba(255, 255, 255, .3); border-radius: 50%; background: rgba(4, 7, 15, .55); color: #fff; cursor: pointer; transform: translateY(-50%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: background .2s, border-color .2s; }
+.website-arrow:hover, .website-arrow:focus-visible { background: var(--accent); border-color: var(--accent); }
+.website-arrow.prev { left: 20px; }
+.website-arrow.next { right: 20px; }
+.website-count { position: absolute; top: 18px; right: 20px; z-index: 2; padding: 7px 11px; border-radius: 999px; background: rgba(4, 7, 15, .62); color: #fff; font: 500 .72rem/1 var(--mono); letter-spacing: .08em; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.website-thumbs { display: flex; gap: 12px; padding-top: 18px; }
+.website-thumb { flex: 0 0 168px; padding: 0; border: 1px solid rgba(255, 255, 255, .16); background: transparent; color: rgba(255, 255, 255, .58); cursor: pointer; text-align: left; transition: border-color .2s, color .2s; }
+.website-thumb img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top center; opacity: .5; transition: opacity .2s; }
+.website-thumb span { display: block; padding: 8px 0 0; font-size: .75rem; letter-spacing: .02em; }
+.website-thumb[aria-current="true"] { border-color: var(--accent); color: #fff; }
+.website-thumb[aria-current="true"] img { opacity: 1; }
+.website-thumb:hover img, .website-thumb:focus-visible img { opacity: 1; }
+.website-thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media screen and (max-width: 767px) {
+  .website-carousel { margin-top: 24px; }
+  .website-arrow { width: 44px; height: 44px; }
+  .website-arrow.prev { left: 10px; }
+  .website-arrow.next { right: 10px; }
+  .website-caption { gap: 12px; padding-top: 12px; }
+  .website-count { top: 10px; right: 10px; padding: 6px 9px; }
+  .website-thumbs { gap: 10px; }
+  .website-thumb { flex: 1 1 0; min-width: 0; }
+  .website-thumb span { font-size: .7rem; }
+}
